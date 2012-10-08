@@ -90,8 +90,7 @@ cls.PrettyPrinter.types[cls.PrettyPrinter.DATE] =
   {
     return class_name == "Date";
   },
-  script: "new Date(object.getTime() - object.getTimezoneOffset() * 1000 * 60)" +
-          ".toISOString().replace(\"Z\", \"\")",
+  script: "object.toString()",
   template: function(message, ctx)
   {
     var VALUE = 2;

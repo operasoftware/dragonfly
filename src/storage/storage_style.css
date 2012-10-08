@@ -118,7 +118,9 @@ input[type='datetime-local']
 
 .storage_view .sortable-table .check
 {
-  content: url("../ui-images/menu_check.png");
+  background: transparent url("../ui-images/menu_check.png") 50% no-repeat;
+  width: 100%;
+  height: 22px;
 }
 
 

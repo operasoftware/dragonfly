@@ -571,7 +571,7 @@ templates.sortable_table_row = function(tabledef, item, cols)
               return [];
             var content = coldef.renderer(item, coldef.getter);
 
-            if (typeof content !== "undefined" && typeof content !== "null")
+            if (content != null)
             {
               var title;
               if (coldef.title_getter)

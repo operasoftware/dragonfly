@@ -24,15 +24,6 @@ if (!Element.prototype.insertAdjacentHTML)
   }
 }
 
-if (typeof document.createElement('div').classList == 'undefined')
-{
-  Element.prototype.__defineGetter__('classList', function()
-  {
-    return this.className.split(/\s+/);
-  });
-  Element.prototype.__defineSetter__('classList', function(){});
-}
-
 /**
  * @fileoverview
  * Helper function prototypes related to DOM objects and the DOM
@@ -163,59 +154,22 @@ Element.prototype.clearAndRender = function(template)
   return this.render(template);
 };
 
-if (document.createElement("div").classList)
+Element.prototype.hasClass = function(cl)
 {
-  Element.prototype.hasClass = function(cl)
-  {
-    return cl && this.classList.contains(cl);
-  };
+  return cl && this.classList.contains(cl);
+};
 
-  Element.prototype.addClass = function(cl)
-  {
-    cl && this.classList.add(cl);
-    return this;
-  };
-
-  Element.prototype.removeClass = function(cl)
-  {
-    cl && this.classList.remove(cl);
-    return this;
-  };
-}
-else
+Element.prototype.addClass = function(cl)
 {
-  (function()
-  {
-    var cache = {};
-    var re = null;
-    var cln = "";
-    var has_class = function(cln, cl)
-    {
-      if (!cache.hasOwnProperty(cl))
-        cache[cl] = new RegExp("(?:^|\\s+)" + cl + "(?=\\s+|$)");
-      return (re = cache[cl]).test(cln);
-    };
+  cl && this.classList.add(cl);
+  return this;
+};
 
-    this.hasClass = function(cl)
-    {
-      return has_class(this.getAttribute("class"), cl);
-    };
-
-    this.addClass = function(cl)
-    {
-      if (!has_class(cln = this.getAttribute("class"), cl))
-        this.setAttribute("class" , (cln ? cln + " " : "") + cl);
-      return this;
-    };
-
-    this.removeClass = function(cl)
-    {
-      if (has_class(cln = this.getAttribute("class"), cl))
-        this.setAttribute("class" , cln.replace(re, "").trim());
-      return this;
-    };
-  }).apply(Element.prototype);
-}
+Element.prototype.removeClass = function(cl)
+{
+  cl && this.classList.remove(cl);
+  return this;
+};
 
 /**
  * Toggle class "name"

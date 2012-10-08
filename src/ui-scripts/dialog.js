@@ -101,22 +101,39 @@ BaseDialog.prototype = new function()
 /**
  * @constructor
  */
-function ConfirmDialog(template, ok_callback, cancel_callback) {
-  this._init(template, ok_callback, cancel_callback);
+function ConfirmDialog(template, ok_callback_or_callback_list, cancel_callback_or_type, type) {
+  this._init(template, ok_callback_or_callback_list, cancel_callback_or_type, type);
 };
 
 function ConfirmDialogPrototype()
 {
-  this._init = function(template, ok_callback, cancel_callback)
+  this._init = function(template, ok_callback_or_callback_list, cancel_callback_or_type, type)
   {
+    var ACCEPT = 0;
+    var REJECT = 1;
+    var accept_cb = ok_callback_or_callback_list;
+    var reject_cb = cancel_callback_or_type;
+    if (Array.isArray(ok_callback_or_callback_list))
+    {
+      accept_cb = ok_callback_or_callback_list[0];
+      reject_cb = ok_callback_or_callback_list[1];
+      type = cancel_callback_or_type;
+    }
+
+    if (!type)
+      type = ConfirmDialog.OK_CANCEL;
+
+    if (!ConfirmDialog.labels[type])
+      throw "Not a valid type in ConfirmDialog";
+
     var buttons = [
       {
-        label: ui_strings.S_BUTTON_OK,
-        handler: ok_callback,
+        label: ConfirmDialog.labels[type][ACCEPT],
+        handler: accept_cb,
       },
       {
-        label: ui_strings.S_BUTTON_CANCEL,
-        handler: cancel_callback,
+        label: ConfirmDialog.labels[type][REJECT],
+        handler: reject_cb,
       }
     ];
     BaseDialog.prototype._init.call(this, template, buttons);
@@ -125,6 +142,11 @@ function ConfirmDialogPrototype()
 
 ConfirmDialogPrototype.prototype = new BaseDialog();
 ConfirmDialog.prototype = new ConfirmDialogPrototype();
+ConfirmDialog.YES_NO = 1;
+ConfirmDialog.OK_CANCEL = 2;
+ConfirmDialog.labels = {};
+ConfirmDialog.labels[ConfirmDialog.YES_NO] = [ui_strings.S_BUTTON_YES, ui_strings.S_BUTTON_NO];
+ConfirmDialog.labels[ConfirmDialog.OK_CANCEL] = [ui_strings.S_BUTTON_OK, ui_strings.S_BUTTON_CANCEL];
 
 /**
  * @constructor

@@ -31,7 +31,7 @@ cls.UserTracker = function(url, storagekey)
 
     conn.onreadystatechange = rshandler;
     conn.open("GET", url, true);
-    conn.send(null);
+    try { conn.send(null); } catch(e) {};
   }
 
 

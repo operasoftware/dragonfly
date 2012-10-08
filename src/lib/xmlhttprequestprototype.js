@@ -5,12 +5,18 @@
  * "this" value
  */
 
-XMLHttpRequest.prototype.loadResource = function(url, callback, context)
+XMLHttpRequest.prototype.loadResource = function(url, callback, context, error_callback)
 {
   this.onload = function()
   {
     callback(this, context);
-  }
+  };
+
+  this.onerror = function()
+  {
+    setTimeout(error_callback, 0, context);
+  };
+
   this.open('GET', url);
-  this.send(null);
+  try { this.send(null); } catch(e) {};
 };

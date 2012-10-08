@@ -86,7 +86,7 @@ window.app.profiles[window.app.profiles.HTTP_PROFILER].is_enabled = false;
 
 window.app.build_application = function(on_services_created, on_services_enabled)
 {
-
+  var app_ctx = {messages: window.messages};
   var _find_compatible_version = function(version, version_list)
   {
     var
@@ -147,6 +147,17 @@ window.app.build_application = function(on_services_created, on_services_enabled
     builder = null,
     numbers = null;
 
+    window.messages.clear_session_listeners();
+
+    var session_ctx =
+    {
+      messages: app_ctx.messages,
+      helpers: app_ctx.helpers,
+      tag_manager: app_ctx.tag_manager,
+      show_dragonfly_window: app_ctx.show_dragonfly_window,
+      services: app_ctx.services
+    };
+
     for (service_name in service_descriptions)
     {
       service = service_descriptions[service_name];
@@ -166,7 +177,10 @@ window.app.build_application = function(on_services_created, on_services_enabled
             // service_description is a dict of services
             // with name and version for each service
             // return false if the service shall not be enabled
-            window.services[service_name].is_implemented = builder(service, service_descriptions);
+            var is_implemented = builder(service,
+                                         service_descriptions,
+                                         session_ctx);
+            window.services[service_name].is_implemented = is_implemented;
           }
         }
       }
@@ -221,14 +235,15 @@ window.app.build_application = function(on_services_created, on_services_enabled
   new cls.ServiceBase();
   new ActionBroker();
 
-  window.messages.addListener("application-setup", report_usage);
+  window.messages.addListener("application-setup", report_usage, true);
 
   // global objects
-  window.tagManager = window.tag_manager = new window.cls.TagManager();
-  window.helpers = new cls.Helpers();
+  window.tagManager = window.tag_manager = app_ctx.tag_manager = new window.cls.TagManager();
+  window.helpers = app_ctx.helpers = new cls.Helpers();
 
   // create window.services namespace and register it.
-  cls.ServiceBase.register_services(new cls.Namespace("services"));
+  app_ctx.services = new cls.Namespace("services");
+  cls.ServiceBase.register_services(app_ctx.services);
   [
     'scope',
     'console-logger',
@@ -246,6 +261,7 @@ window.app.build_application = function(on_services_created, on_services_enabled
   {
     cls.debug.create_debug_environment(params);
   }
+  app_ctx.show_dragonfly_window = Boolean(params.showdfl);
   var namespace = cls.Scope && cls.Scope["1.1"];
   namespace.Service.apply(window.services.scope.constructor.prototype);
   window.services.scope.is_implemented = true;
@@ -321,18 +337,14 @@ window.app.helpers.parse_url_arguments = function()
     supported arguments:
       - debug
       - log-filter
+      - showdfl
   */
-  var
-  args = location.search.slice(1).split(';'),
-  params = {},
-  arg = '',
-  i = 0;
-
-  for( ; arg = args[i]; i++)
+  var args = location.search.slice(1).split(/[;&]/);
+  var params = {};
+  for (var i = 0, arg; arg = args[i]; i++)
   {
     arg = arg.split('=');
-    params[arg[0].replace(/^ +/, '').replace(/ +$/, '')] =
-      arg[1] && arg[1].replace(/^ +/, '').replace(/ +$/, '') || true;
+    params[arg[0].trim()] = arg[1] && arg[1].trim() || true;
   }
   return params;
 }

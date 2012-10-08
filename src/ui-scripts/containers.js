@@ -66,29 +66,25 @@ var ContainerBase = function()
   this.setup = function(view_id)
   {
     var view = views[this.view_id = view_id];
-    var container = document.getElementById(this.type + '-to-' + this.cell.id) || this.update();
+    var container = document.getElementById(this.type + "-to-" + this.cell.id) || this.update();
     if( view )
     {
-      container.removeAttribute('handler');
-      container.removeAttribute('edit-handler');
-      if (view.default_handler)
+      var names = ["handler", "edit-handler", "data-tooltip", "data-menu"];
+      var values = [view.default_handler, view.edit_handler, view.default_tooltip, view_id];
+      names.forEach(function(name, index)
       {
-        container.setAttribute('handler', view.default_handler);
-      }
-      if (view.edit_handler)
-      {
-        container.setAttribute('edit-handler', view.edit_handler);
-      }
-      container.className = view.container_class || '';
-      container.setAttribute('data-menu', view_id || '');
-      container.innerHTML = '';
+        if (values[index])
+          container.setAttribute(name, values[index]);
+        else
+          container.removeAttribute(name);
+      });
+      container.className = view.container_class || "";
+      container.innerHTML = "";
       if (!view.has_container_id(container.id))
-      {
         view.addContainerId(container.id);
-      }
       view.update();
     }
-  }
+  };
 
   this.init = function(cell)
   {
