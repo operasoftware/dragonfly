@@ -118,11 +118,18 @@ window.cls.Helpers = function()
     var re_amp = /&/g;
     var re_lt = /</g;
     var re_cd_end = /]]>/g;
+    var re_control_characters = /[\u0000-\u001f]/g;
     return function(str)
     {
       return str ? str.replace(re_amp, "&amp;")
                       .replace(re_lt, "&lt;")
                       .replace(re_cd_end, "]]&gt;")
+                      .replace(re_control_characters, function(c) {
+                        // We can't set innerHTML with these characters in XML.
+                        // Just replace them with blank, since they are very
+                        // seldomly used.
+                        return "";
+                      })
                  : str;
     }
   })();
