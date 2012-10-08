@@ -22,7 +22,6 @@ cls.ResourceManagerService = function(view, network_logger)
   };
 
 
-
   this._view = view;
   this._network_logger = network_logger;
 
@@ -65,7 +64,7 @@ cls.ResourceManagerService = function(view, network_logger)
     //  bounce if _suppress_updates
     if (this._suppress_updates)
     {
-      if (msg && msg.id)
+      if (msg && msg.name=='resrouce-update')
       {
         //  suppress the uid altogether if its URL matches the one we are requesting
         var r = this._network_logger.get_resources([msg.id]);
@@ -75,6 +74,7 @@ cls.ResourceManagerService = function(view, network_logger)
       return setTimeout(this._update_bound, THROTTLE_DELAY);
     }
 
+    // build the context
     var ctx = {};
 
     // get the order of the groups of resources
