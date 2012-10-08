@@ -139,7 +139,7 @@ templates.resource_tree =
 					d.sameOrigin?[]:['span',d.url.host,'class','resource-domain'],
 					' ',
 					['span',
-						'('+resources.length+')',
+						String(resources.length),
 						'class','resource-tree-count'
 					],
 					'class','resource-tree-document',
@@ -196,7 +196,7 @@ templates.resource_tree =
 					],
 					' ',
 					['span',
-						'('+resources.length+')',
+						String(resources.length),
 						'class','resource-tree-count'
 					],
 					'class','resource-tree-group resource-tree-group-'+g.toLowerCase()
