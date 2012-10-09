@@ -302,9 +302,6 @@ a.external:hover
 .resource-tree-windows
 {
   width: 100%;
-  background-image: linear-gradient(0deg, rgba(0,0,0,.031) 50%, transparent 0%);
-  background-size: 100% 36px;
-  background-repeat: repeat;
   display: table;
   margin: 4px 0;
 }
