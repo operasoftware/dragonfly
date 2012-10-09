@@ -274,8 +274,7 @@ templates.resource_detail =
 				this[specificTemplate](resource, resource.data),
 				'class','resource-detail-'+ specificTemplate +'-container'
 			],
-			'class','resource-detail-container',
-			'style','height:100%;overflow:auto;'
+			'class','resource-detail-container'
 		]);
 	},
 
