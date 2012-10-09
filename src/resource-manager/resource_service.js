@@ -89,11 +89,11 @@ cls.ResourceManagerService = function(view, network_logger)
 
     if (ctx.windowList.length)
     {
-      // get all the (non-suppressed) resources
+      // get all the (non-suppressed) resources with content
       ctx.resourceList = (this._network_logger.get_resources()||[])
       .filter(function(v)
       {
-        return !this._suppress_uids.hasOwnProperty(v.uid);
+        return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode!=204;
       }, this);
 
       ctx.documentResourceHash = {};
