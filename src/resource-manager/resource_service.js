@@ -64,7 +64,7 @@ cls.ResourceManagerService = function(view, network_logger)
     //  bounce if _suppress_updates
     if (this._suppress_updates)
     {
-      if (msg && msg.name=='resrouce-update')
+      if (msg && msg.type=='resource-update')
       {
         //  suppress the uid altogether if its URL matches the one we are requesting
         var r = this._network_logger.get_resources([msg.id]);
