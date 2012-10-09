@@ -118,7 +118,7 @@ window.cls.Helpers = function()
     var re_amp = /&/g;
     var re_lt = /</g;
     var re_cd_end = /]]>/g;
-    var re_control_characters = /[\u0000-\u001f]/g;
+    var re_control_characters = /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g;
     return function(str)
     {
       return str ? str.replace(re_amp, "&amp;")

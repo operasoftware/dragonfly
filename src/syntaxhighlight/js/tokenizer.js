@@ -358,6 +358,7 @@ cls.SimpleJSParser.prototype = new function()
     '>': '&gt;',
     '&': '&amp;',
     // The following control characters need to be escaped in XML.
+    // U+0000-U+001F excluding U+0009, U+000A and U+000D.
     '\u0000': '\\u0000',
     '\u0001': '\\u0001',
     '\u0002': '\\u0002',
@@ -367,11 +368,8 @@ cls.SimpleJSParser.prototype = new function()
     '\u0006': '\\u0006',
     '\u0007': '\\u0007',
     '\u0008': '\\u0008',
-    '\u0009': '\\u0009',
-    '\u000a': '\\u000a',
     '\u000b': '\\u000b',
     '\u000c': '\\u000c',
-    '\u000d': '\\u000d',
     '\u000e': '\\u000e',
     '\u000f': '\\u000f',
     '\u0010': '\\u0010',
