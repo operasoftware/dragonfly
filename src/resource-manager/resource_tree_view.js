@@ -111,6 +111,15 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     this.update();
   }.bind(this);
 
+  this._on_debug_context_selected_bound = function()
+  {
+    this._loading = false;
+    this.update();
+  }.bind(this);
+
+  var messages = window.messages;
+  messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+
   var doc_service = window.services['document-manager'];
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
