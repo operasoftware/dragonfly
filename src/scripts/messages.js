@@ -147,25 +147,35 @@
  */
 var messages = new function()
 {
-  var __listeners = {};
+  var _listeners = {};
+  var _permanent_listeners = {};
 
   /**
    * Add a message listener
    * @param key {String} The name of the message to listen for
    * @param cb {function} The callback to call when message is received
    */
-  this.addListener = function(key, cb)
+  this.addListener = function(key, cb, is_permanent_listener)
   {
-    if (__listeners[key])
+    if (!cb)
     {
-      if (__listeners[key].indexOf(cb) == -1)
-      {
-        __listeners[key].push(cb);
-      }
+      opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
+                      "No callback function for message listener provided: " + key);
+      return;
     }
-    else
+    var lists = [_listeners];
+    if (is_permanent_listener)
+      lists.push(_permanent_listeners);
+
+    for (var i = 0, listeners; listeners = lists[i]; i++)
     {
-      __listeners[key] = [cb];
+      if (listeners[key])
+      {
+        if (listeners[key].indexOf(cb) == -1)
+          listeners[key].push(cb);
+      }
+      else
+        listeners[key] = [cb];
     }
   };
 
@@ -178,15 +188,16 @@ var messages = new function()
    */
   this.removeListener = function(key, cb)
   {
-    var cur = null, listeners = __listeners[key], i = 0;
-    if (listeners)
+    var lists = [_listeners, _permanent_listeners];
+    for (var i = 0, listeners; listeners = lists[i]; i++)
     {
-      for (; cur = listeners[i]; i++)
+      var listeners_type = listeners[key];
+      if (listeners_type)
       {
-        if (cur == cb)
+        for (var j = listeners_type.length - 1, cur; cur = listeners_type[j]; j--)
         {
-          listeners.splice(i, 1);
-          i--;
+          if (cur == cb)
+            listeners_type.splice(j, 1);
         }
       }
     }
@@ -203,7 +214,7 @@ var messages = new function()
   this.post = function(key, msg)
   {
     msg || (msg = {});
-    var listeners = __listeners[key];
+    var listeners = _listeners[key];
     msg.type = key;
     if (listeners)
     {
@@ -213,4 +224,13 @@ var messages = new function()
       }
     }
   }
+
+  this.clear_session_listeners = function()
+  {
+    _listeners = {};
+    for (var key in _permanent_listeners)
+    {
+      _listeners[key] = _permanent_listeners[key].slice();
+    }
+  };
 }

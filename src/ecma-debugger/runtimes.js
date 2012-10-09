@@ -10,6 +10,7 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
   var OBJECT_ID = 3;
   var URI = 4;
   var DESCRIPTION = 5;
+  var EXTENSION_NAME = 7;
 
   this.runtime_id = runtime[RUNTIME_ID];
   this.html_frame_path = runtime[HTML_FRAME_PATH];
@@ -17,6 +18,7 @@ cls.EcmascriptDebugger["6.0"].Runtime = function(runtime)
   this.object_id = runtime[OBJECT_ID];
   this.uri = runtime[URI];
   this.description = runtime[DESCRIPTION];
+  this.extension_name = runtime[EXTENSION_NAME];
 };
 
 cls.EcmascriptDebugger["6.0"].Runtime.prototype = new URIPrototype("uri");
@@ -38,7 +40,7 @@ cls.EcmascriptDebugger["6.0"].ExtensionRuntime = function(rt)
   this.type = "extension";
   this.id = rt.runtime_id;
   this.uri = rt.uri;
-  this.title = "Extension Runtime " + rt.runtime_id;
+  this.title = "Extension" + (rt.extension_name ? ": " + rt.extension_name : " Runtime " + rt.runtime_id);
 };
 
 /**
@@ -1340,14 +1342,17 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
     return  __scripts[scriptId] && __scripts[scriptId].runtime_id || null;
   }
 
-  this.reloadWindow = function()
+  this.reloadWindow = function(window_id)
   {
-    if (__selected_window)
-    {
-      if (!__windows_reloaded[__selected_window])
-        __windows_reloaded[__selected_window] = 1;
+    if (!window_id)
+      window_id = __selected_window;
 
-      var rt_id = this.getRuntimeIdsFromWindow(__selected_window)[0];
+    if (window_id)
+    {
+      if (!__windows_reloaded[window_id])
+        __windows_reloaded[window_id] = 1;
+
+      var rt_id = this.getRuntimeIdsFromWindow(window_id)[0];
       if (window.services['ecmascript-debugger'] &&
           window.services['ecmascript-debugger'].is_enabled &&
           // For background processes we can not use the exec service.
@@ -1363,9 +1368,8 @@ cls.EcmascriptDebugger["6.0"].Runtimes = function(service_version)
       }
       else if (window.services.exec && window.services.exec.is_implemented)
       {
-        var msg = [[["reload",
-                     null,
-                     window.window_manager_data.get_debug_context()]]];
+        var action_list = ["reload", null, window_id];
+        var msg = [[action_list]];
         window.services.exec.requestExec(cls.TagManager.IGNORE_RESPONSE, msg);
       }
     }

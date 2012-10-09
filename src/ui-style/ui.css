@@ -1,7 +1,9 @@
 ﻿/* Font stack defaults */
 viewport,
 .info-box,
-.ui-button {
+.ui-button,
+.ui-font
+{
   font-family: sans-serif;
   font: menu;
   font-style: normal;
@@ -385,6 +387,11 @@ cst-select-option-list,
 .update-ev-listeners::before
 {
   background-image: url("../ui-images/icons/icon_refetch_listeners.png");
+}
+
+.close-overlay-view::before
+{
+  background-image: url("../ui-images/icons/icon_close.png");
 }
 
 .storage-delete
@@ -1701,8 +1708,8 @@ toolbar
 /* TODO: this is just a temp workaround. */
 #waiting-for-connection
 {
-    position: relative;
-    z-index: 2;
+  position: relative;
+  z-index: 2;
 }
 
 .close-tab-button
@@ -1792,31 +1799,32 @@ info {
 
 .badge.paused
 {
-    content: url("../ui-images/pause.png");
-    background-color: transparent;
-    top: -2px;
-    left: 21px;
+  background: transparent url("../ui-images/pause.png") 50% no-repeat;
+  height: 15px;
+  width: 15px;
+  left: 22px;
+  top: -1px;
 }
 
 .inspect-node-link
 {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .inspect-node-link:hover
 {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .internal-link
 {
-    cursor: pointer;
-    text-decoration: underline;
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .internal-link:hover
 {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .inline-block
@@ -1834,4 +1842,12 @@ info {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.background-overlay
+{
+  position: absolute;
+  border: 1px solid #999;
+  box-shadow: 0 5px 5px hsla(0, 0%, 0%, 0.30),
+              0 2px 2px hsla(0, 0%, 0%, 0.25)
 }

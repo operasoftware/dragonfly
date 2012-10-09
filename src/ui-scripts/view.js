@@ -60,17 +60,18 @@ var ViewBase = new function()
     return false;
   }
 
-  this.init = function(id, name, container_class, html, default_handler, edit_handler)
+  this.init = function(id, name, container_class, html, default_handler, edit_handler, default_tooltip)
   {
     this.id = id || getId();
     this.name = name;
     this.container_class = container_class;
     this.inner = html;  // only for testing;
     this.container_ids = [];
-    this.type = this.type || 'single-view';
-    this.default_handler = default_handler || '';
-    this.edit_handler = edit_handler || '';
-    this.requires_view || ( this.requires_view = '' );
+    this.type = this.type || "single-view";
+    this.default_handler = default_handler || "";
+    this.edit_handler = edit_handler || "";
+    this.default_tooltip = default_tooltip || "";
+    this.requires_view || ( this.requires_view = "" );
     if(!window.views)
     {
       window.views = {};
@@ -80,8 +81,15 @@ var ViewBase = new function()
     {
       ids[ids.length] = this.id;
     }
-    messages.post('view-initialized', {'view_id': this.id});
+    messages.post("view-initialized", {"view_id": this.id});
   }
+
+  this.register_overlay = function(view)
+  {
+    this._overlay = view;
+    view.parent_view_id = this.id;
+    return view;
+  };
 
   this.addContainerId = function(id)
   {
@@ -257,7 +265,7 @@ var ViewBase = new function()
     }
   }
 
-  window.messages.addListener("hide-view", onHideView);
+  window.messages.addListener("hide-view", onHideView, true);
   window.messages.addListener("profile-enabled", function(msg)
   {
     _ignore_updates = false;
@@ -278,7 +286,7 @@ var ViewBase = new function()
         }
       }
     }
-  });
+  }, true);
 
   window.messages.addListener("profile-disabled", function(msg)
   {
@@ -289,7 +297,7 @@ var ViewBase = new function()
     });
     // Updating the views will be done in the following "profile-enabled"
     // message.
-  });
+  }, true);
 
 }
 
@@ -297,16 +305,9 @@ var ViewBase = new function()
   * @constructor
   * @extends ViewBase
   */
-
-
-var View = function(id, name, container_class, html, default_handler)
+var View = function(id, name, container_class, html, default_handler, edit_handler, default_tooltip)
 {
-  this.init(id, name, container_class, html, default_handler);
+  this.init(id, name, container_class, html, default_handler, edit_handler, default_tooltip);
 }
 
 View.prototype = ViewBase;
-
-
-
-
-

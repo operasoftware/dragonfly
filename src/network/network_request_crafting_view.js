@@ -47,7 +47,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
 
   this._render_main_view = function(container)
   {
-    container.clearAndRender(templates.network_request_crafter_main(this._prev_url,
+    container.clearAndRender(templates.network.request_crafter_main(this._prev_url,
                                                                     this._is_listening,
                                                                     this._prev_request,
                                                                     this._prev_response));
@@ -312,7 +312,6 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
   this.required_services = ["resource-manager", "document-manager"];
   this._service = window.services['resource-manager'];
   this._service.addListener("urlload", this._on_urlload_bound);
-  this._service.addListener("request", this._on_request_bound);
   this._service.addListener("response", this._on_response_bound);
   this._service.addListener("responseheader", this._on_responseheader_bound);
   this._service.addListener("responsefinished", this._on_responsefinished_bound);

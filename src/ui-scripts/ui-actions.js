@@ -42,7 +42,7 @@ var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
     while (ele)
     {
       handler = ele.getAttribute(handler_key);
-      while (!(handler && eventHandlers[type][handler]) && (ele = ele.parentNode))
+      while (!(handler && window.eventHandlers[type][handler]) && (ele = ele.parentNode))
       {
         handler = ele.nodeType == 1 ? ele.getAttribute(handler_key) : null;
       }
@@ -53,7 +53,7 @@ var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
           container =
             document.getElementById(ele.parentNode.parentNode.id.replace('toolbar', 'container'));
         }
-        eventHandlers[type][handler](event, ele, container);
+        window.eventHandlers[type][handler](event, ele, container);
       }
       ele = cancel_bubble ? null : ele && ele.parentNode;
     }
@@ -61,9 +61,9 @@ var EventHandler = function(type, is_capturing, handler_key, cancel_bubble)
 
   this.post = function(handler, event)
   {
-    if(eventHandlers[type][handler])
+    if(window.eventHandlers[type][handler])
     {
-      eventHandlers[type][handler](event);
+      window.eventHandlers[type][handler](event);
     }
   }
 
@@ -88,7 +88,7 @@ new EventHandler('scroll', true);
 
 /***** general ui click handler *****/
 
-eventHandlers.mousedown['tab'] = function(event, target)
+window.event_handlers.mousedown['tab'] = function(event, target)
 {
   var tabs = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var view_id = target.get_attr('parent-node-chain', 'ref-id');
@@ -99,11 +99,11 @@ eventHandlers.mousedown['tab'] = function(event, target)
   else
   {
     opera.postError(ui_strings.S_DRAGONFLY_INFO_MESSAGE +
-      "tabs is missing in eventHandlers.click['tab'] in ui-actions");
+      "tabs is missing in window.event_handlers.click['tab'] in ui-actions");
   }
 }
 
-eventHandlers.mousewheel['change-on-scroll'] = function(event, target)
+window.event_handlers.mousewheel['change-on-scroll'] = function(event, target)
 {
   if (target.nodeName == "tab")
   {
@@ -113,18 +113,18 @@ eventHandlers.mousewheel['change-on-scroll'] = function(event, target)
   if (event.detail < 0) {
       if (active_tab.previousElementSibling)
       {
-        eventHandlers.mousedown['tab'](null, active_tab.previousElementSibling);
+        window.event_handlers.mousedown['tab'](null, active_tab.previousElementSibling);
       }
   }
   else {
       if (active_tab.nextElementSibling)
       {
-        eventHandlers.mousedown['tab'](null, active_tab.nextElementSibling);
+        window.event_handlers.mousedown['tab'](null, active_tab.nextElementSibling);
       }
   }
 }
 
-eventHandlers.click['close-tab'] = function(event, target)
+window.event_handlers.click['close-tab'] = function(event, target)
 {
   //target = target.parentElement;
 
@@ -137,15 +137,15 @@ eventHandlers.click['close-tab'] = function(event, target)
   }
 }
 
-eventHandlers.mousedown['horizontal-nav'] = function(event, target)
+window.event_handlers.mousedown['horizontal-nav'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   var dir = target.get_attr('parent-node-chain', 'dir');
   horizontal_nav.nav(dir, true);
 };
 
-eventHandlers.mouseup['horizontal-nav'] =
-eventHandlers.mouseout['horizontal-nav'] = function(event, target)
+window.event_handlers.mouseup['horizontal-nav'] =
+window.event_handlers.mouseout['horizontal-nav'] = function(event, target)
 {
   var selection = window.getSelection();
   if (!selection.isCollapsed)
@@ -156,26 +156,26 @@ eventHandlers.mouseout['horizontal-nav'] = function(event, target)
   horizontal_nav.clear_nav_timeout();
 };
 
-eventHandlers.mousewheel['breadcrumbs-drag'] = function(event, target)
+window.event_handlers.mousewheel['breadcrumbs-drag'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   horizontal_nav.nav(event.detail < 0 ? 100 : -100);
 };
 
-eventHandlers.mousedown['breadcrumbs-drag'] = function(event, target)
+window.event_handlers.mousedown['breadcrumbs-drag'] = function(event, target)
 {
   var horizontal_nav = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   horizontal_nav.drag_breadcrumb(event, target);
 
 };
 
-eventHandlers.click['settings-tabs'] = function(event, target)
+window.event_handlers.click['settings-tabs'] = function(event, target)
 {
   var tabs = UIBase.getUIById(target.parentElement.getAttribute('ui-id'));
   windows.showWindow('window-3', 'Settings', templates.settings(tabs), 200, 200, 200, 200);
 }
 
-eventHandlers.click['show-search'] = function(event, target)
+window.event_handlers.click['show-search'] = function(event, target)
 {
   var toolbar = UIBase.getUIById(target.get_attr('parent-node-chain', 'ui-id'));
   if (toolbar)
@@ -188,11 +188,7 @@ eventHandlers.click['show-search'] = function(event, target)
   }
 }
 
-
-
-
-
-eventHandlers.click['show-window'] = function(event)
+window.event_handlers.click['show-window'] = function(event)
 {
   var target = event.target;
   var view_id = target.getAttribute('view-id');
@@ -200,30 +196,30 @@ eventHandlers.click['show-window'] = function(event)
   UIWindowBase.showWindow(view_id);
 }
 
-eventHandlers.click['documentation'] = function(event)
+window.event_handlers.click['documentation'] = function(event)
 {
   window.open(event.target.getAttribute('param'), '_info_window').focus();
 }
 
 
-eventHandlers.click['top-window-close'] = function(event)
+window.event_handlers.click['top-window-close'] = function(event)
 {
   window.close();
 }
 
-eventHandlers.click['top-window-toggle-attach'] = function(event)
+window.event_handlers.click['top-window-toggle-attach'] = function(event)
 {
   window.opera.attached = !window.opera.attached;
   window.settings.general.set('window-attached',  window.opera.attached);
   window.client.create_window_controls();
 }
 
-eventHandlers.click['overlay-tab'] = function(event, target)
+window.event_handlers.click['overlay-tab'] = function(event, target)
 {
   Overlay.get_instance().change_group(event.target.getAttribute("group"));
 };
 
-eventHandlers.click['toggle-overlay'] = function(event, target)
+window.event_handlers.click['toggle-overlay'] = function(event, target)
 {
   var overlay = Overlay.get_instance();
   var overlay_id = target.getAttribute("data-overlay-id");
@@ -233,12 +229,12 @@ eventHandlers.click['toggle-overlay'] = function(event, target)
       this.broker.dispatch_action("global", "show-overlay", event, target);
 };
 
-eventHandlers.click['toggle-console'] = function(event, target)
+window.event_handlers.click['toggle-console'] = function(event, target)
 {
   this.broker.dispatch_action("global", "toggle-console", event, target);
 };
 
-eventHandlers.click['toolbar-switch'] = function(event)
+window.event_handlers.click['toolbar-switch'] = function(event)
 {
   var target = event.target;
   var arr = target.getAttribute('key') && target.getAttribute('key').split('.');
@@ -253,7 +249,7 @@ eventHandlers.click['toolbar-switch'] = function(event)
   }
 }
 
-eventHandlers.click["toolbar-single-select"] = function(event, target)
+window.event_handlers.click["toolbar-single-select"] = function(event, target)
 {
   var button = event.target;
   var view_id = target.getAttribute("data-view-id");
@@ -306,10 +302,19 @@ eventHandlers.click["toolbar-single-select"] = function(event, target)
   }
 }
 
+window.event_handlers.click["close-overlay-view"] = function(event, target)
+{
+  var ui_id = target.get_ancestor_attr("ui-id");
+  var toolbar = UIBase.getUIById(ui_id);
+  var view = toolbar && window.views[toolbar.cell.tab.activeTab];
+  if (view)
+    view.hide();
+};
+
 
 /***** change handler *****/
 
-eventHandlers.change['checkbox-setting'] = function(event)
+window.event_handlers.change['checkbox-setting'] = function(event)
 {
   var ele = event.target;
   var view_id = ele.getAttribute('view-id');

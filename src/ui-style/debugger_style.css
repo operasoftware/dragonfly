@@ -404,16 +404,12 @@ styles
   padding: 0 5px;
 }
 
-header
+container > div > header,
+.header
 {
   padding: 2px;
-  background-color: #fff;
-  border-bottom: 1px solid #fff;
-  border-bottom-color: #ccc;
-}
-
-container > div > header
-{
+  border: 0 solid #ccc;
+  border-bottom-width: 1px;
   line-height: 20px;
   background-color: #e9e9e9;
   background-image: -o-linear-gradient(-90deg,
@@ -428,12 +424,18 @@ div.unfolded
   border-bottom: 1px solid #ccc;
 }
 
+div.unfolded:last-child
+{
+  border-bottom-width: 0;
+}
+
 category header:hover input
 {
   opacity: 1;
 }
 
-header input
+header input,
+.header input
 {
   background: transparent url('../ui-images/icons/icon_arrow_right.png') scroll no-repeat 50% 100%;
   border: none;
@@ -443,13 +445,8 @@ header input
   transition: 0.2s;
 }
 
-.unfolded > header
-{
-  border-bottom-color: #d7d7d7;
-}
-
 .unfolded > header input,
-input.unfolded
+.unfolded > .header input
 {
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
@@ -768,7 +765,7 @@ breadcrumb span
 
 .js-dd-filter-container
 {
-  margin: 0 3px;  
+  margin: 0 3px;
 }
 
 .js-dd-filter
@@ -795,7 +792,7 @@ breadcrumb span
 
 .js-dd-visible
 {
-  opacity: 1; 
+  opacity: 1;
   -o-transition: opacity 0.5s;
   transition: opacity 0.5s;
 }
@@ -831,7 +828,7 @@ breadcrumb span
 }
 
 .cmd-line-runtimes cst-option
-{  
+{
   margin-bottom: 0;
 }
 
@@ -875,7 +872,7 @@ breadcrumb span
 }
 
 .cmd-line-runtimes cst-option:hover
-{  
+{
   background-color: #bbcef1;
   color: #000;
 }

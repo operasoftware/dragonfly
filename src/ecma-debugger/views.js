@@ -79,17 +79,29 @@ cls.AboutView.create_ui_widgets = function()
       about:
       function(setting)
       {
-        new XMLHttpRequest().loadResource('AUTHORS', function(xml)
+        var on_about_sucess = function(xml)
         {
-          var
-          authors = document.getElementById('about-authors'),
-          response_text = xml.responseText;
-          if(authors && response_text)
-          {
+          var authors = document.getElementById('about-authors');
+          var response_text = xml.responseText;
+          if (authors && response_text)
             authors.textContent = response_text;
+        };
+
+        var on_about_error = function()
+        {
+          var authors = document.getElementById('about-authors');
+          if (authors)
+          {
+            var tmpl = ["a", ui_strings.S_CONTRIBUTORS,
+                             "target", "_blank",
+                             "style", "color: inherit",
+                             "href", "https://github.com/operasoftware/dragonfly/blob/master/AUTHORS"];
+            authors.render(tmpl);
           }
-        });
-        return ['ul', ['li', 'id', 'about-authors', 'class', 'padding selectable']];
+        };
+
+        new XMLHttpRequest().loadResource("AUTHORS", on_about_sucess, null, on_about_error);
+        return ["ul", ["li", "id", "about-authors", "class", "padding selectable"]];
       }
     },
     "about"
@@ -477,6 +489,7 @@ cls.MainView .create_ui_widgets = function()
 
   eventHandlers.click['reload-window'] = function(event, target)
   {
-    runtimes.reloadWindow();
+    var window_id = Number(target.get_attr("parent-node-chain", "data-reload-window-id"));
+    runtimes.reloadWindow(window_id);
   }
 }

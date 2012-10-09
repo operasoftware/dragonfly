@@ -463,7 +463,7 @@ templates.sortable_table_header = function(tabledef, cols, sortby, reversed)
                     "data-column-id", c,
                    ].concat(tabledef.columns[c].sorter ? ["handler", "sortable-table-sort"] : [])
           }),
-          "class", "header"
+          "class", "table-header"
          ];
 }
 
@@ -571,7 +571,7 @@ templates.sortable_table_row = function(tabledef, item, cols)
               return [];
             var content = coldef.renderer(item, coldef.getter);
 
-            if (typeof content !== "undefined" && typeof content !== "null")
+            if (content != null)
             {
               var title;
               if (coldef.title_getter)

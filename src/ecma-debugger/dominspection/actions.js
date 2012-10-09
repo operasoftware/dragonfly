@@ -8,6 +8,7 @@
 
 cls.DOMInspectorActions = function(id)
 {
+  ActionHandlerInterface.apply(this);
   this.view_id = id;
   this.id = id;
 

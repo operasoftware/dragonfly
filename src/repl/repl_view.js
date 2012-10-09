@@ -6,6 +6,7 @@
  */
 
 cls.ReplView = function(id, name, container_class, html, default_handler) {
+  ActionHandlerInterface.apply(this);
   this._resolver = new cls.PropertyFinder();
   this._data = new cls.ReplData(this);
 
@@ -472,7 +473,8 @@ cls.ReplView = function(id, name, container_class, html, default_handler) {
   this._highlight_completion = function(index)
   {
     var sel = window.getSelection();
-    sel.collapseToStart();
+    if (!sel.isCollapsed)
+      sel.collapseToStart();
 
     // with no arg, clear the selection.
     if (index === null || index === undefined) {
