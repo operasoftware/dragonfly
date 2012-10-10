@@ -268,6 +268,32 @@ cls.ResourceManagerService = function(view, network_logger)
       e.classList.add('resource-highlight');
   }.bind(this);
 
+  this._highlight_sibling_resource = function(increment)
+  {
+    if(!this._context || !this._context.visibleResources || !this._context.visibleResources.length)
+      return;
+
+    var uid;
+    var list = this._context.visibleResources;
+    var pos = list.indexOf(this._selectedResourceUID);
+    if (pos == -1)
+      uid = list[ increment > 0 ? 0 : list.length-1 ];
+    else
+      uid = list[ (list.length+pos+increment) % list.length ];
+
+    this.highlight_resource( uid );
+    cls.ResourceDetailView.instance.show_resource(uid);
+  }
+
+  this.highlight_next_resource_bound = function()
+  {
+    this._highlight_sibling_resource(1);
+  }.bind(this);
+
+  this.highlight_previous_resource_bound = function()
+  {
+    this._highlight_sibling_resource(-1);
+  }.bind(this);
 
   this._resource_request_update_bound = function(msg)
   {

@@ -48,6 +48,7 @@ templates.resource_tree =
 
 	update:function(context)
 	{
+		context.visibleResources = [];
 		return this.windows(context);
 	},
 
@@ -223,6 +224,8 @@ templates.resource_tree =
 
 			partial_URL_match = (pos_first>0?'…':'')+r.url.substring( pos_first, pos_last)+(pos_last<r.url.length?'…':'');
 		}
+
+		context.visibleResources.push(r.uid);
 
 		var tpl =
 			['li',

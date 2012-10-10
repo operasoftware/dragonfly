@@ -124,6 +124,14 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
   doc_service.addListener("documentloaded", this._on_documentloaded_bound);
 
+  ActionHandlerInterface.apply(this);
+  this._handlers = {
+    "select-next-entry": this._service.highlight_next_resource_bound,
+    "select-previous-entry": this._service.highlight_previous_resource_bound
+  };
+  this.id = id;
+  ActionBroker.get_instance().register_handler(this);
+
   this.init(id, name, container_class, html, default_handler);
 };
 
