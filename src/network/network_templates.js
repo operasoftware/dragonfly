@@ -75,27 +75,63 @@ templates.options_override_presets = function(overrides)
             ].concat(overrides ? [] : ["disabled", "disabled"]);
 };
 
-templates.request_crafter_main = function(url, loading, request, response)
+templates.request_crafter_main = function(url, request, entries, error_message)
 {
-  // fixme: replace request in progress text with spinner or similar.
-  return ["div",
-          ["div",
-           ["h2", ui_strings.S_HTTP_LABEL_URL],
-           ["p", ["input", "type", "text",
-            "value", url || "http://example.org",
-            "handler", "request-crafter-url-change"]],
-           ["h2", ui_strings.M_NETWORK_CRAFTER_REQUEST_BODY],
-            ["p", ["_auto_height_textarea", request]],
-           ["p", ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
-            "handler", "request-crafter-send",
-            "unselectable", "on",
-            "class", "ui-button",
-            "tabindex", "1"]],
-           ["h2", ui_strings.M_NETWORK_CRAFTER_RESPONSE_BODY],
-           ["p", ["textarea", loading ? ui_strings.M_NETWORK_CRAFTER_SEND : response]],
-           "class", "padding request-crafter"
+  var response = ui_strings.M_NETWORK_CRAFTER_SEND;
+  if (error_message)
+  {
+    response = error_message;
+  }
+  else
+  {
+    var entry = entries[0]; // todo: will deal with multiple entries later.
+    if (entry && entry.is_finished)
+    {
+      var helpers = window.helpers;
+      var first_response = entry.requests_responses.filter(helpers.eq("is_response", true))[0];
+      if (first_response)
+      {
+        response = first_response.response_headers_raw;
+        if (first_response.responsebody &&
+            first_response.responsebody.content &&
+            first_response.responsebody.content.stringData)
+        {
+          response += "\n\n" + first_response.responsebody.content.stringData;
+        }
+      }
+    }
+  }
+  return (
+    ["div",
+      ["div",
+        ["h2", ui_strings.S_HTTP_LABEL_URL],
+        ["p",
+          ["input",
+           "type", "text",
+           "value", url || "http://example.org",
+           "handler", "request-crafter-url-change"
           ]
-         ];
+        ],
+        ["h2", ui_strings.S_NETWORK_REQUEST],
+        ["p",
+          ["_auto_height_textarea", request]
+        ],
+        ["p",
+          ["span", ui_strings.M_NETWORK_CRAFTER_SEND,
+           "handler", "request-crafter-send",
+           "unselectable", "on",
+           "class", "ui-button",
+           "tabindex", "1"
+          ]
+        ],
+        ["h2", ui_strings.S_NETWORK_REQUEST_DETAIL_RESPONSE_TITLE],
+        ["p",
+          ["textarea", response]
+        ],
+        "class", "padding request-crafter"
+      ]
+    ]
+  );
 };
 
 templates.incomplete_warning = function(context, index, all_contexts)
@@ -136,7 +172,7 @@ templates.incomplete_warning = function(context, index, all_contexts)
          ];
 };
 
-templates.main = function(ctx, entries, selected, detail_width, table_template)
+templates.main = function(ctx, window_contexts, entries, selected, detail_width, table_template)
 {
   return [
     [
@@ -155,7 +191,7 @@ templates.main = function(ctx, entries, selected, detail_width, table_template)
     [
       templates.summary(entries)
     ],
-    ctx.window_contexts.map(templates.incomplete_warning)
+    window_contexts.map(templates.incomplete_warning)
   ];
 };
 
@@ -192,7 +228,7 @@ templates.url_list_entry = function(selected, entry)
   return ["li",
            templates.icon(entry),
            ["span",
-             (entry.short_distinguisher || entry.human_url).slice(0, 200),
+             (entry.short_distinguisher || entry.human_url || entry.url || "NO URL").slice(0, 200),
              "class", "network-url",
              "data-tooltip", "network-url-list-tooltip"
            ],

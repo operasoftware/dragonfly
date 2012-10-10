@@ -1,285 +1,501 @@
-﻿/**
+﻿window.cls || (window.cls = {});
+
+/**
  *
  */
-
-cls.ResourceManagerService = function(view)
+cls.ResourceManagerService = function(view, network_logger)
 {
   if (cls.ResourceManagerService.instance)
-  {
     return cls.ResourceManagerService.instance;
-  }
+
   cls.ResourceManagerService.instance = this;
 
-  this._current_context = null;
-  this._view = view;
-
-  this._enable_content_tracking = function()
+  var THROTTLE_DELAY = 250;
+  var TYPE_GROUP_MAPPING =
   {
-    this._res_service.requestSetResponseMode(null, [[3, 1]]);
+    'markup':ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+    'css':ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+    'script':ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+    'image':ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+    'font':ui_strings.S_HTTP_LABEL_FILTER_FONTS,
+    '*':ui_strings.S_HTTP_LABEL_FILTER_OTHER
+  };
+
+
+  this._view = view;
+  this._network_logger = network_logger;
+
+
+  this._handle_listDocuments = function(status,msg)
+  {
+    delete this._tag_requestListDocuments;
+    this._documentList = new cls.DocumentManager["1.0"].DocumentList(msg).documentList;
+
+    this._documentList.forEach(function(d)
+    {
+      //  use the URL class
+      d.original_url = d.url;
+      d.url = new URI(d.url);
+    });
+
+
+    this._update({type:'_handle_listDocuments'});
+  };
+
+  this._listDocuments = function()
+  {
+    this._tag_requestListDocuments = window.tagManager.set_callback(this, this._handle_listDocuments );
+    window.services['document-manager'].requestListDocuments(this._tag_requestListDocuments, []);
+  }.bind(this).throttle(THROTTLE_DELAY);;
+
+  this._populate_document_resources = function(r)
+  {
+    var documentID = r.document_id;
+
+    if (!this._documentResources[documentID])
+      this._documentResources[documentID]=[];
+
+    if (!this._documentResources[documentID].contains(r.uid))
+      this._documentResources[documentID].push(r.uid);
   }
 
-  this._on_abouttoloaddocument_bound = function(msg)
+  this._update = function(msg)
   {
-    var data = new cls.DocumentManager["1.0"].AboutToLoadDocument(msg);
-    // if not a top resource, just ignore. This usually means it's an iframe
-    if (data.parentDocumentID) { return; }
-    this._current_context = new cls.ResourceContext();
-  }.bind(this);
+    //  bounce if _suppress_updates
+    if (this._suppress_updates)
+    {
+      if (msg && msg.type=='resource-update')
+      {
+        //  suppress the uid altogether if its URL matches the one we are requesting
+        var r = this._network_logger.get_resources([msg.id]);
+        if (r && r[0] && r[0].url == this._suppress_updates_url)
+          this._suppress_uids[msg.id] = true;
+      }
+      return setTimeout(this._update_bound, THROTTLE_DELAY);
+    }
 
-  this._on_urlload_bound = function(msg)
-  {
-    if (!this._current_context) { return; }
-    var data = new cls.ResourceManager["1.2"].UrlLoad(msg);
+    // build the context
+    var ctx = {};
 
-    //bail if we get dupes. Why do we get dupes? fixme
-    //if (data.resourceID in this._current_document.resourcemap) { return }
-    this._current_context.update("urlload", data);
-  }.bind(this);
+    // get the order of the groups of resources
+    ctx.groupOrder = this._view.get_group_order();
 
-  this._on_urlredirect_bound = function(msg)
-  {
-    if (!this._current_context) { return; }
+    // get list of window_contexts for which we saw the main_document
+    ctx.windowList = (this._network_logger.get_window_contexts()||[])
+    .filter(function(w)
+    {
+      return w.saw_main_document;
+    });
 
-    var data = new cls.ResourceManager["1.0"].UrlRedirect(msg);
-    // a bit of cheating since further down we use .resouceID to determine
-    // what resource the event applies to:
-    data.resourceID = data.fromResourceID;
-    this._current_context.update("urlredirect", data);
-  }.bind(this);
+    if (ctx.windowList.length)
+    {
+      // get all the (non-suppressed) resources with content
+      ctx.resourceList = (this._network_logger.get_resources()||[])
+      .filter(function(v)
+      {
+        return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode!=204;
+      }, this);
 
-  this._on_urlfinished_bound = function(msg)
-  {
-    if (!this._current_context) { return; }
-    var data = new cls.ResourceManager["1.0"].UrlFinished(msg);
-    this._current_context.update("urlfinished", data);
-  }.bind(this);
+      ctx.documentResourceHash = {};
 
-  this._on_response_bound = function(msg)
-  {
-    if (!this._current_context) { return; }
-    var data = new cls.ResourceManager["1.0"].Response(msg);
-    this._current_context.update("response", data);
-  }.bind(this);
+      // mapping of the WindowIDs in the debugging context
+      var windowID_index = {};
+      ctx.windowList.forEach(function(w,i){ windowID_index[w.id] = i; });
+
+      var nullDocumentID = false;
+      var documentID_index = {};
+      // filter the documentId that belong in the windowIdList,
+      // set nullDocumentID flag,
+      // augment the document objects,
+      // set the default collapsed flags
+      ctx.documentList  = this._documentList
+      .filter(function(d,i,a)
+      {
+        var inContext = windowID_index.hasOwnProperty(d.windowID);
+
+        if (inContext)
+        {
+          if (!nullDocumentID && !d.documentID)
+            nullDocumentID = true;
+
+          if (d.resourceID != null)
+            ctx.documentResourceHash[ d.resourceID ] = d.documentID;
+
+          //  populate documentID_index
+          documentID_index[ d.documentID ] = i;
+
+          //  set depth, pivotID and sameOrigin
+          var p = a[ documentID_index[ d.parentDocumentID ] ]||{pivotID:d.windowID,depth:0};
+          var id = p.pivotID+'_'+d.documentID;
+          d.depth = p.depth+1;
+          d.pivotID = id;
+          d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
+
+          //  set the default collapsed flag
+          var hash = this. _collapsedHash;
+          if (!hash.hasOwnProperty(id))
+          {
+            hash[id] = d.depth>1;
+            ctx.groupOrder.forEach( function(g){ hash[id+'_'+g] = true; } );
+          }
+        }
+
+        return inContext;
+      },this);
+
+      var unknownDocumentID = false;
+
+      // set unknownDocumentID flag,
+      // assign top resource to the right document,
+      // add group to each resource,
+      // sameOrigin flag to each resource
+      ctx.resourceList
+      .forEach(function(r)
+      {
+        if (!unknownDocumentID && !documentID_index.hasOwnProperty(r.document_id))
+          unknownDocumentID = true;
+
+        // check if this is the top resource of a document
+        var documentID = ctx.documentResourceHash[r.resource_id];
+        if (documentID != null && documentID != r.document_id)
+          r.document_id = documentID;
+
+        this._populate_document_resources(r);
+
+        r.group = TYPE_GROUP_MAPPING[r.type]||TYPE_GROUP_MAPPING['*'];
+        var d = this._documentList[documentID_index[r.document_id]];
+        r.sameOrigin = cls.ResourceUtil.sameOrigin(d&&d.url, r);
+      },this);
+
+      //  filter the list of window. Purge the ones with no documents
+      ctx.windowList = ctx.windowList
+      .filter(function(v)
+      {
+        return ctx.documentList
+        .some(function(w)
+        {
+          return v.id == w.windowID;
+        });
+      });
+
+      // request the list of documents if we have
+      // an empty documentList
+      // or a resource pointing to an unknown document
+      // or a document does not have a documentID yet
+      if( !ctx.documentList.length || unknownDocumentID || nullDocumentID )
+        this._listDocuments();
+
+      ctx.selectedResourceUID = this._selectedResourceUID;
+      ctx.documentResources = this._documentResources;
+      ctx.collapsed = this._collapsedHash;
+      this._context = ctx;
+    }
+    else
+    {
+      this._context = null;
+    }
+
+    this._view.update();
+  };
+
+  this._update_bound = this._update.bind(this);
+
 
   this._on_debug_context_selected_bound = function()
   {
-    this._current_context = null;
-    this._view.update();
+    this._reset();
   }.bind(this);
 
-  this.init = function()
+  this._handle_expand_collapse_bound = function(event, target)
   {
-    this._res_service = window.services['resource-manager'];
-    this._res_service.addListener("urlload", this._on_urlload_bound);
-    this._res_service.addListener("response", this._on_response_bound);
-    this._res_service.addListener("urlredirect", this._on_urlredirect_bound);
-    this._res_service.addListener("urlfinished", this._on_urlfinished_bound);
-    this._doc_service = window.services['document-manager'];
-    this._doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+    if (!this._context)
+      return;
+
+    var pivot = target.get_ancestor('[data-expand-collapse-id]');
+    if (pivot)
+    {
+      var hash = this. _collapsedHash;
+      var pivotID = pivot.getAttribute('data-expand-collapse-id');
+      var pivotIDs = [pivotID];
+      var collapsed = !hash[pivotID];
+
+      if (event.shiftKey)
+        pivotIDs.push.apply( pivotIDs, Object.keys(hash).filter( function(p)
+        {
+          return p.indexOf(pivotID+'_') == 0;
+        }));
+
+      pivotIDs.forEach(function(p){ hash[p] = collapsed; });
+
+      this._view.update();
+    }
+  }.bind(this);
+
+
+  this._handle_resource_detail_bound = function(event, target)
+  {
+    if (!this._context)
+      return;
+
+    var parent = target.get_ancestor('[data-resource-uid]');
+    if (!parent)
+      return;
+
+    var uid = parent.getAttribute('data-resource-uid');
+    this.highlight_resource(uid);
+    cls.ResourceDetailView.instance.show_resource(uid);
+  }.bind(this);
+
+  this.highlight_resource = function(uid)
+  {
+    var e;
+    if (this._selectedResourceUID == uid)
+        return;
+
+    if (this._selectedResourceUID)
+    {
+        e = document.querySelector('*[data-resource-uid="'+ this._selectedResourceUID +'"]');
+        if (e)
+          e.classList.remove('resource-highlight');
+    }
+
+    this._selectedResourceUID = uid;
+    if (this._context)
+      this._context.selectedResourceUID = uid;
+
+    e = document.querySelector('*[data-resource-uid="'+ this._selectedResourceUID +'"]');
+    if (e)
+      e.classList.add('resource-highlight');
+  }.bind(this);
+
+  this._highlight_sibling_resource = function(increment)
+  {
+    if(!this._context || !this._context.visibleResources || !this._context.visibleResources.length)
+      return;
+
+    var uid;
+    var list = this._context.visibleResources;
+    var pos = list.indexOf(this._selectedResourceUID);
+    if (pos == -1)
+      uid = list[ increment > 0 ? 0 : list.length-1 ];
+    else
+      uid = list[ (list.length+pos+increment) % list.length ];
+
+    this.highlight_resource( uid );
+    cls.ResourceDetailView.instance.show_resource(uid);
+  }
+
+  this.highlight_next_resource_bound = function()
+  {
+    this._highlight_sibling_resource(1);
+  }.bind(this);
+
+  this.highlight_previous_resource_bound = function()
+  {
+    this._highlight_sibling_resource(-1);
+  }.bind(this);
+
+  this._resource_request_update_bound = function(msg)
+  {
+    if (msg.type == 'resource-request-id')
+      this._suppress_updates = true;
+    else
+      this._suppress_updates = false;
+  }.bind(this);
+
+  this._init = function()
+  {
+    var eh = window.eventHandlers;
+    eh.click["resources-expand-collapse"] = this._handle_expand_collapse_bound;
+    eh.click["resource-detail"] = this._handle_resource_detail_bound;
+
+    eh.click['open-resource-tab'] = function(event, target)
+    {
+      var broker = cls.ResourceDisplayBroker.get_instance();
+      broker.show_resource_for_ele(target);
+    }
+
+    var messages = window.messages;
     messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+
+    messages.addListener('resource-request-id', this._resource_request_update_bound);
+    messages.addListener('resource-request-resource', this._resource_request_update_bound);
+    messages.addListener('resource-request-fallback', this._resource_request_update_bound);
+
+    this._network_logger.addListener("resource-update", this._update_bound);
+    this._network_logger.addListener("window-context-added", this._update_bound);
+    this._network_logger.addListener("window-context-removed", this._update_bound);
+
+    window.services["window-manager"].addListener('windowclosed', this._update_bound );
+
+    this._reset();
+  };
+
+  this._reset = function()
+  {
+    this._context = null;
+    this._selectedResourceUID = null;
+
+    this._documentList = [];
+    this._collapsedHash = {};
+    this._documentResources = {};
+
+    this._suppress_updates = false;
+    this._suppress_uids = {};
+    this._view.update();
   };
 
   this.get_resource_context = function()
   {
-    return this._current_context;
+    return this._context;
   };
 
-  /**
-   * Returns an array of resource objects. The internal representation is to
-   * keep separate lists of seen resources and a map of id/resource.
-   */
-  this.get_resource_list = function()
+  this.get_resource = function(uid)
   {
-    if (! this._current_context) { return []; }
-    return this._current_context.resources;
+    var ctx = this._context;
+    if (!ctx)
+        return null;
+
+    var resource = ctx.resourceList.filter(function(v){return v.uid==uid;});
+    return resource && resource.last;
   };
 
-  this.get_resource_for_id = function(id)
+  this.get_resource_by_url = function(url)
   {
-    if (this._current_context)
-    {
-      return this._current_context.get_resource(id);
-    }
-    return null;
+    var ctx = this._context;
+    if (!ctx)
+      return null;
+
+    var resource = ctx.resourceList.filter(function(v){return v.url==url;});
+    return resource && resource.last;
   };
 
-  this.get_resource_for_url = function(url)
+  this.request_resource_data = function(url, callback, data, resourceInfo)
   {
-    if (this._current_context) {
-      var filterfun = function(res) { return res.url == url };
-      return this._current_context.resources.filter(filterfun).pop();
-    }
-    return null;
-  };
-
-  this.fetch_resource_data = function(callback, rid, type)
-  {
-    var typecode = {datauri: 3, string: 1}[type] || 1;
-    var tag = window.tagManager.set_callback(null, callback);
-    const MAX_PAYLOAD_SIZE = 10 * 1000 * 1000; // allow payloads of about 10 mb.
-    this._res_service.requestGetResource(tag, [rid, [typecode, 1, MAX_PAYLOAD_SIZE]]);
+    this._suppress_updates = true;
+    this._suppress_updates_url = url;
+    new cls.ResourceRequest(url, callback, data, resourceInfo);
   }
 
-  this.init();
+  this._init();
 };
 
-
-cls.ResourceContext = function()
+cls.ResourceRequest = function(url, callback, data, resourceInfo)
 {
-  this.resources = [];
+  const
+  SUCCESS = 0,
 
-  this.update = function(eventname, event)
+  TRANSPORT_STRING = 1,
+  TRANSPORT_DATA_URI = 3,
+  TRANSPORT_OFF = 4,
+  DECODE_TRUE = 1,
+  SIZE_LIMIT = 1e7;
+
+  var MAX_RETRIES = 3;
+
+  this._init = function(url, callback, data, resourceInfo)
   {
-    var res = this.get_resource(event.resourceID);
+    this.url = url;
+    this.resourceInfo = resourceInfo;
+    this._calback_data = data;
+    this._callback = callback;
+    this._retries = 0;
 
-    if (eventname == "urlload" && !res)
-    {
-      res = new cls.Resource(event.resourceID);
-      this.resources.push(res);
-    }
-    else if (!res)
-    {
-      // ignoring. Never saw an urlload, or it's allready invalidated
-      return
-    }
-
-    res.update(eventname, event);
-
-    if (res.invalid)
-    {
-      this.resources.splice(this.resources.indexOf(res), 1);
-    }
+    this._tag_manager =  window.tagManager;
+    this._resource_manager = window.services['resource-manager'];
+    if (this._tag_manager && this._resource_manager)
+      this._request_create_request();
+    else
+      this._fallback();
   }
 
-  this.get_resource = function(id)
+  this._fallback = function()
   {
-    return this.resources.filter(function(e) { return e.id == id; })[0];
-  };
+    //  broadcast that we fellback
+    window.messages.post('resource-request-fallback', {resource_id: this.resource_id});
 
-  this.get_resources_for_types = function()
-  {
-    var types = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return types.indexOf(e.type) > -1;};
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resources_for_mimes = function()
-  {
-    var mimes = Array.prototype.slice.call(arguments, 0);
-    var filterfun = function(e) { return mimes.indexOf(e.mime) > -1; };
-    return this.resources.filter(filterfun);
-  };
-
-  this.get_resource_groups = function()
-  {
-    var imgs = this.get_resources_for_type("image");
-    var stylesheets = this.get_resources_for_mime("text/css");
-    var markup = this.get_resources_for_mime("text/html",
-                                             "application/xhtml+xml");
-    var scripts = this.get_resources_for_mime("application/javascript",
-                                              "text/javascript");
-
-    var known = [].concat(imgs, stylesheets, markup, scripts);
-    var other = this.resources.filter(function(e) {
-      return known.indexOf(e) == -1;
-    });
-    return {
-      images: imgs, stylesheets: stylesheets, markup: markup,
-      scripts: scripts, other: other
-    }
+    window.open(this.url);
   }
-}
 
-cls.Resource = function(id)
-{
-  this.id = id;
-  this.finished = false;
-  this.url = null;
-  this.location = "No URL";
-  this.result = null;
-  this.mime = null;
-  this.encoding = null;
-  this.size = 0;
-  this.type = null;
-  this.urltype = null;
-  this.invalid = false;
-
-  this.update = function(eventname, eventdata)
+  this._request_create_request = function()
   {
-    if (eventname == "urlload")
+    if (this._resource_manager.requestCreateRequest)
     {
-      this.url = eventdata.url;
-      this.urltype = eventdata.urlType;
-      // fixme: complete list
-      this.urltypeName = {0: "Unknown", 1: "HTTP", 2: "HTTPS", 3: "File", 4: "Data" }[eventdata.urlType];
-      this._humanize_url();
-    }
-    else if (eventname == "urlfinished")
-    {
-      if (!this.url)
-      {
-        this.url = eventdata.url;
-      }
-      this.result = eventdata.result;
-      this.mime = eventdata.mimeType;
-      this.encoding = eventdata.characterEncoding;
-      this.size = eventdata.contentLength || 0;
-      this.finished = true;
-      this._guess_type();
-      this._humanize_url();
-    }
-    else if (eventname == "response")
-    {
-      // If it's one of these, it's not a real resource.
-      if ([200, 206, 304].indexOf(eventdata.responseCode) == -1)
-      {
-        this.invalid = true;
-      }
-    }
-    else if (eventname == "urlredirect")
-    {
-      this.invalid = true;
+      var windowID = window.window_manager_data.get_debug_context();
+      var tag = this._tag_manager.set_callback(this, this._on_request_resource_id);
+      this._resource_manager.requestCreateRequest(tag, [windowID, this.url, 'GET']);
     }
     else
-    {
-      opera.postError("got unknown event: " + eventname);
-    }
+      this._fallback();
   }
 
-  this.get_source = function()
+  this._on_request_resource_id = function(status, message)
   {
-    // cache, file, http, https ..
-  }
+    if(status == SUCCESS && this._resource_manager.requestGetResource)
+    {
+      // resource_id -> getResource => _on_request_get_resource
+      const RESOURCE_ID = 0;
+      this.resource_id = message[RESOURCE_ID];
 
-  this._guess_type = function()
-  {
-    if (!this.finished || !this.mime)
-    {
-      this.type = undefined;
-    }
-    else if (this.mime.toLowerCase() == "application/octet-stream")
-    {
-      this.type = cls.ResourceUtil.path_to_type(this.url);
+        //  broadcast that we are working on the resource this.resource_id
+      window.messages.post('resource-request-id', {resource_id: this.resource_id});
+
+      this._request_get_resource();
     }
     else
-    {
-      this.type = cls.ResourceUtil.mime_to_type(this.mime);
-    }
+      this._fallback();
   }
 
-  this._humanize_url = function()
+  this._request_get_resource = function()
   {
-    this.human_url = this.url;
-    if (this.urltype == 4) // data URI
-    {
+      var transport_type = TRANSPORT_OFF;
       if (this.type)
       {
-        this.human_url = this.type + " data URI";
+        // resource of known type-> call with appropriate transport mode.
+        var response_type = cls.ResourceUtil.type_to_content_mode(this./*nle.*/type);
+        var transport_type = response_type=='datauri'?TRANSPORT_DATA_URI:TRANSPORT_STRING;
+      }
+
+      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
+      this._resource_manager.requestGetResource(tag, [this.resource_id, [transport_type, DECODE_TRUE, SIZE_LIMIT]]);
+  }
+
+  this._on_request_get_resource = function(status, message)
+  {
+    if (status == SUCCESS)
+    {
+
+      var resourceData = new  cls.ResourceManager["1.2"].ResourceData(message);
+      if (this._retries == MAX_RETRIES || resourceData.content)
+      {
+
+        // content -> mock a cls.NetworkLoggerEntry and instanciate a cls.ResourceInfo
+        this.requests_responses = [{responsebody:resourceData}];
+        var resourceInfo = new cls.ResourceInfo(this);
+        if(!this.resourceInfo)
+            this.resourceInfo = resourceInfo;
+          else
+            this.resourceInfo.data = resourceInfo.data;
+
+        //  broadcast that we got payload of the resource
+        window.messages.post('resource-request-resource', {resource_id: this.resource_id});
+
+        //  aaaand callback
+        this._callback(this.resourceInfo, this._calback_data);
       }
       else
       {
-        this.human_url = "data URI";
+        // no content -> guess the type and request using the appropriate transport mode
+        this.type = cls.ResourceUtil.guess_type(resourceData.mimeType, this.extension);
+        this._request_get_resource();
+        this._retries++;
       }
     }
+    else
+      this._fallback();
   }
+
+  this._init(url, callback, data, resourceInfo);
 }
+
+cls.ResourceRequest.prototype = new URIPrototype("url");

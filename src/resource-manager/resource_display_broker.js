@@ -8,38 +8,34 @@ cls.ResourceDisplayBroker = function()
   }
   cls.ResourceDisplayBroker.instance = this;
 
+
+  this._show_resource = function(resource, line)
+  {
+    var data = {};
+    var manager = window.services["resource-manager"];
+    var view = window.views.resource_detail_view;
+    if (manager && view)
+    {
+      if (line)
+        data.lines = [line];
+
+      view.show_resource(resource, data);
+
+      return true;
+    }
+    return false;
+  }
+
   this.show_resource_for_id = function(id, line)
   {
-      if (line)
-      {
-        var data = {"lines":[line]}
-      }
-    if (window.services["resource-manager"] && window.views.resource_all)
-    {
-      var view = window.views.resource_all;
-      view.show_resource_for_id(id, data);
-    }
+    if (!this._show_resource(id, line))
+      window.open(url);
   }
 
   this.show_resource_for_url = function(url, line)
   {
-
-    if (window.services["resource-manager"] && window.views.resource_all)
-    {
-      if (line)
-      {
-        var data = {"lines":[line]};
-      }
-      else
-      {
-        var data = {};
-      }
-      new cls.OpenSingleResource(window.views.resource_all, url, data);
-    }
-    else
-    {
+    if (!this._show_resource(url, line))
       window.open(url);
-    }
   }
 
   /**
@@ -49,10 +45,24 @@ cls.ResourceDisplayBroker = function()
    */
   this.show_resource_for_ele = function(ele)
   {
-    var rid, url;
+    var id = Number( ele.getAttribute("data-resource-id") );
+    var url = ele.getAttribute("data-resource-url");
     var line = ele.getAttribute('data-resource-line-number');
-    if (rid = ele.getAttribute("data-resource-id")) { this.show_resource_for_id(rid, line) }
-    else if (url = ele.getAttribute("data-resource-url")) { this.show_resource_for_url(url, line) }
+    var rt_id;
+
+    if (id)
+      this.show_resource_for_id(id, line);
+    else if (url)
+    {
+      //  resolve the URL based on that of the runtime if we only have a relative path
+      if (url.indexOf('://') == -1)
+      {
+        rt_id = ele.get_attr('parent-node-chain', 'rt-id');
+        if (rt_id)
+          url = window.helpers.resolveURLS(runtimes.getURI(rt_id), url);
+      }
+      this.show_resource_for_url(url, line);
+    }
   }
 
 }

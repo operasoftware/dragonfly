@@ -84,6 +84,8 @@ cls.ResourceUtil.mime_type_map = {
 
   "text/plain": "text",
 
+  "text/cache-manifest": "text",
+
   "application/x-javascript": "script",
   "application/javascript": "script",
   "text/javascript": "script",
@@ -92,6 +94,7 @@ cls.ResourceUtil.mime_type_map = {
 
   "image/png": "image",
   "image/gif": "image",
+  "image/jpg": "image",
   "image/jpeg": "image",
   "image/x-icon": "image",
   "image/vnd.microsoft.icon": "image",
@@ -106,7 +109,9 @@ cls.ResourceUtil.mime_type_map = {
   "font/opentype": "font",
   "font/ttf": "font",
   "font/otf": "font",
+  "font/truetype": "font",
   "font/woff": "font", // not official, but seems to be common
+  "font/x-woff": "font",
 
   "audio/mid": "audio",
   "audio/mpeg": "audio",
@@ -142,12 +147,6 @@ cls.ResourceUtil.mime_type_map = {
   "application/x-silverlight-app": "silverlight"
 }
 
-cls.ResourceUtil.type_to_string_map = {
-  "css": "CSS",
-  "pdf": "PDF",
-  "postscript": "PostScript"
-};
-
 /**
  * Returns the most sensible way of getting this resource,
  * as datauri or string, based on the mime type.
@@ -155,22 +154,28 @@ cls.ResourceUtil.type_to_string_map = {
 cls.ResourceUtil.mime_to_content_mode = function(mime)
 {
   var type = cls.ResourceUtil.mime_to_type(mime);
+  return cls.ResourceUtil.type_to_content_mode(type);
+}
+
+/**
+ * Returns the most sensible way of getting this resource,
+ * as datauri or string, based on the type.
+ */
+cls.ResourceUtil.type_to_content_mode = function(type)
+{
   switch (type) {
     case "image":
+    case "video":
+    case "audio":
     case "pdf":
     case "flash":
     case "font":
       return "datauri";
-    case "markup":
-    case "css":
-    case "xml":
-    case "script":
-      return "text";
   }
   return "text";
 }
 
-cls.ResourceUtil.mime_to_type = function(mime)
+cls.ResourceUtil.mime_to_type = function(mime, extension)
 {
   if (mime)
   {
@@ -180,55 +185,38 @@ cls.ResourceUtil.mime_to_type = function(mime)
   }
 }
 
-cls.ResourceUtil.path_to_type = function(path)
+/**
+ *  Returns the most sensible type based on
+ *  the mimeType and extension of resource
+ */
+cls.ResourceUtil.guess_type = function(mime, extension)
 {
-  if (path)
+  // For "application/octet-stream" we check by extension even though we have a mime
+  if (!mime || mime.toLowerCase() === "application/octet-stream")
+    return this.extension_type_map[extension];
+
+  return this.mime_to_type(mime);
+}
+
+/**
+ *  Returns meta_data of a cls.ResourceInfo
+ */
+cls.ResourceUtil.get_meta_data = function(resourceInfo)
+{
+  var data = resourceInfo.data;
+  if (!data)
+    return;
+
+  if (resourceInfo.type == 'image')
   {
-    var extension = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
-    var query = extension.indexOf("?");
-    if (query != -1)
-      extension = extension.slice(0, query);
-    var hash = extension.indexOf("#");
-    if (hash != -1)
-      extension = extension.slice(0, hash);
-    return extension && this.extension_type_map[extension];
+    var i=new Image();
+    i.src=data.content.stringData;
+    if (i.naturalWidth)
+      return i.naturalWidth + '\u00D7' + i.naturalHeight;
+    else
+      return ui_strings.S_RESOURCE_VECTOR_GRAPHIC;
   }
-}
-
-cls.ResourceUtil.url_path = function(url)
-{
-  if (!url) { return null; }
-  var firstslash = url.replace("://", "xxx").indexOf("/");
-  var querystart = url.indexOf("?");
-  if (querystart == -1) { querystart = url.length; }
-  var path = url.slice(firstslash, querystart);
-  return path;
-}
-
-cls.ResourceUtil.url_filename = function(url)
-{
-  var path = cls.ResourceUtil.url_path(url);
-  var lastslash = path.lastIndexOf("/");
-  if (
-    lastslash === -1 || // no slash or
-    path === "/"        // the path _is_ a slash means there is no file name
-  )
-  {
-    return null;
-  }
-  else {
-    return path.slice(lastslash+1);
-  }
-}
-
-cls.ResourceUtil.url_host = function(url)
-{
-  if (!url) { return null; }
-  var host = url.replace(/\w+?:\/\//, "");
-  var firstslash = host.indexOf("/");
-  host = host.slice(0, firstslash == -1 ? host.length : firstslash);
-  return host;
-}
+};
 
 cls.ResourceUtil.header_presets = [
   {name: ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESET_NONE, headers: ""},
@@ -412,4 +400,20 @@ cls.ResourceUtil.http_status_codes = {
   307: 'Temporary Redirect', 500: 'Internal Server Error',
   501: 'Not Implemented', 502: 'Bad Gateway', 503: 'Service Unavailable',
   504: 'Gateway Timeout', 505: 'HTTP Version Not Supported'
+}
+
+cls.ResourceUtil.sameOrigin = function(reference, url)
+{
+  if (!reference)
+    return true;
+
+  if (reference.protocol == url.protocol)
+  {
+    if (reference.host == url.host)
+      return true;
+    if (reference.host.match(new RegExp('\\.' + url.host + '$')) != null)
+      return true;
+  }
+
+  return false;
 }
