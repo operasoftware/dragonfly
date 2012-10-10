@@ -102,8 +102,12 @@ cls.ResourceManagerService = function(view, network_logger)
       var windowID_index = {};
       ctx.windowList.forEach(function(w,i){ windowID_index[w.id] = i; });
 
+      var nullDocumentID = false;
       var documentID_index = {};
-      // filter the documentId that belong in the windowIdList
+      // filter the documentId that belong in the windowIdList,
+      // set nullDocumentID flag,
+      // augment the document objects,
+      // set the default collapsed flags
       ctx.documentList  = this._documentList
       .filter(function(d,i,a)
       {
@@ -111,6 +115,9 @@ cls.ResourceManagerService = function(view, network_logger)
 
         if (inContext)
         {
+          if (!nullDocumentID && !d.documentID)
+            nullDocumentID = true;
+
           if (d.resourceID != null)
             ctx.documentResourceHash[ d.resourceID ] = d.documentID;
 
@@ -136,12 +143,18 @@ cls.ResourceManagerService = function(view, network_logger)
         return inContext;
       },this);
 
-      // assign top resource to the right document
-      // add group to each resource
+      var unknownDocumentID = false;
+
+      // set unknownDocumentID flag,
+      // assign top resource to the right document,
+      // add group to each resource,
       // sameOrigin flag to each resource
       ctx.resourceList
       .forEach(function(r)
       {
+        if (!unknownDocumentID && !documentID_index.hasOwnProperty(r.document_id))
+          unknownDocumentID = true;
+
         // check if this is the top resource of a document
         var documentID = ctx.documentResourceHash[r.resource_id];
         if (documentID != null && documentID != r.document_id)
@@ -169,21 +182,7 @@ cls.ResourceManagerService = function(view, network_logger)
       // an empty documentList
       // or a resource pointing to an unknown document
       // or a document does not have a documentID yet
-      if(
-          ctx.documentList.length == 0
-          ||
-          ctx.resourceList
-          .some(function(v)
-          {
-           return v.document_id && !documentID_index[v.document_id];
-          },this)
-          ||
-          ctx.documentList
-          .some(function(v)
-          {
-            return v.documentID == null;
-          })
-      )
+      if( !ctx.documentList.length || unknownDocumentID || nullDocumentID )
         this._listDocuments();
 
       ctx.selectedResourceUID = this._selectedResourceUID;
@@ -312,7 +311,6 @@ cls.ResourceManagerService = function(view, network_logger)
     this._selectedResourceUID = null;
 
     this._documentList = [];
-    this._documentURLHash = {};
     this._collapsedHash = {};
     this._documentResources = {};
 
