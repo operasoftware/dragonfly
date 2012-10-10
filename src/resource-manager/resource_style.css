@@ -330,7 +330,7 @@ a.external:hover
   background-color: rgba(55, 115, 211, 0.702);
 }
 
-.resource-tree li > h2 .resource-tree-count
+h2 .resource-tree-count
 {
   background-color: #e6e6e6;
   display: inline-block;
@@ -341,13 +341,13 @@ a.external:hover
   vertical-align:middle;
 }
 
-.resource-tree li > h2:hover .resource-tree-count
+h2:hover .resource-tree-count
 {
   background-color: #cfd6e0;
   color: #3c3e42;
 }
 
-.resource-tree li > h2 .resource-domain
+h2 .resource-domain
 {
   color: #808080;
 }
@@ -357,15 +357,15 @@ a.external:hover
   color: #6e7680;
 }
 
-.resource-tree li > h2.resource-highlight .resource-tree-count
+h2.resource-highlight .resource-tree-count
 {
   background-color: #8fb1e6;
 }
 
-.resource-tree li > h2.resource-highlight .resource-tree-count,
-.resource-tree li > h2.resource-highlight:hover .resource-tree-count,
-.resource-tree li > h2.resource-highlight .resource-domain,
-.resource-tree li > h2.resource-highlight:hover .resource-domain
+h2.resource-highlight .resource-tree-count,
+h2.resource-highlight:hover .resource-tree-count,
+h2.resource-highlight .resource-domain,
+h2.resource-highlight:hover .resource-domain
 {
   color: #fff;
 }
