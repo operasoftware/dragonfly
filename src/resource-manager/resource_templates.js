@@ -1,10 +1,5 @@
 ﻿window.templates = window.templates || {};
 
-templates.resource_icon = function(resource)
-{
-  return ["span", "class", "resource-icon resource-type-" + resource.type];
-};
-
 templates.resource_tree =
 {
 	URL_MATCH_CONTEXT_SIZE: 10,
@@ -18,7 +13,6 @@ templates.resource_tree =
 			name = name.slice(0, this.DISTINGUISHER_MAX_LENGTH)+'…';
 		return name;
 	},
-
 
 	_expander_extras:function(context, pivotID, depth)
 	{
