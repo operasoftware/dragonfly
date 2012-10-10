@@ -181,6 +181,12 @@
   position: relative;
   overflow: auto;
 }
+.resource-detail-container
+{
+  background-image: linear-gradient(180deg, #eee 54px, #e9e9e9 55px);
+  background-size:100% 55px;
+  background-repeat: repeat-x;
+}
 
 .resource-detail-script-container,
 .resource-detail-css-container,
@@ -203,9 +209,7 @@
 .resource-detail-overview
 {
   padding: 8px;
-  background: #eee;
   color: #707070;
-  box-shadow: inset 0 -1px 0 0 #e9e9e9;
 }
 
 .resource-detail-overview-url
