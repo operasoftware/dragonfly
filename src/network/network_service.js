@@ -1304,8 +1304,8 @@ cls.ResourceInfo = function(entry)
     if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
       this.data.meta = cls.ResourceUtil.get_meta_data(this);
   }
-  this.uid = entry.id;
 
+  this.uid = entry.id;
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
