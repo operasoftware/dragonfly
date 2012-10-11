@@ -36,7 +36,7 @@ window.templates.errors.log_table = function(entries, allExpanded, expandedList,
   };
 
   return [
-    "table", entries.map(rowClosure),
+    "table", new window.helpers.EvenOddHandler().add_elems(entries.map(rowClosure)),
     "class", "sortable-table errors-table",
   ];
 };

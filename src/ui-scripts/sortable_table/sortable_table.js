@@ -411,12 +411,18 @@ window.templates = window.templates || {};
 
 templates.sortable_table = function(tabledef, data, objectid, cols, groupby, sortby, reversed)
 {
+  var even_handler = new window.helpers.EvenOddHandler();
+  var header = even_handler.add_elem(
+                 templates.sortable_table_header(tabledef, cols, sortby, reversed)
+               );
+  var body = templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed);
+  body.forEach(even_handler.add_elems, even_handler);
   var table =  ["table",
-                templates.sortable_table_header(tabledef, cols, sortby, reversed),
-                templates.sortable_table_body(tabledef, data, cols, groupby, sortby, reversed),
+                header,
+                body,
                 "class", "sortable-table" + (tabledef.nowrap ? " nowrap" : ""),
                 "data-table-object-id", objectid,
-               ]
+               ];
 
   if (!tabledef.options || !tabledef.options.no_default_menu)
   {

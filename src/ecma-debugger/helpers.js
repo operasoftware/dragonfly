@@ -391,6 +391,57 @@ window.cls.Helpers = function()
       return obj[prop] === val;
     };
   };
+
+  this.EvenOddHandler = function(even_class, odd_class)
+  {
+    // Adds an "even" class when no params are passed
+    var DEFAULT_EVEN_CLASSNAME = "even";
+    var DEFAULT_ODD_CLASSNAME = "odd";
+
+    if (even_class === undefined || even_class === true)
+      this._even_class = DEFAULT_EVEN_CLASSNAME;
+    else
+      this._even_class = even_class;
+
+    if (odd_class === true)
+      this._odd_class = DEFAULT_ODD_CLASSNAME;
+    else
+      this._odd_class = odd_class;
+
+    this.count = 0;
+  };
+
+  this.EvenOddHandlerPrototype = function()
+  {
+    this.add_elem = function(elem)
+    {
+      if (this.count % 2)
+        this._even_class && this._add_class(elem, this._even_class);
+      else
+        this._odd_class && this._add_class(elem, this._odd_class);
+      this.count++;
+      return elem;
+    };
+
+    this.add_elems = function(elems)
+    {
+      elems.forEach(this.add_elem, this);
+      return elems;
+    };
+
+    this._add_class = function(elem_arr, classname)
+    {
+      var class_arg_index = elem_arr.lastIndexOf("class");
+      var has_class_attr = class_arg_index != -1 &&
+                           // In a template, only "class" at an odd reverse index means a class attr
+                           (elem_arr.length - 1 - class_arg_index) % 2
+      if (has_class_attr)
+        elem_arr[class_arg_index + 1] += " " + classname;
+      else
+        elem_arr.push("class", classname);
+    }
+  };
+  this.EvenOddHandler.prototype = new this.EvenOddHandlerPrototype();
 }
 
 cls.Helpers.shortcut_search_cb = function(action_id, event, target)
