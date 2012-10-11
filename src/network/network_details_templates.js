@@ -393,6 +393,7 @@ templates._request_body = function(req, do_raw)
         ]
       );
       rows.extend(parts.map(this.param_cells));
+      rows = new window.helpers.EvenOddHandler().addRows(rows);
       var table = ["table", rows];
       ret = table;
     }

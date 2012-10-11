@@ -62,9 +62,9 @@
   border-bottom-width: 1px;
 }
 
-.sortable-table > tr:nth-child(even),
-.network-log-url-list li:nth-child(odd),
-.network-graph-row:nth-child(even)
+.sortable-table > tr.even,
+.network-log-url-list li.odd,
+.network-graph-row-even
 {
   background-color: rgba(0, 0, 0, 0.03);
 }

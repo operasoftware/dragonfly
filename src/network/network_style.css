@@ -364,7 +364,7 @@
   padding-left: 0;
 }
 
-.network-detail-overlay tr:nth-child(even)
+.network-detail-overlay tr.even
 {
   background-color: rgba(0, 0, 0, 0.03);
 }

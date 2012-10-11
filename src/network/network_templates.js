@@ -174,8 +174,10 @@ templates.viewmode_graphs = function(ctx, entries, selected, width)
   {
     var stepsize = templates.grid_info(duration, width);
     var gridwidth = Math.round((width / duration) * stepsize);
+    var even_handler = new window.helpers.EvenOddHandler("network-graph-row-even");
     var headerrow = templates.timeline_row(width, stepsize, gridwidth);
-
+    even_handler.add_elem(headerrow);
+    even_handler.add_elems(rows);
     template = ["div", headerrow, rows,
                   "id", "graph",
                   "style", "background-size: " + gridwidth + "px 100%;"
@@ -206,11 +208,14 @@ templates.url_list_entry = function(selected, entry)
 
 templates.url_list = function(ctx, entries, selected)
 {
+  var lis = entries.map(
+    templates.url_list_entry.bind(null, selected)
+  );
+  new window.helpers.EvenOddHandler(false, true).add_elems(lis);
+
   return [
     ["ol",
-      entries.map(
-        templates.url_list_entry.bind(null, selected)
-      ),
+      lis,
       "class", "network-log-url-list sortable-table-style-list"]
   ]
 };
