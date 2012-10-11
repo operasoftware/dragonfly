@@ -14,13 +14,15 @@ if (!(function(){}).bind)
 </script>
 
 <script src="../../src/ui-scripts/actions/keyidentifier.js"></script>
+<script src="../../src/scripts/ini.js"></script>
+<script src="../../src/lib/arrayprototype.js"></script>
 <script>
 
 var onshortcut = function(shortcut, event)
 {
   document.getElementsByTagName('p')[0].textContent = shortcut;
   var pre = document.getElementsByTagName('pre')[0];
-  
+
   var pos = ('\n' + pre.textContent + '\n').indexOf('\n' + shortcut + '\n');
   var selection = getSelection();
   var range = document.createRange();
@@ -37,16 +39,19 @@ var onshortcut = function(shortcut, event)
 
 window.onload = function()
 {
-  var sc = 
-  [
-    "ctrl a", "ctrl b", "shift ctrl a", 
-    "up","down","left","right",
-    "enter","ctrl enter",
-    "shift tab","tab", "ctrl tab",
-    "escape", "shift escape",
-    "a", "(", ")", "s", "f6", ".", "[",
-    "ctrl p", "page-down", "page-up"
-  ];
+  var sc_map = window.ini.default_shortcuts;
+  var sc = [];
+  for (var view in sc_map)
+  {
+    for (var mode in sc_map[view])
+    {
+      for (var shortcut in sc_map[view][mode])
+      {
+        if (!sc.contains(shortcut))
+          sc.push(shortcut);
+      }
+    }
+  }
   var ki = new KeyIdentifier(onshortcut, window.chrome ? "chrome" : window.opera ?"opera" : "firefox");
   document.getElementsByTagName('pre')[0].textContent = sc.join('\n');
   ki.set_shortcuts(sc);

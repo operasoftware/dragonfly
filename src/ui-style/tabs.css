@@ -172,21 +172,7 @@ top-tabs tab[data-state="waiting"].active
 top-tabs .badge
 {
   position: absolute;
-  background: #cf3015; /* daniel/david edit 2011-07-01, was: #df6531 */
-  color: #fff; /* daniel/david edit 2011-07-01, was: #000 */
-  text-shadow: 0 0 1px;  /* daniel/david edit 2011-07-01, was: none */
-  line-height: 1;
-  padding: 1px 3px;
-  border-radius: 4px;
-  top: 1px;
-  right: 1px;
-  font-size: 9px;
 }
-top-tabs .badge:empty
-{
-  display: none;
-}
-
 
 /* Top tabs */
 /* Width depends on the images */
@@ -237,7 +223,7 @@ top-tabs .badge:empty
 
 .profiler_mode
 {
-  background: url("../ui-images/mode_profiler.png");
+  background-image: url("../ui-images/mode_profiler.png");
   width: 25px;
 }
 

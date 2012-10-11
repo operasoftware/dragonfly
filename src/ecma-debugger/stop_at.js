@@ -46,16 +46,16 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
 
   var reformat_condition =
   [
-    "var MAX_SLICE = 5000;",
-    "var LIMIT = 11;",
-    "var re = /\\s+/g;",
-    "var ws = 0;",
-    "var m = null;",
-    "var src = scriptData.slice(0, MAX_SLICE);",
-    "while (m = re.exec(src))",
-    "  ws += m[0].length;",
-    "",
-    "return (100 * ws / src.length) < LIMIT;",
+    "var MAX_LINE_LENGTH = 160;",
+    "var last = 0;",
+    "var index = 0;",
+    "while ((index = scriptData.indexOf(\"\\n\", last)) > -1)",
+    "{",
+    "  if (index - last > MAX_LINE_LENGTH)",
+    "    return true;",
+    "  last = index + 1;",
+    "}",
+    "return scriptData.length - last > MAX_LINE_LENGTH;"
   ].join("");
 
   var self = this;
@@ -101,7 +101,8 @@ cls.EcmascriptDebugger["6.0"].StopAt = function()
       if (msg.key == 'reformat_javascript')
       {
         new ConfirmDialog(ui_strings.D_REFORMAT_SCRIPTS,
-                          function() { window.runtimes.reloadWindow(); }).show();
+                          [function() { window.runtimes.reloadWindow(); }],
+                          ConfirmDialog.YES_NO).show();
       }
     }
   };

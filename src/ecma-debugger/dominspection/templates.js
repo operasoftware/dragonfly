@@ -145,7 +145,7 @@
   {
     for (var i = 0, attr, attr_value, attrs = ''; attr = node[ATTRS][i]; i++)
     {
-      attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+      attr_value = helpers.escape_html_attr(attr[ATTR_VALUE]);
       if (typeof is_search_hit != 'boolean' || is_search_hit)
       {
         attrs += " <key>" + safe_escape_attr_key(attr) +
@@ -163,7 +163,7 @@
   {
     for (var i = 0, attr, attr_value, attrs = ''; attr = node[ATTRS][i]; i++)
     {
-      attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+      attr_value = helpers.escape_html_attr(attr[ATTR_VALUE]);
       attrs += " <key>" +
                  "<match-token>" + safe_escape_attr_key(attr) + "</match-token>" +
                "</key>=<value>\"" +
@@ -199,14 +199,14 @@
         continue;
       }
       node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':': '') + node[NAME];
-      node_name = helpers.escapeTextHtml(node_name);
+      node_name = helpers.escape_html(node_name);
       if (force_lower_case && disregard_force_lower_case(node))
       {
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
       }
       else if (disregard_force_lower_case_depth &&
-               disregard_force_lower_case_depth == node[DEPTH])
+               disregard_force_lower_case_depth >= node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() &&
@@ -267,7 +267,7 @@
               "<div class='search-match dom-search comment pre-wrap' " +
                 "obj-id='" + node[ID] + "' handler='show-search-match' >" +
                 (open_tag ? open_tag + "!--" : "#comment") +
-                "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
+                "<match-token>" + helpers.escape_html(node[VALUE]) + "</match-token>" +
                 (close_tag ? "--" + close_tag : "") +
               "</div>";
           }
@@ -305,7 +305,7 @@
               "<div class='search-match dom-search' " +
                 "obj-id='" + node[ID] + "' handler='show-search-match' >" +
                 "<span class='dom-search-text-node'>#text</span>" +
-                "<match-token>" + helpers.escapeTextHtml(node[VALUE]) + "</match-token>" +
+                "<match-token>" + helpers.escape_html(node[VALUE]) + "</match-token>" +
               "</div>";
           }
         }
@@ -357,7 +357,8 @@
       current_depth = node[DEPTH];
       children_length = node[CHILDREN_LENGTH];
       is_expandable = children_length || (show_pseudo_elements &&
-                                          node[PSEUDO_ELEMENT_LIST]);
+                                          node[PSEUDO_ELEMENT_LIST] &&
+                                          node[PSEUDO_ELEMENT_LIST].length);
       child_pointer = 0;
 
       if (force_lower_case && disregard_force_lower_case(node))
@@ -366,7 +367,7 @@
         force_lower_case = false;
       }
       else if (disregard_force_lower_case_depth &&
-               disregard_force_lower_case_depth == node[DEPTH])
+               disregard_force_lower_case_depth >= node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
@@ -393,7 +394,7 @@
         case ELEMENT_NODE:
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
-          node_name = helpers.escapeTextHtml(node_name);
+          node_name = helpers.escape_html(node_name);
           var ev_listener = node[EVENT_LISTENER_LIST] && node[EVENT_LISTENER_LIST].length
                           ? EV_LISTENER_MARKUP
                           : "";
@@ -406,7 +407,7 @@
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
           {
-            attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+            attr_value = helpers.escape_html_attr(attr[ATTR_VALUE]);
             attrs += " <key>" +
               ((attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
               /* Regarding escaping "<". It happens that there are very
@@ -452,7 +453,7 @@
               {
                 one_child_text_content += "<text" +
                   " ref-id='" + data[child_pointer][ID] + "' " +
-                  ">" + helpers.escapeTextHtml(data[child_pointer][VALUE]) + "</text>";
+                  ">" + helpers.escape_html(data[child_pointer][VALUE]) + "</text>";
               }
             }
             if (has_only_text_content)
@@ -537,7 +538,7 @@
                                "ref-id='" + node[ID] + "' " +
                                "class='comment pre-wrap'>" +
                                "&lt;!--" +
-                                   helpers.escapeTextHtml(node[VALUE]) +
+                                   helpers.escape_html(node[VALUE]) +
                                "--&gt;</div>";
             }
           }
@@ -569,7 +570,7 @@
                              (no_contextmenu ? "" : "data-menu='dom-element' ") +
                              ">" +
                     "<text ref-id='"+ node[ID] + "' " +
-                    ">" + helpers.escapeTextHtml(node[VALUE]) + "</text>" +
+                    ">" + helpers.escape_html(node[VALUE]) + "</text>" +
                     "</div>";
           }
         }
@@ -641,7 +642,7 @@
         disregard_force_lower_case_depth = node[DEPTH];
         force_lower_case = false;
       }
-      else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth == node[DEPTH])
+      else if (disregard_force_lower_case_depth && disregard_force_lower_case_depth >= node[DEPTH])
       {
         disregard_force_lower_case_depth = 0;
         force_lower_case = model.isTextHtml() && window.settings.dom.get('force-lowercase');
@@ -672,7 +673,7 @@
         case ELEMENT_NODE:
         {
           var node_name = (node[NAMESPACE] ? node[NAMESPACE] + ':' : '') + node[NAME];
-          node_name = helpers.escapeTextHtml(node_name);
+          node_name = helpers.escape_html(node_name);
           if (force_lower_case)
           {
             node_name = node_name.toLowerCase();
@@ -682,7 +683,7 @@
           attrs = '';
           for (k = 0; attr = node[ATTRS][k]; k++)
           {
-            attr_value = helpers.escapeAttributeHtml(attr[ATTR_VALUE]);
+            attr_value = helpers.escape_html_attr(attr[ATTR_VALUE]);
             attrs += " <key>" +
               (attr[ATTR_PREFIX] ? attr[ATTR_PREFIX] + ':' : '') +
               /* regarding escaping "<". it happens that there are very starnge keys in broken html.
@@ -749,7 +750,7 @@
                             "ref-id='"+node[ID] + "' " +
                             "class='comment pre-wrap'>" +
                         "<span class='comment-node'>#comment</span>" +
-                        helpers.escapeTextHtml(node[VALUE]) + "</div>";
+                        helpers.escape_html(node[VALUE]) + "</div>";
           }
           break;
         }
@@ -792,7 +793,7 @@
                                 ">" +
                        (node[NAME] ? node[NAME] : this._node_name_map[node[TYPE]]) +
                        "<text ref-id='" + node[ID] + "' >" +
-                         helpers.escapeTextHtml(node[VALUE]) + "</text>" +
+                         helpers.escape_html(node[VALUE]) + "</text>" +
                        "</div>";
             }
           }
@@ -807,7 +808,7 @@
                       "<text ref-id='" + node[ID]+  "' " +
                         " class='" + (only_whitespace ? "only-whitespace" : "") + "'>" +
                         (only_whitespace ? helpers.escape_whitespace(node[VALUE])
-                                         : helpers.escapeTextHtml(node[VALUE])) +
+                                         : helpers.escape_html(node[VALUE])) +
                       "</text>" +
                     "</div>";
           }

@@ -28,8 +28,16 @@ cls.CookieManager.Cookie = function(details, data)
   }
 }
 
+cls.CookieManager.Cookie.prototype = new function()
+{
+  this.__defineGetter__("rt_id", function() { return this._rt_id; });
+  this.__defineSetter__("rt_id", function() {});
+}
+
 cls.CookieManager.CookieDataBase = function()
 {
+  var SUCCESS = 0;
+
   this.refetch = function(){};
   this.remove_cookie = function(objectref, callback){};
   this.remove_cookies = function(cookies){};
@@ -41,15 +49,21 @@ cls.CookieManager.CookieDataBase = function()
 
   this.refetch = function()
   {
-    this._active_tab_count++;
     this.cookie_list = [];
-    for (var rt_id in this._rts) {
-      this._request_location_object_id(Number(rt_id), this._active_tab_count);
+    for (var rt_id in this._rts)
+    {
+      this._request_location_object_id(Number(rt_id));
     };
   };
 
   this.get_cookies = function()
   {
+    if (!this._is_active)
+    {
+      this._is_active = true;
+      if (this._last_on_active_tab_msg)
+        this._on_active_tab(this._last_on_active_tab_msg)
+    }
     return this.cookie_list;
   };
 
@@ -131,29 +145,35 @@ cls.CookieManager.CookieDataBase = function()
 
   this._on_active_tab = function(msg)
   {
-    this._active_tab_count++;
-    this.cookie_list = [];
-    for (var i=0; i < msg.runtimes_with_dom.length; i++)
+    if (this._is_active)
     {
-      var rt_id = msg.runtimes_with_dom[i];
-      if (!this._rts[rt_id])
+      for (var i = 0, rt_id; rt_id = msg.runtimes_with_dom[i]; i++)
       {
-        this._rts[rt_id]={rt_id: rt_id};
-      }
-      this._request_location_object_id(rt_id, this._active_tab_count);
-    };
+        if (!this._rts[rt_id])
+        {
+          this._rts[rt_id] = {rt_id: rt_id};
+          this._request_location_object_id(rt_id);
+        }
+      };
 
-    // cleanup runtimes directory
-    for (var rt in this._rts)
-    {
-      // rt is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
-      var rt_id = this._rts[rt].rt_id;
-      if (msg.runtimes_with_dom.indexOf(rt_id) === -1)
+      // cleanup runtimes directory
+      for (var rt in this._rts)
       {
-        // runtime was not active and is to be removed from this._rts
-        delete this._rts[rt_id];
+        // rt is a string, rt_id is a number which can now be compared with what's in msg.runtimes_with_dom
+        var rt_id = this._rts[rt].rt_id;
+        if (msg.runtimes_with_dom.indexOf(rt_id) === -1)
+        {
+          // runtime was not active and is to be removed from this._rts
+          delete this._rts[rt_id];
+          this.cookie_list = this.cookie_list.filter(function(cookie)
+          {
+            return cookie.rt_id != rt_id;
+          });
+        }
       }
     }
+    else
+      this._last_on_active_tab_msg = msg;
   };
 
   this._on_profile_disabled = function(msg)
@@ -165,24 +185,24 @@ cls.CookieManager.CookieDataBase = function()
     }
   };
 
-  this._request_location_object_id = function(rt_id, active_tab_counter)
+  this._request_location_object_id = function(rt_id)
   {
     var script = "location";
-    var tag = tagManager.set_callback(this, this._handle_location_object_id,[rt_id, active_tab_counter]);
-    services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
+    var tag = tagManager.set_callback(this, this._handle_location_object_id, [rt_id]);
+    services['ecmascript-debugger'].requestEval(tag, [rt_id, 0, 0, script]);
   };
 
-  this._handle_location_object_id = function(status, message, rt_id, active_tab_counter)
+  this._handle_location_object_id = function(status, message, rt_id)
   {
     const
     OBJECT_VALUE = 3,
     // within sub message ObjectValue
     OBJECT_ID = 0;
 
-    if (status === 0 && message[OBJECT_VALUE])
+    if (status === SUCCESS && message[OBJECT_VALUE])
     {
       var object_id = message[OBJECT_VALUE][OBJECT_ID];
-      var tag = tagManager.set_callback(this, this._handle_location, [rt_id, active_tab_counter]);
+      var tag = tagManager.set_callback(this, this._handle_location, [rt_id]);
       var command_details = [
         rt_id, // runtimeID
         [ // objectList
@@ -196,7 +216,7 @@ cls.CookieManager.CookieDataBase = function()
     }
   };
 
-  this._handle_location = function(status, message, rt_id, active_tab_counter)
+  this._handle_location = function(status, message, rt_id)
   {
     const
     OBJECT_CHAIN_LIST = 0,
@@ -241,8 +261,8 @@ cls.CookieManager.CookieDataBase = function()
       if (rt.hostname)
       {
         var request_hostname = rt.hostname;
-        var tag = tagManager.set_callback(this, this._handle_cookies,[rt_id, active_tab_counter]);
-        services['cookie-manager'].requestGetCookie(tag,[request_hostname, rt.pathname]);
+        var tag = tagManager.set_callback(this, this._handle_cookies, [rt_id]);
+        services['cookie-manager'].requestGetCookie(tag, [request_hostname, rt.pathname]);
       }
       else
       {
@@ -252,96 +272,94 @@ cls.CookieManager.CookieDataBase = function()
     }
   };
 
-  this._handle_cookies = function(status, message, rt_id, active_tab_counter)
+  this._handle_cookies = function(status, message, rt_id)
   {
-    if (this._active_tab_count === active_tab_counter)
-    {
-      var rt = this._rts[rt_id] || {};
-      if (status === 0)
-      {
-        const COOKIE = 0;
-        if (message.length > 0)
-        {
-          var cookies = message[COOKIE];
-          for (var i=0, cookie_info; cookie_info = cookies[i]; i++) {
-            // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
-            var is_secure = cookie_info[5];
-            if (is_secure && rt.protocol !== "https:")
-            {
-              continue;
-            }
-            this.cookie_list.push(
-              new cls.CookieManager.Cookie({
-                domain:     cookie_info[0],
-                path:       cookie_info[1],
-                name:       cookie_info[2],
-                value:      cookie_info[3],
-                expires:    cookie_info[4],
-                isSecure:   cookie_info[5],
-                isHTTPOnly: cookie_info[6],
+    var rt = this._rts[rt_id];
+    if (!rt)
+      throw "missing runtime in _handle_cookies";
 
-                _rt_id:       rt_id,
-                _rt_hostname: rt.hostname,
-                _rt_path:     rt.pathname,
-                _rt_protocol: rt.protocol
-              }, this)
-            )
-          };
-        }
-        else
+    if (status === SUCCESS)
+    {
+      var COOKIE = 0;
+      if (message.length > 0)
+      {
+        var cookies = message[COOKIE];
+        for (var i = 0, cookie_info; cookie_info = cookies[i]; i++)
         {
-          // In case no cookies come back, check via JS (workaround for CORE-41145)
-          var script = "return document.cookie";
-          var tag = tagManager.set_callback(this, this._handle_js_retrieved_cookies, [rt_id, active_tab_counter]);
-          services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
-        }
+          // workaround: GetCookie doesn't allow to specify protocol, requested in CORE-35925
+          var is_secure = cookie_info[5];
+          if (is_secure && rt.protocol !== "https:")
+          {
+            continue;
+          }
+          this.cookie_list.push(
+            new cls.CookieManager.Cookie({
+              domain:     cookie_info[0],
+              path:       cookie_info[1],
+              name:       cookie_info[2],
+              value:      cookie_info[3],
+              expires:    cookie_info[4],
+              isSecure:   cookie_info[5],
+              isHTTPOnly: cookie_info[6],
+
+              _rt_id:       rt_id,
+              _rt_hostname: rt.hostname,
+              _rt_path:     rt.pathname,
+              _rt_protocol: rt.protocol
+            }, this)
+          )
+        };
       }
-      // add a placeholder per runtime to make the group show up even if there were no cookies
-      this.cookie_list.push(
-        new cls.CookieManager.Cookie({
-          _is_runtime_placeholder: true,
-          _rt_id:       rt_id,
-          _rt_protocol: rt.protocol,
-          _rt_hostname: rt.hostname,
-          _rt_path:     rt.pathname
-        }, this)
-      );
-      this._view.update();
+      else
+      {
+        // In case no cookies come back, check via JS (workaround for CORE-41145)
+        var script = "return document.cookie";
+        var tag = tagManager.set_callback(this, this._handle_js_retrieved_cookies, [rt_id]);
+        services['ecmascript-debugger'].requestEval(tag,[rt_id, 0, 0, script]);
+      }
     }
+    // add a placeholder per runtime to make the group show up even if there were no cookies
+    this.cookie_list.push(
+      new cls.CookieManager.Cookie({
+        _is_runtime_placeholder: true,
+        _rt_id:       rt_id,
+        _rt_protocol: rt.protocol,
+        _rt_hostname: rt.hostname,
+        _rt_path:     rt.pathname
+      }, this)
+    );
+    this._view.update();
   };
 
-  this._handle_js_retrieved_cookies = function(status, message, rt_id, active_tab_counter)
+  this._handle_js_retrieved_cookies = function(status, message, rt_id)
   {
-    if (this._active_tab_count === active_tab_counter)
+    const STATUS = 0;
+    const DATA = 2;
+    if (status === SUCCESS && message[STATUS] == "completed")
     {
-      const STATUS = 0;
-      const DATA = 2;
-      if (status === 0 && message[STATUS] == "completed")
+      var rt = this._rts[rt_id] || {};
+      var cookie_string = message[DATA];
+      if (cookie_string && cookie_string.length > 0)
       {
-        var rt = this._rts[rt_id] || {};
-        var cookie_string = message[DATA];
-        if (cookie_string && cookie_string.length > 0)
+        var cookies = cookie_string.split('; ');
+        for (var i = 0, cookie_info; cookie_info = cookies[i]; i++)
         {
-          var cookies = cookie_string.split('; ');
-          for (var i=0, cookie_info; cookie_info = cookies[i]; i++)
-          {
-            var pos = cookie_info.indexOf('=');
-            var has_value = pos !== -1;
-            this.cookie_list.push(
-              new cls.CookieManager.Cookie({
-                name:  has_value ? cookie_info.slice(0, pos) : cookie_info,
-                value: has_value ? decodeURIComponent(cookie_info.slice(pos+1)) : null,
-                _rt_id:       rt_id,
-                _rt_protocol: rt.protocol,
-                _rt_hostname: rt.hostname,
-                _rt_path:     rt.pathname
-              }, this)
-            );
-          };
-        }
+          var pos = cookie_info.indexOf('=');
+          var has_value = pos !== -1;
+          this.cookie_list.push(
+            new cls.CookieManager.Cookie({
+              name:  has_value ? cookie_info.slice(0, pos) : cookie_info,
+              value: has_value ? decodeURIComponent(cookie_info.slice(pos+1)) : null,
+              _rt_id:       rt_id,
+              _rt_protocol: rt.protocol,
+              _rt_hostname: rt.hostname,
+              _rt_path:     rt.pathname
+            }, this)
+          );
+        };
       }
-      this._view.update();
     }
+    this._view.update();
   };
 
   this._init = function(view)
@@ -349,7 +367,8 @@ cls.CookieManager.CookieDataBase = function()
     this._view = view;
     this.cookie_list = [];
     this._rts = {};
-    this._active_tab_count = 0;
+    this._active_dom_rt_ids = [];
+    this._is_active = false;
     window.messages.addListener('active-tab', this._on_active_tab.bind(this));
     window.messages.addListener('profile-disabled', this._on_profile_disabled.bind(this));
   };

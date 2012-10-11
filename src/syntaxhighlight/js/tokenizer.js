@@ -57,7 +57,7 @@ cls.SimpleJSParser.prototype = new function()
     * @param {String} script_source The script string.
     * @param {Function} ontoken. Signature of the callback is (token_type, token).
     * @param {String} escape. Optional. Currently supports only "html"
-    * to escape "<" and "&" to "&lt;" and "&amp;".
+    * to escape "<", ">" and "&" to "&lt;", "&gt;" (for ]]>) and "&amp;".
     */
   this.tokenize = function(script_source, ontoken, escape, start_state){};
 
@@ -355,6 +355,7 @@ cls.SimpleJSParser.prototype = new function()
   var ESCAPE =
   {
     '<': '&lt;',
+    '>': '&gt;',
     '&': '&amp;'
   }
   var default_parser=function(c)
@@ -868,7 +869,7 @@ cls.SimpleJSParser.prototype = new function()
           if(__parse_error_first_token)
           {
             __line = "<div class='error-description'>" +
-                        helpers.escapeTextHtml(__parse_error_description) +
+                        helpers.escape_html(__parse_error_description) +
                         "</div>" +
                         "<span class='not-error'>" +  __line + "</span>" +
                         "<span class='first-error'>" +  __buffer + "</span>";
