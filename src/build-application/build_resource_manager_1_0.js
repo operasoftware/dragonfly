@@ -2,7 +2,7 @@
 
 window.app.builders.ResourceManager["1.0"] = function(service)
 {
-  var logger_service = new cls.NetworkLoggerService();
+  var network_logger = new cls.NetworkLogger();
   new cls.ResourceManagerAllView("resource_all", ui_strings.M_VIEW_LABEL_ALL_RESOURCES, "scroll resource-manager", "", "");
   //new cls.ResourceManagerFontView('resource_fonts', "Fonts", 'scroll', '', '');
   //new cls.ResourceManagerImageView('resource_images', "Images", 'scroll', '', '');
@@ -11,8 +11,13 @@ window.app.builders.ResourceManager["1.0"] = function(service)
                          "scroll network_logger",
                          null,
                          "network-logger",
-                         logger_service);
-  new cls.RequestCraftingView("request_crafter", ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER, "scroll", "", "");
+                         network_logger);
+  new cls.RequestCraftingView("request_crafter",
+                              ui_strings.M_VIEW_LABEL_REQUEST_CRAFTER,
+                              "scroll",
+                              "",
+                              "",
+                              network_logger);
   new cls.NetworkOptionsView("network_options",
                              ui_strings.M_VIEW_LABEL_NETWORK_OPTIONS,
                              "scroll network-options-container", "", "");
