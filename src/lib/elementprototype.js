@@ -172,21 +172,6 @@ Element.prototype.removeClass = function(cl)
 };
 
 /**
- * Toggle class "name"
- */
-Element.prototype.toggleClass = function(name)
-{
-  if (this.hasClass(name))
-  {
-    this.removeClass(name);
-  }
-  else
-  {
-    this.addClass(name);
-  }
-}
-
-/**
  * Swap class "from" with class "to"
  */
 Element.prototype.swapClass = function(from, to)
