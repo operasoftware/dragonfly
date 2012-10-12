@@ -1,4 +1,6 @@
-﻿window.cls = window.cls || {};
+﻿"use strict";
+
+window.cls = window.cls || {};
 
 cls.ResourceDisplayBroker = function()
 {

@@ -581,7 +581,7 @@ cls.RequestContextPrototype = function()
   };
 
   this.clear = function()
-    {
+  {
     var helpers = window.helpers;
     this._cleared_ids.extend(this.get_entries().map(helpers.prop("id")));
     this.after_clear = true;
@@ -1067,7 +1067,7 @@ cls.NetworkLoggerEntryPrototype = function()
     // The first guess is made based on file extension. No response is needed for that.
     // The current response is updated though, at the time it will be the correct one.
     // Multiple responses can get different types in this way.
-    if (!cls || !cls.ResourceUtil || !cls.ResourceUtil.guess_type)
+    if (!cls || !cls.ResourceUtil)
       return;
 
     this.type = cls.ResourceUtil.guess_type(this.mime, this.extension);
@@ -1297,10 +1297,10 @@ cls.ResourceInfo = function(entry)
   this.is_unloaded = entry.is_unloaded;
   this.responsecode = entry.current_responsecode;
 
-  var lastResponse = entry.requests_responses && entry.requests_responses.last;
-  if (lastResponse && lastResponse.responsebody)
+  var last_response = entry.requests_responses && entry.requests_responses.last;
+  if (last_response && last_response.responsebody)
   {
-    this.data = lastResponse.responsebody;
+    this.data = last_response.responsebody;
     if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
       this.data.meta = cls.ResourceUtil.get_meta_data(this);
   }

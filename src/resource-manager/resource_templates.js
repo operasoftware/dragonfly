@@ -1,4 +1,6 @@
-﻿window.templates = window.templates || {};
+﻿"use strict";
+
+window.templates = window.templates || {};
 
 templates.resource_tree =
 {

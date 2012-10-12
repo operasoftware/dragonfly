@@ -1,4 +1,6 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 /**
  * @constructor
@@ -12,8 +14,8 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   cls.ResourceTreeView.instance = this;
 
   //	const
-  const THROTTLE_DELAY = 250;
-  const GROUP_ORDER =
+  var THROTTLE_DELAY = 250;
+  var GROUP_ORDER =
   [
     ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
     ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,

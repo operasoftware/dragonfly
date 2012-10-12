@@ -1,7 +1,9 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 /**
- * @constructor
+ * @varructor
  * @extends ViewBase
  */
 cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger) {
@@ -17,11 +19,11 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   this.createView = function(container)
   {
     if (this.resource && this.resource.data)
-      container.clearAndRender( templates.resource_detail.formatting_data(this.resource) );
+      container.clearAndRender(templates.resource_detail.formatting_data(this.resource));
 
-    container.clearAndRender( templates.resource_detail.update(this.resource) );
+    container.clearAndRender(templates.resource_detail.update(this.resource));
     if(this.data)
-      this.go_to_line(container,this.data);
+      this.go_to_line(container, this.data);
 
     this.text_search.update_search();
   };
@@ -31,10 +33,10 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     container.clearAndRender(window.templates.disabled_view());
   };
 
-  const HIGHLIGHTED_LINE_CLASSNAME = 'highlighted-line';
-  const RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container';
-  const TEXT = document.TEXT_NODE;
-  const ELE  = document.ELEMENT_NODE;
+  var HIGHLIGHTED_LINE_CLASSNAME = 'highlighted-line';
+  var RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container';
+  var TEXT = document.TEXT_NODE;
+  var ELE = document.ELEMENT_NODE;
   this._span = document.createElement('span');
   this._span.textContent = ' ';
   this._line_count = 0;
@@ -45,8 +47,8 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this._highlight_line = function(ele)
   {
-    const CR = "\r";
-    const LF = "\n";
+    var CR = "\r";
+    var LF = "\n";
     var child = ele.firstChild;
     while (child && !this._line_found)
     {
@@ -60,7 +62,6 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
         for (var pos = 0, len = value.length; pos < len; pos++)
         {
           var c = value.charAt(pos);
-          // Linefeed recognition will not support Acorn BBC spooled text output
           if ((c == CR ) || (c == LF))
           {
             this._line_count++;
@@ -73,7 +74,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
               child.parentNode.normalize();
               if (this._tops.length < 2)
               {
-                this._target_line+=1;
+                this._target_line += 1;
               }
               else
               {
@@ -89,18 +90,16 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
                 var scroll_position = scroll_top + this._tops[0] - container_top;
                 if (scroll_position <= this._root_ele.parentNode.clientHeight)
-                {
-                  scroll_position-=64;
-                }
+                  scroll_position -= 64;
+
                 this._root_ele.scrollTop = scroll_position;
                 this._line_found = true;
                 return;
               }
             }
+
             if ((c == CR) && (value.charAt(pos+1) == LF))
-            {
               pos++;
-            }
           }
         }
       }
@@ -115,7 +114,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._line_found = false;
     this._target_line = 0;
     this._tops = [];
-    var _ele = container.querySelectorAll('.'+HIGHLIGHTED_LINE_CLASSNAME)[0];
+    var _ele = container.querySelectorAll('.' + HIGHLIGHTED_LINE_CLASSNAME)[0];
     if (_ele)
       _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
   }
@@ -129,7 +128,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     if (this._root_ele)
     {
       this.clear_line_highlight(this._root_ele)
-      this._target_line = parseInt(data.lines[0]);
+      this._target_line = Number(data.lines[0]);
       this._highlight_line(this._root_ele);
     }
   };
@@ -152,12 +151,13 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     if (!this._show_resource(resource, data))
       this._show_resource_by_key(resource.uid, data);
   };
+
   this._show_resource_by_key = function(key, data)
   {
     var service = this._service;
     var resource = service.get_resource(key) || service.get_resource_by_url(key);
 
-    var url = resource?resource.url:key;
+    var url = resource ? resource.url : key;
 
     if (!this._show_resource(resource, data))
       service.request_resource_data(url, this.show_resource.bind(this), data, resource);
@@ -170,7 +170,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     else
       this._show_resource_by_key(key, data);
 
-    window.UI.instance.show_view( this.id );
+    window.UI.instance.show_view(this.id);
   };
 
   this._on_debug_context_selected_bound = function()
@@ -181,7 +181,6 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   var messages = window.messages;
   messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
-
 
   this.init(id, name, container_class, html, default_handler);
 };
@@ -210,7 +209,7 @@ cls.ResourceDetailView.create_ui_widgets = function()
 
   var text_search = window.views.resource_detail_view.text_search = new TextSearch();
 
-  window.eventHandlers.input["resource-text-search"] = function(event, target)
+  window.event_handlers.input["resource-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
@@ -248,8 +247,8 @@ cls.ResourceDetailView.create_ui_widgets = function()
       text_search.cleanup();
   }
 
-  window.messages.addListener("view-created", on_view_created);
-  window.messages.addListener("view-destroyed", on_view_destroyed);
+  window.messages.add_listener("view-created", on_view_created);
+  window.messages.add_listener("view-destroyed", on_view_destroyed);
 }
 
 cls.ResourceDetailView.prototype = ViewBase;
