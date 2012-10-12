@@ -3,7 +3,7 @@
 window.cls || (window.cls = {});
 
 /**
- * @varructor
+ * @constructor
  * @extends ViewBase
  */
 cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger) {
