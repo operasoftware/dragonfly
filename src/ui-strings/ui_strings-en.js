@@ -150,7 +150,7 @@ ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL = "Delete items";
 /* DESC: Context menu item for editing an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
 
-/* DESC: Label for breakpoint condition (lowercase). */
+/* DESC: Label for breakpoint condition (lowercase), JavaScript to be evaluated when hitting the breakpoint, execution will only halt when returned value evaluates to true. */
 ui_strings.M_LABEL_BREAKPOINT_CONDITION = "condition";
 
 /* DESC: Label for option that clears all errors */
