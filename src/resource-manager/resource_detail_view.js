@@ -6,7 +6,8 @@ window.cls || (window.cls = {});
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger) {
+cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger)
+{
   if (cls.ResourceDetailView.instance)
   {
     return cls.ResourceDetailView.instance;
@@ -22,7 +23,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       container.clearAndRender(templates.resource_detail.formatting_data(this.resource));
 
     container.clearAndRender(templates.resource_detail.update(this.resource));
-    if(this.data)
+    if (this.data)
       this.go_to_line(container, this.data);
 
     this.text_search.update_search();
@@ -33,12 +34,12 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     container.clearAndRender(window.templates.disabled_view());
   };
 
-  var HIGHLIGHTED_LINE_CLASSNAME = 'highlighted-line';
-  var RESOURCE_DETAIL_CONTAINER_CLASSNAME = 'resource-detail-container';
+  var HIGHLIGHTED_LINE_CLASSNAME = "highlighted-line";
+  var RESOURCE_DETAIL_CONTAINER_CLASSNAME = "resource-detail-container";
   var TEXT = document.TEXT_NODE;
   var ELE = document.ELEMENT_NODE;
-  this._span = document.createElement('span');
-  this._span.textContent = ' ';
+  this._span = document.createElement("span");
+  this._span.textContent = " ";
   this._line_count = 0;
   this._line_found = false;
   this._target_line = 0;
@@ -62,7 +63,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
         for (var pos = 0, len = value.length; pos < len; pos++)
         {
           var c = value.charAt(pos);
-          if ((c == CR ) || (c == LF))
+          if ((c == CR) || (c == LF))
           {
             this._line_count++;
             if (this._line_count == this._target_line)
@@ -114,7 +115,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._line_found = false;
     this._target_line = 0;
     this._tops = [];
-    var _ele = container.querySelectorAll('.' + HIGHLIGHTED_LINE_CLASSNAME)[0];
+    var _ele = container.querySelector("." + HIGHLIGHTED_LINE_CLASSNAME);
     if (_ele)
       _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
   }
@@ -124,7 +125,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     if (!data || !data.lines || !data.lines.length)
       return;
 
-    this._root_ele = container.getElementsByClassName(RESOURCE_DETAIL_CONTAINER_CLASSNAME)[0];
+    this._root_ele = container.querySelector("." + RESOURCE_DETAIL_CONTAINER_CLASSNAME);
     if (this._root_ele)
     {
       this.clear_line_highlight(this._root_ele)
@@ -180,7 +181,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   }.bind(this);
 
   var messages = window.messages;
-  messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+  messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
 
   this.init(id, name, container_class, html, default_handler);
 };
@@ -189,7 +190,7 @@ cls.ResourceDetailView.create_ui_widgets = function()
 {
   new ToolbarConfig(
   {
-    view:'resource_detail_view',
+    view:"resource_detail_view",
     groups:
     [
       {

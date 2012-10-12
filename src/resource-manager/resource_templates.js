@@ -8,7 +8,7 @@ templates.resource_tree =
 	DEPTH_IDENTATION: 18,
 	DISTINGUISHER_MAX_LENGTH: 64,
 
-	_get_short_distinguisher:function( url )
+	_get_short_distinguisher:function(url)
 	{
 		var name = url.filename || url.short_distinguisher || url;
 		if (name.length>this.DISTINGUISHER_MAX_LENGTH)
@@ -41,7 +41,7 @@ templates.resource_tree =
 			'class','button-expand-collapse'
 		];
 
-		if(depth)
+		if (depth)
 			tpl.button.push('style', 'margin-left:'+ depth*this.DEPTH_IDENTATION +'px;');
 
 
@@ -74,7 +74,7 @@ templates.resource_tree =
 		if (!windowInfo)
 			return [];
 
-		var extras = this._expander_extras( context, String(w.id) );
+		var extras = this._expander_extras(context, String(w.id));
 
 		var tpl =
 			['li',
@@ -85,9 +85,9 @@ templates.resource_tree =
 						'class','resource-tree-window-label'
 					],
 					'class','resource-tree-window'
-				].concat( extras.tpl.h2 ),
+				].concat(extras.tpl.h2),
 				extras.collapsed?[]:this.documents(context, w.id)
-			].concat( extras.tpl.li );
+			].concat(extras.tpl.li);
 
 		return tpl;
 	},
@@ -101,7 +101,7 @@ templates.resource_tree =
 
 		var tpl = documents.length?
 			['ul',
-				documents.map( this.document.bind(this, context) ),
+				documents.map(this.document.bind(this, context)),
 				'class','resource-tree-documents'
 			]:[];
 
@@ -120,7 +120,7 @@ templates.resource_tree =
 		});
 
 		var depth = d.depth;
-		var extras = this._expander_extras( context, d.pivotID, depth );
+		var extras = this._expander_extras(context, d.pivotID, depth);
 
 		var tpl =
 			['li',
@@ -140,13 +140,13 @@ templates.resource_tree =
 						'class','resource-tree-count'
 					],
 					'class','resource-tree-document',
-				].concat( extras.tpl.h2 ),
-				( resources.length == 0 || extras.collapsed )?[]:
+				].concat(extras.tpl.h2),
+				(resources.length == 0 || extras.collapsed)?[]:
 				[
 					this.resource_groups(context, resources, d),
 					this.documents(context, d.windowID, d.documentID)
 				]
-			].concat( extras.tpl.li );
+			].concat(extras.tpl.li);
 
 		return tpl;
 
@@ -155,7 +155,7 @@ templates.resource_tree =
 	resource_groups:function(context, resources, d)
 	{
 		var tpl = context.groupOrder
-		.map( this.resource_group.bind(this, context, resources, d) )
+		.map(this.resource_group.bind(this, context, resources, d))
 		.filter(function(v){
 			return v!=null;
 		});
@@ -197,9 +197,9 @@ templates.resource_tree =
 						'class','resource-tree-count'
 					],
 					'class','resource-tree-group resource-tree-group-'+g.toLowerCase()
-				].concat( extras.tpl.h2 ),
+				].concat(extras.tpl.h2),
 				extras.collapsed?[]:this.resources(context, resources, depth+1)
-			].concat( extras.tpl.li );
+			].concat(extras.tpl.li);
 
 		return tpl;
 	},
@@ -297,7 +297,7 @@ templates.resource_detail =
 
 	formatting_data:function(resource)
 	{
-		if(!resource)
+		if (!resource)
 			return this.no_resource_selected();
 
 		if (!resource.data)

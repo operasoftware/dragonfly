@@ -47,44 +47,44 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     var scrollLeft = target?target.scrollLeft:0;
     var tpl;
 
-    if (ctx )
+    if (ctx)
     {
-      ctx.searchTerm = this.searchTerm||'';
+      ctx.searchTerm = this.searchTerm||"";
       tpl = templates.resource_tree.update(ctx);
     }
     else if (this._loading)
     {
       tpl = (
-        ['div',
-         ['p', ui_strings.S_RESOURCE_LOADING_PAGE],
-         'class', 'info-box'
+        ["div",
+         ["p", ui_strings.S_RESOURCE_LOADING_PAGE],
+         "class", "info-box"
         ]
       );
     }
     else
     {
       tpl = (
-        ['div',
-         ['span',
-          'class', 'container-button ui-button reload-window',
-          'handler', 'reload-window',
-          'tabindex', '1'],
-         ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
-         'class', 'info-box'
+        ["div",
+         ["span",
+          "class", "container-button ui-button reload-window",
+          "handler", "reload-window",
+          "tabindex", "1"],
+         ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
+         "class", "info-box"
         ]
       );
     }
 
     //  only render the template if it has changed ( using its JSON representation as hash )
     var tpl_JSON = JSON.stringify(tpl);
-    if( !this.tpl_JSON || tpl_JSON.length != this.tpl_JSON.length || tpl_JSON != this.tpl_JSON)
+    if (!this.tpl_JSON || tpl_JSON.length != this.tpl_JSON.length || tpl_JSON != this.tpl_JSON)
     {
-      container.clearAndRender( tpl );
+      container.clearAndRender(tpl);
       this.tpl_JSON = tpl_JSON;
     }
 
     target = container.firstElementChild;
-    if(target)
+    if (target)
     {
       target.scrollTop = scrollTop;
       target.scrollLeft = scrollLeft;
@@ -120,11 +120,11 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   }.bind(this);
 
   var messages = window.messages;
-  messages.addListener('debug-context-selected', this._on_debug_context_selected_bound);
+  messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
 
-  var doc_service = window.services['document-manager'];
-  doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-  doc_service.addListener("documentloaded", this._on_documentloaded_bound);
+  var doc_service = window.services["document-manager"];
+  doc_service.add_listener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+  doc_service.add_listener("documentloaded", this._on_documentloaded_bound);
 
   ActionHandlerInterface.apply(this);
   this._handlers = {
@@ -141,7 +141,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
 {
   new ToolbarConfig(
   {
-    view:'resource_tree_view',
+    view:"resource_tree_view",
     groups:
     [
       {
@@ -162,7 +162,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
 
   var text_search = window.views.resource_tree_view.text_search = new TextSearch();
 
-  text_search.addListener("onbeforesearch",(function(msg)
+  text_search.add_listener("onbeforesearch",(function(msg)
   {
     var view = window.views.resource_tree_view;
     if (view.searchTerm != msg.search_term)
@@ -173,7 +173,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
 
   }).bind(text_search));
 
-  window.eventHandlers.input["resource-tree-text-search"] = function(event, target)
+  window.event_handlers.input["resource-tree-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
@@ -195,7 +195,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);
-        text_search.set_query_selector('.resource-tree-resource-label');
+        text_search.set_query_selector(".resource-tree-resource-label");
         text_search.setFormInput(
           views.resource_tree_view.getToolbarControl(msg.container, "resource-tree-text-search")
         );
@@ -209,8 +209,8 @@ cls.ResourceTreeView.create_ui_widgets = function()
       text_search.cleanup();
   }
 
-  window.messages.addListener("view-created", on_view_created);
-  window.messages.addListener("view-destroyed", on_view_destroyed);
+  window.messages.add_listener("view-created", on_view_created);
+  window.messages.add_listener("view-destroyed", on_view_destroyed);
 }
 
 cls.ResourceTreeView.prototype = ViewBase;

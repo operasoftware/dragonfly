@@ -47,7 +47,7 @@ cls.ResourceDisplayBroker = function()
    */
   this.show_resource_for_ele = function(ele)
   {
-    var id = Number( ele.getAttribute("data-resource-id") );
+    var id = Number(ele.getAttribute("data-resource-id"));
     var url = ele.getAttribute("data-resource-url");
     var line = ele.getAttribute('data-resource-line-number');
     var rt_id;

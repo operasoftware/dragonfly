@@ -16,7 +16,7 @@ Function.prototype.throttle || (Function.prototype.throttle = function(delay)
 
   return function()
   {
-    if (last < Date.now()-delay)
+    if (last < Date.now() - delay)
       wrapped();
     else if (!timeout)
       timeout = setTimeout(wrapped, delay);

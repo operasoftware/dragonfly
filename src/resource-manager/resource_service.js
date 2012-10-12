@@ -176,7 +176,7 @@ cls.ResourceManagerService = function(view, network_logger)
       // an empty documentList
       // or a resource pointing to an unknown document
       // or a document does not have a documentID yet
-      if( !ctx.documentList.length || unknownDocumentID || nullDocumentID )
+      if (!ctx.documentList.length || unknownDocumentID || nullDocumentID)
         this._list_documents();
 
       ctx.selectedResourceUID = this._selectedResourceUID;
@@ -265,7 +265,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._highlight_sibling_resource = function(increment)
   {
-    if(!this._context || !this._context.visibleResources || !this._context.visibleResources.length)
+    if (!this._context || !this._context.visibleResources || !this._context.visibleResources.length)
       return;
 
     var uid;
@@ -426,7 +426,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
 
   this._on_request_resource_id = function(status, message)
   {
-    if(status == SUCCESS && this._resource_manager.requestGetResource)
+    if (status == SUCCESS && this._resource_manager.requestGetResource)
     {
       // resource_id -> getResource => _on_request_get_resource
       var RESOURCE_ID = 0;
