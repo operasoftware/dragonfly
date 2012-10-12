@@ -18,7 +18,7 @@ var Overlay = function()
 
   this.__defineGetter__("is_visible", function()
   {
-    return !!(this.element && this.element.parentNode);
+    return Boolean(this.element && this.element.parentNode);
   });
 
   this.show = function(id)

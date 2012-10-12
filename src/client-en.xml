@@ -349,6 +349,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./build-application/build_resource_manager_1_0.js"></script>
 <script src="./build-application/build_profiler_1_0.js"></script>
 <script src="./build-application/build_document_manager_1_0.js"></script>
+<script src="./build-application/build_overlay_1_0.js"></script>
 
 <script src="./debug/debug.js"/>
 <script src="./debug/po_tester.js"/>

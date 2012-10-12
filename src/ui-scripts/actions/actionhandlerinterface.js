@@ -52,6 +52,8 @@
     return actions;
   };
 
+  this.is_enabled = true;
+
   this.mode = "default";
 
   this._handlers = {};

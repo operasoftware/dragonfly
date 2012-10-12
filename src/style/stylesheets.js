@@ -958,6 +958,9 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "overflow":
     return "visible";
 
+  case "overflow-wrap":
+    return "normal";
+
   case "overflow-x":
     return "visible";
 
