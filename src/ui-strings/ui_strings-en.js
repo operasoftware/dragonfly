@@ -579,7 +579,7 @@ ui_strings.S_BUTTON_SHOW_RULER = "Show ruler";
 /* DESC: Button label in settings to reset the element highlight to the default values */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 
-/* DESC: Button title for starting the profiler */
+/* DESC: Button title for starting the profiler. The profiler collects all events that happens on a page (parsing, layout etc.) and presents it in a timeline. Individual events can be clicked to give more information (e.g. timing). */
 ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
 
 /* DESC: Button title for stopping the profiler */
@@ -729,28 +729,28 @@ ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
 /* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler for events that didn't end up in any other category. Currently not in use. */
 ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a layout happened on the page. */
 ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, something was painted in the page. */
 ui_strings.S_EVENT_TYPE_PAINT = "Paint";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler for the whole Opera process. Currently not in use. */
 ui_strings.S_EVENT_TYPE_PROCESS = "Process";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a reflow happened in the page. */
 ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a script was compiled. */
 ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, style was recalculated. */
 ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a script ran. */
 ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
 
 /* DESC: Context menu item for expanding CSS shorthands */
@@ -1341,22 +1341,22 @@ ui_strings.S_NONE = "None";
 /* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
 ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the area of a paint event, e.g. "100×200" */
 ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the location of a paint event from top left, e.f. "(10, 20)" */
 ui_strings.S_PROFILER_AREA_LOCATION = "Location";
 
 /* DESC: Message in the profiler when the profiler is calculating */
 ui_strings.S_PROFILER_CALCULATING = "Calculating…";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the duration of an event, e.g. "20 ms" */
 ui_strings.S_PROFILER_DURATION = "Duration";
 
-/* DESC: Message in the profiler when no data was "captured" by the profiler */
+/* DESC: Message in the profiler when no data was "captured" by the profiler. I.e. nothing happened on the page between the time the profiler started and stopped. */
 ui_strings.S_PROFILER_NO_DATA = "No data";
 
-/* DESC: Message when an event in the profiler has no details */
+/* DESC: Message when an event in the profiler has no details, i.e. no child events with futher information. Currently not in use. */
 ui_strings.S_PROFILER_NO_DETAILS = "No details";
 
 /* DESC: Message in the profiler when the profiler is active */
@@ -1368,7 +1368,7 @@ ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
 /* DESC: Message before activating the profiler profile */
 ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, all other features have to be disabled and the document has to be reloaded.";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the self time (techincal term in regards to a profiler) of an event. The time spent inside that call, exluding the time of child calls. */
 ui_strings.S_PROFILER_SELF_TIME = "Self time";
 
 /* DESC: Message before starting the profiler */
@@ -1377,19 +1377,19 @@ ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profilin
 /* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_START_TIME = "Start";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the total self time of all child events presented in the table when picking a parent event. */
 ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the DOM event, e.g. "click" or "mousewheel" */
 ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the type of script, e.g. "inline" */
 ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the CSS selector */
 ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the type of the thread, e.g. "Inline script" or "Event" */
 ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
 
 /* DESC: Remote debug guide, connection setup */
@@ -1719,10 +1719,10 @@ ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = "Automatically update global scope";
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = "Use lower case tag names for text/html";
 
-/* DESC: Table header in the profiler */
+/* DESC: Table header in the profiler, the number of times a selector was matched against elements in the DOM. */
 ui_strings.S_TABLE_HEADER_HITS = "Hits";
 
-/* DESC: Table header in the profiler */
+/* DESC: Table header in the profiler, the time spent on selector matching for this selector. */
 ui_strings.S_TABLE_HEADER_TIME = "Time";
 
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
