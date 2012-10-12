@@ -173,7 +173,7 @@ var SortableTablePrototype = function()
     }
     // and not in tooltips either
     if (window.Tooltips)
-      Tooltips.register("sortable-table-tooltip", true, false);
+      Tooltips.register("sortable-table-tooltip", {set_selected: false});
   }
 
   this._make_context_menu = function(evt)

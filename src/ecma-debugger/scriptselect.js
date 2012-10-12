@@ -356,7 +356,7 @@ cls.ScriptSelect = function(id, class_name)
     messages.addListener("thread-stopped-event", onThreadStopped);
     messages.addListener("thread-continue-event", onThreadContinue);
     messages.addListener("application-setup", onApplicationSetup);
-    this._tooltip = Tooltips.register("js-script-select", true, false);
+    this._tooltip = Tooltips.register("js-script-select");
     this._setting = null;
     this._match_history = [];
     this._match_cursor = 0;

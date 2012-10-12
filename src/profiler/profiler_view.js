@@ -413,8 +413,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._old_session_id = null;
     this._reset();
 
-    Tooltips.register("profiler-tooltip-url", true, false);
-    this._tooltip = Tooltips.register("profiler-event", true, false);
+    Tooltips.register("profiler-tooltip-url", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
+    this._tooltip = Tooltips.register("profiler-event", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
     this._tooltip.ontooltip = this._ontooltip.bind(this);
 
     this._handle_start_profiler_bound = this._handle_start_profiler.bind(this);

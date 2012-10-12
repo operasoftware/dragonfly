@@ -12,11 +12,12 @@ cls.DOMInspectorActions = function(id)
   this.view_id = id;
   this.id = id;
 
-  const
-  SCROLL_IN_PADDING = 30,
-  MODE_DEFAULT = "default",
-  MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text",
-  MODE_EDIT_MARKUP = "edit-markup";
+  var SCROLL_IN_PADDING = 30;
+  var MODE_DEFAULT = "default";
+  var MODE_EDIT_ATTR_TEXT = "edit-attributes-and-text";
+  var MODE_EDIT_MARKUP = "edit-markup";
+  var LEFT_CLICK = 1;
+  var SUCCESS = 0;
 
   this.mode_labels =
   {
@@ -33,8 +34,6 @@ cls.DOMInspectorActions = function(id)
   var range = null;
 
   var broker = ActionBroker.get_instance();
-
-  this.serializer = new cls.DOMSerializer();
 
   this._handlers = {};
   this._mode = MODE_DEFAULT;
@@ -369,10 +368,10 @@ cls.DOMInspectorActions = function(id)
         }
       }
       if (!nav_target)
-      {
         nav_target = this.getFirstTarget();
-      }
-      this.setSelected(nav_target);
+
+      if (event.which == LEFT_CLICK)
+        this.setSelected(nav_target);
     }
   }
 
@@ -479,9 +478,11 @@ cls.DOMInspectorActions = function(id)
   {
     var target = event.target;
     var is_in_container = view_container && view_container.contains(target);
-    if(is_in_container)
+    if (is_in_container)
     {
-      if(target != nav_target && /^input|node|key|value|text$/i.test(target.nodeName))
+      if (event.which == LEFT_CLICK &&
+          target != nav_target &&
+          /^input|node|key|value|text$/i.test(target.nodeName))
       {
         this.setSelected(target);
       }
@@ -498,9 +499,10 @@ cls.DOMInspectorActions = function(id)
 
   this.blur = function(event)
   {
+
     if (this.mode != MODE_DEFAULT && this.editor)
       this.editor.submit();
-    if (selection)
+    if (selection && !selection.isCollapsed)
       selection.removeAllRanges();
     view_container = null;
     view_container_first_child = null;
@@ -609,12 +611,6 @@ cls.DOMInspectorActions = function(id)
       }
       window.helpers.scroll_dom_target_into_view();
     }
-  }.bind(this);
-
-  this._handlers["export-markup"] = function(event, target)
-  {
-    var data = this.serializer.serialize(window.dom_data);
-    window.open("data:text/plain;charset=utf-8," + encodeURIComponent(data));
   }.bind(this);
 
   this._handlers["expand-whole-dom"] = function(event, target)
@@ -893,6 +889,48 @@ cls.DOMInspectorActions = function(id)
     }
   }.bind(this);
 
+  this._handlers["copy-xpath"] = function(event, target)
+  {
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
+    if (model && obj_id)
+    {
+      var force_lower_case = window.settings.dom.get("force-lowercase");
+      model.get_xpath(obj_id, force_lower_case, function(path)
+      {
+        if (path)
+          Clipboard.set_string(path);
+      });
+    }
+  }.bind(this);
+
+  this._handlers["copy-css-path"] = function(event, target)
+  {
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
+    if (model && obj_id)
+    {
+      var force_lower_case = window.settings.dom.get("force-lowercase");
+      var path = model.get_unique_css_path(obj_id, force_lower_case);
+      if (path)
+        Clipboard.set_string(path);
+    }
+  }.bind(this);
+
+  this._handlers["copy-markup"] = function(event, target)
+  {
+    var model = window.dominspections[target.get_ancestor_attr("data-model-id")];
+    var obj_id = parseInt(target.get_ancestor_attr("ref-id"));
+    if (model && obj_id)
+    {
+      model.serialize_to_string(obj_id, function(markup)
+      {
+        if (markup)
+          Clipboard.set_string(markup);
+      });
+    }
+  }.bind(this);
+
   this.edit_onclick = function(event)
   {
     if( this.editor )
@@ -961,11 +999,6 @@ window.event_handlers.mouseover['spotlight-node'] = function(event, target)
 {
   this.broker.dispatch_action("dom", "spotlight-node", event, target);
 }
-
-window.event_handlers.click['dom-inspection-export'] = function(event, target)
-{
-  this.broker.dispatch_action("dom", "export-markup", event, target);
-};
 
 window.event_handlers.click['dom-inspection-snapshot'] = function(event, target)
 {

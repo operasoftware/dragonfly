@@ -1,4 +1,17 @@
 message <span class="message">SetReloadPolicyArg</span>
 {
-  required <span class="number">ReloadPolicy</span> policy = 1; 
+  required ReloadPolicy policy = 1;
+  {
+    <span class="comment">/**
+      * Do not interfere with caching policy. This means there might
+      * be no OnRequest-events from a certain URL-load if the resource
+      * is cached.
+      */</span>
+    <span class="enum">DEFAULT</span> = 1;
+    <span class="comment">/**
+      * Load resources in full from the server, even if the resource is
+      * unchanged and could be fetched from cache.
+      */</span>
+    <span class="enum">NO_CACHE</span> = 2;
+  }
 }

@@ -280,6 +280,11 @@
                  script.filename || script.uri,
                  "data-tooltip", is_linked && "js-script-select",
                  "data-tooltip-text", is_linked && script.uri]];
+      if (is_linked && script.uri)
+      {
+        ret.push("data-copy", script.uri,
+                 "data-copy-label", ui_strings.M_CONTEXTMENU_COPY_URL)
+      }
 
       if (script.search)
         ret.push(["span", script.search, "class", "js-dd-scr-query"]);

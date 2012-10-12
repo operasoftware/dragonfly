@@ -1,42 +1,41 @@
 message <span class="message">Session</span>
 {
-  message <span class="message">Timeline</span>
+  <span class="comment">/**
+    * Non-zero ID for the `Session`. This must be used when accessing `Events`
+    * from a `Timeline` within the `Session`, and when releasing the
+    * `Session`.
+    */</span>
+  required <span class="number">uint32</span> sessionID = 1;
+  <span class="comment">/**
+    * The ID of the window associated with a `Session`.
+    * 
+    * This field may not be present if the `Session` is not associated with a
+    * window. (Currently not applicable, but field is made optional for
+    * future compatibility).
+    */</span>
+  optional <span class="number">uint32</span> windowID = 2;
+  <span class="comment">/**
+    * `Timelines` contained within the `Session`. This will typically contain
+    * one `Timeline` for each frame that existed in the window at some point
+    * during profiling.
+    */</span>
+  repeated Timeline timelineList = 3;
   {
-    <span class="comment">/** 
-     * Non-zero ID for the `Timeline`. This must be used when accessing `Events`
-     * from the `Timeline`.
-     */</span>
-    required <span class="number">uint32</span> timelineID = 1; 
-    <span class="comment">/** 
-     * If the `Timeline` is associated with a frame, the ID of the frame will be
-     * stored here. If the frame was removed during profiling, it will not be
-     * possible to access additional information about the frame from
-     * 'DocumentManager'.
-     * 
-     * Also, this field may not be present if the `Timeline` is not associated
-     * with a frame. (Currently not applicable, but field is made optional for
-     * future compatibility).
-     */</span>
-    optional <span class="number">uint32</span> frameID    = 2; 
+    <span class="comment">/**
+      * Non-zero ID for the `Timeline`. This must be used when accessing `Events`
+      * from the `Timeline`.
+      */</span>
+    required <span class="number">uint32</span> timelineID = 1;
+    <span class="comment">/**
+      * If the `Timeline` is associated with a frame, the ID of the frame will be
+      * stored here. If the frame was removed during profiling, it will not be
+      * possible to access additional information about the frame from
+      * 'DocumentManager'.
+      * 
+      * Also, this field may not be present if the `Timeline` is not associated
+      * with a frame. (Currently not applicable, but field is made optional for
+      * future compatibility).
+      */</span>
+    optional <span class="number">uint32</span> frameID = 2;
   }
-  <span class="comment">/** 
-   * Non-zero ID for the `Session`. This must be used when accessing `Events`
-   * from a `Timeline` within the `Session`, and when releasing the
-   * `Session`.
-   */</span>
-  required <span class="number">uint32  </span> sessionID    = 1; 
-  <span class="comment">/** 
-   * The ID of the window associated with a `Session`.
-   * 
-   * This field may not be present if the `Session` is not associated with a
-   * window. (Currently not applicable, but field is made optional for
-   * future compatibility).
-   */</span>
-  optional <span class="number">uint32  </span> windowID     = 2; 
-  <span class="comment">/** 
-   * `Timelines` contained within the `Session`. This will typically contain
-   * one `Timeline` for each frame that existed in the window at some point
-   * during profiling.
-   */</span>
-  repeated <span class="message">Timeline</span> timelineList = 3; 
 }

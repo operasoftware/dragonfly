@@ -36,6 +36,8 @@
     */
   this.onclick = function(event){};
 
+  this.get_selection_string = function() {};
+
   this.handle = function(action_id, event, target)
   {
     if (action_id in this._handlers)

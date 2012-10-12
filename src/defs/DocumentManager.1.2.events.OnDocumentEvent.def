@@ -1,23 +1,44 @@
-<span class="comment">/** 
- * Fired for specific events happening during document load.
- * 
- * @since 1.2
- */</span>
 message <span class="message">DocumentEvent</span>
 {
-  required <span class="number">uint32           </span> windowID   = 1; 
-  required <span class="number">uint32           </span> frameID    = 2; 
-  required <span class="number">uint32           </span> documentID = 3; 
-  <span class="comment">/** 
-   * The resource that was used to generate this document.
-   */</span>
-  required <span class="number">uint32           </span> resourceID = 4; 
-  <span class="comment">/** 
-   * The type of event that is being reported.
-   */</span>
-  required <span class="number">DocumentEventType</span> eventType  = 5; 
-  <span class="comment">/** 
-   * Milliseconds since Unix epoch.
-   */</span>
-  required <span class="number">double           </span> time       = 6; 
+  required <span class="number">uint32</span> windowID = 1;
+  required <span class="number">uint32</span> frameID = 2;
+  required <span class="number">uint32</span> documentID = 3;
+  <span class="comment">/**
+    * The resource that was used to generate this document.
+    */</span>
+  required <span class="number">uint32</span> resourceID = 4;
+  <span class="comment">/**
+    * The type of event that is being reported.
+    */</span>
+  required DocumentEventType eventType = 5;
+  {
+    <span class="comment">/**
+      * The notification immediately before DOMContentLoaded event is handled.
+      */</span>
+    <span class="enum">DOMCONTENTLOADED_START</span> = 0;
+    <span class="comment">/**
+      * The notification immediately after DOMContentLoaded event is handled.
+      */</span>
+    <span class="enum">DOMCONTENTLOADED_END</span> = 1;
+    <span class="comment">/**
+      * The notification immediately before load event is handled.
+      */</span>
+    <span class="enum">LOAD_START</span> = 2;
+    <span class="comment">/**
+      * The notification immediately after load event is handled.
+      */</span>
+    <span class="enum">LOAD_END</span> = 3;
+    <span class="comment">/**
+      * The notification immediately before unload event is handled.
+      */</span>
+    <span class="enum">UNLOAD_START</span> = 4;
+    <span class="comment">/**
+      * The notification immediately after unload event is handled.
+      */</span>
+    <span class="enum">UNLOAD_END</span> = 5;
+  }
+  <span class="comment">/**
+    * Milliseconds since Unix epoch.
+    */</span>
+  required <span class="number">double</span> time = 6;
 }

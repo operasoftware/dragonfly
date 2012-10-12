@@ -6,6 +6,7 @@
  */
 cls.CSSInspectorActions = function(id)
 {
+  ActionHandlerInterface.apply(this);
   this.editor = new Editor(this);
 
   this._es_debugger = window.services['ecmascript-debugger'];

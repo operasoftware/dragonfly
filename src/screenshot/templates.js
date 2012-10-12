@@ -43,7 +43,7 @@
     return (
     ['div',
       ['span',
-            'Show ruler',
+            ui_strings.S_BUTTON_SHOW_RULER,
             'handler', 'screenshot-show-ruler',
             'class', 'ui-button',
             'tabindex', '1'],
