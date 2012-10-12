@@ -38,6 +38,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   var RESOURCE_DETAIL_CONTAINER_CLASSNAME = "resource-detail-container";
   var TEXT = document.TEXT_NODE;
   var ELE = document.ELEMENT_NODE;
+  var HIGHLIGHT_CONTEXT_SIZE = 8;
   this._span = document.createElement("span");
   this._span.textContent = " ";
   this._line_count = 0;
@@ -91,7 +92,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
                 var scroll_position = scroll_top + this._tops[0] - container_top;
                 if (scroll_position <= this._root_ele.parentNode.clientHeight)
-                  scroll_position -= 64;
+                  scroll_position -= HIGHLIGHT_CONTEXT_SIZE * window.defaults["js-source-line-height"];
 
                 this._root_ele.scrollTop = scroll_position;
                 this._line_found = true;
