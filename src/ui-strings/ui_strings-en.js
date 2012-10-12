@@ -15,7 +15,7 @@ window.ui_strings.lang_code = "en";
 /* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
 ui_strings.D_REDO_SEARCH = "The searched document no longer exists.\nRepeat search in the current document?";
 
-/* DESC: Confirm dialog text for asking if the user wants to reload and reformat the scripts now. */
+/* DESC: Confirm dialog text for asking if the user wants to reload to reformat scripts after turning on/off script reformatting ("Pretty-print" in the UI). Alternative is to only have the change apply to scripts loaded afterwards. */
 ui_strings.D_REFORMAT_SCRIPTS = "Reload the page to reformat the scripts now?";
 
 /* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
@@ -570,7 +570,7 @@ ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 /* DESC: Button label to store the color */
 ui_strings.S_BUTTON_STORE_COLOR = "Store color";
 
-/* DESC: Button to switch to network-profiler mode. */
+/* DESC: Button to switch to mode where accuracy of timing information is improved by turning off other services like e.g. JavaScript debugging */
 ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Improve accuracy of timing information";
 
 /* DESC: Button label to take a screenshot */
@@ -1074,7 +1074,7 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
-/* DESC: Button label to enable the default debugger features. */
+/* DESC: Button label to re-enable the default debugger features when they were turned off or profiling purposes */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
 /* DESC: Setting label to select the font face */
@@ -1257,7 +1257,7 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
 
-/* DESC: Label for save nbutton */
+/* DESC: Label for save button */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
 
 /* DESC: Label for selecting an empty preset */
@@ -1272,7 +1272,7 @@ ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 /* DESC: String used when there is a request body we can't show the contents of directly. */
 ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
 
-/* DESC: Name of networks raw-view setting, shows requests and responses parsed as opposed to raw */
+/* DESC: Name of networks raw-view setting that's changed in the toolbar of the network details view. Shows requests parsed as opposed to raw, on by default. The biggest difference is how request bodies are displayed, but also for example a SPDY requests headers won't show in raw mode */
 ui_strings.S_NETWORK_PARSED_VIEW_LABEL = "Show in parsed mode";
 
 /* DESC: Name of entry in Network Log, used in summary at the end */
