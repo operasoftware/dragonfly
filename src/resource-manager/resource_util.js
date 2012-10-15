@@ -180,7 +180,7 @@ cls.ResourceUtil.mime_to_type = function(mime, extension)
   if (mime)
   {
     return this.mime_type_map[mime.contains(";") ?
-                              mime.split(';')[0].trim() :
+                              mime.split(";")[0].trim() :
                               mime];
   }
 }
@@ -207,12 +207,12 @@ cls.ResourceUtil.get_meta_data = function(resourceInfo)
   if (!data)
     return;
 
-  if (resourceInfo.type == 'image')
+  if (resourceInfo.type == "image")
   {
     var i=new Image();
     i.src=data.content.stringData;
     if (i.naturalWidth)
-      return i.naturalWidth + '\u00D7' + i.naturalHeight;
+      return i.naturalWidth + "\u00D7" + i.naturalHeight;
     else
       return ui_strings.S_RESOURCE_VECTOR_GRAPHIC;
   }
@@ -411,7 +411,7 @@ cls.ResourceUtil.sameOrigin = function(reference, url)
   {
     if (reference.host == url.host)
       return true;
-    if (reference.host.match(new RegExp('\\.' + url.host + '$')) != null)
+    if (reference.host.match(new RegExp("\\." + url.host + "$")) != null)
       return true;
   }
 

@@ -49,7 +49,7 @@ cls.ResourceDisplayBroker = function()
   {
     var id = Number(ele.getAttribute("data-resource-id"));
     var url = ele.getAttribute("data-resource-url");
-    var line = ele.getAttribute('data-resource-line-number');
+    var line = ele.getAttribute("data-resource-line-number");
     var rt_id;
 
     if (id)
@@ -57,9 +57,9 @@ cls.ResourceDisplayBroker = function()
     else if (url)
     {
       //  resolve the URL based on that of the runtime if we only have a relative path
-      if (url.indexOf('://') == -1)
+      if (url.indexOf("://") == -1)
       {
-        rt_id = ele.get_attr('parent-node-chain', 'rt-id');
+        rt_id = ele.get_attr("parent-node-chain", "rt-id");
         if (rt_id)
           url = window.helpers.resolveURLS(runtimes.getURI(rt_id), url);
       }

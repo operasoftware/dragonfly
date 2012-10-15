@@ -177,14 +177,14 @@
 .resource-detail-container-empty
 {
   height: 100%;
-  width:100%;
+  width: 100%;
   position: relative;
   overflow: auto;
 }
 .resource-detail-container
 {
   background-image: linear-gradient(180deg, #eee 54px, #e9e9e9 55px);
-  background-size:100% 55px;
+  background-size: 100% 55px;
   background-repeat: repeat-x;
   background-attachment: local;
 }
@@ -337,8 +337,8 @@ h2 .resource-tree-count
   line-height: 16px;
   border-radius: 3px;
   padding: 0px 5px;
-  margin-left:4px;
-  vertical-align:middle;
+  margin-left: 4px;
+  vertical-align: middle;
 }
 
 h2:hover .resource-tree-count

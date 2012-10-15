@@ -15,8 +15,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
 
   //	const
   var THROTTLE_DELAY = 250;
-  var GROUP_ORDER =
-  [
+  var GROUP_ORDER = [
     ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
     ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
     ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
@@ -25,7 +24,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     ui_strings.S_HTTP_LABEL_FILTER_OTHER
   ];
 
-    // "private"
+  // "private"
   this._service = new cls.ResourceManagerService(this, network_logger);
   this._loading = false;
 
@@ -49,7 +48,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
 
     if (ctx)
     {
-      ctx.searchTerm = this.searchTerm||"";
+      ctx.searchTerm = this.searchTerm || "";
       tpl = templates.resource_tree.update(ctx);
     }
     else if (this._loading)
@@ -94,7 +93,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   this.ondestroy = function(container)
   {
     delete this.tpl_JSON;
-  }
+  };
 
   this.create_disabled_view = function(container)
   {
@@ -162,7 +161,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
 
   var text_search = window.views.resource_tree_view.text_search = new TextSearch();
 
-  text_search.add_listener("onbeforesearch",(function(msg)
+  text_search.add_listener("onbeforesearch", (function(msg)
   {
     var view = window.views.resource_tree_view;
     if (view.searchTerm != msg.search_term)
@@ -170,7 +169,6 @@ cls.ResourceTreeView.create_ui_widgets = function()
       view.searchTerm = msg.search_term;
       view.update();
     }
-
   }).bind(text_search));
 
   window.event_handlers.input["resource-tree-text-search"] = function(event, target)

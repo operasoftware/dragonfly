@@ -39,6 +39,8 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   var TEXT = document.TEXT_NODE;
   var ELE = document.ELEMENT_NODE;
   var HIGHLIGHT_CONTEXT_SIZE = 8;
+  var CR = "\r";
+  var LF = "\n";
   this._span = document.createElement("span");
   this._span.textContent = " ";
   this._line_count = 0;
@@ -49,8 +51,6 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this._highlight_line = function(ele)
   {
-    var CR = "\r";
-    var LF = "\n";
     var child = ele.firstChild;
     while (child && !this._line_found)
     {
@@ -165,6 +165,14 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       service.request_resource_data(url, this.show_resource.bind(this), data, resource);
   };
 
+  /*
+   *  the "key" can be either:
+   *  * an instance of cls.ResourceInfo
+   *  * the UID of a cls.ResourceInfo
+   *  * a URL
+   *
+   *  That way it's easier for the other services to get a resource shown regardless of its "form".
+   */
   this.show_resource = function(key, data)
   {
     if (key instanceof cls.ResourceInfo)

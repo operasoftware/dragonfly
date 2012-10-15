@@ -1462,7 +1462,7 @@ ui_strings.S_RESOURCE_NO_DATA_AVAILABLE = "No data available for the resource.";
 ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED = "No resource selected.";
 
 /* DESC: Display the mime type sent by the server and the mime type guessed by Opera/Dragonfly if there was any ambiguity */
-ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE = "%(SENT) treated as %(GUESSED)";
+ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE = "%(SENT)s treated as %(GUESSED)s";
 
 /* DESC: Vector graphic ( used for SVG images. Otherwise we show the intrinsic dimension of the image ) */
 ui_strings.S_RESOURCE_VECTOR_GRAPHIC = "vector graphic";

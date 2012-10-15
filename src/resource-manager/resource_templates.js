@@ -8,7 +8,7 @@ templates.resource_tree =
 	DEPTH_IDENTATION: 18,
 	DISTINGUISHER_MAX_LENGTH: 64,
 
-	_get_short_distinguisher:function(url)
+	_get_short_distinguisher: function(url)
 	{
 		var name = url.filename || url.short_distinguisher || url;
 		if (name.length>this.DISTINGUISHER_MAX_LENGTH)
@@ -16,7 +16,7 @@ templates.resource_tree =
 		return name;
 	},
 
-	_expander_extras:function(context, pivotID, depth)
+	_expander_extras: function(context, pivotID, depth)
 	{
 		var hash = context.collapsed;
 
@@ -110,7 +110,7 @@ templates.resource_tree =
 
 	document:function(context, d)
 	{
-		var documentResources = context.documentResources[d.documentID]||[];
+		var documentResources = context.documentResources[d.documentID] || [];
 		var resources = context.resourceList
 		.filter(function(r){
 			if (context.searchTerm != '' && !r.url.contains(context.searchTerm))
@@ -240,12 +240,12 @@ templates.resource_tree =
 						'data-tooltip-text',r.url
 					],
 					' ',
-					r.sameOrigin?[]:['span',r.host,'class','resource-domain'],
+					r.sameOrigin?[]:['span', r.host, 'class', 'resource-domain'],
 
-					'handler','resource-detail',
-					'data-resource-uid',String(r.uid),
-					'class','resource-tree-resource'
-						+(context.selectedResourceUID==r.uid?' resource-highlight':'')
+					'handler', 'resource-detail',
+					'data-resource-uid', String(r.uid),
+					'class', 'resource-tree-resource'
+						+(context.selectedResourceUID == r.uid ?' resource-highlight' : '')
 				]
 			];
 
@@ -314,12 +314,12 @@ templates.resource_detail =
 	{
 		var info =
 		{
-			'humanUrl':resource.short_distinguisher,
-			'responseCode':resource.responsecode+' '+cls.ResourceUtil.http_status_codes[resource.responsecode],
-			'type':resource.type,
-			'mimeType':resource.data.mimeType,
-			'size':resource.size||resource.data.contentLength||resource.data.content.length,
-			'characterEncoding':resource.encoding||resource.data.characterEncoding
+			'humanUrl': resource.short_distinguisher,
+			'responseCode': resource.responsecode + ' ' + cls.ResourceUtil.http_status_codes[resource.responsecode],
+			'type': resource.type,
+			'mimeType': resource.data.mimeType,
+			'size': resource.size || resource.data.contentLength || resource.data.content.length,
+			'characterEncoding': resource.encoding || resource.data.characterEncoding
 		};
 
 		var isError = resource.responsecode && ![200,304].contains(resource.responsecode);
@@ -339,8 +339,8 @@ templates.resource_detail =
 			['span',
 				(isError?info.responseCode+' - ':'')+
 				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
-				.replace('%(SENT)',info.mimeType)
-				.replace('%(GUESSED)',info.type)
+				.replace('%(SENT)s',info.mimeType)
+				.replace('%(GUESSED)s',info.type)
 				+(info.characterEncoding&&' '+ui_strings.S_RESOURCE_ENCODING.replace('%s',info.characterEncoding)),
 				'class','resource-detail-overview-type'+(isError?' resource-detail-error':'')
 			],
