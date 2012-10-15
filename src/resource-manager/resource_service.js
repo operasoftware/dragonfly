@@ -23,10 +23,8 @@ cls.ResourceManagerService = function(view, network_logger)
     "*": ui_strings.S_HTTP_LABEL_FILTER_OTHER
   };
 
-
   this._view = view;
   this._network_logger = network_logger;
-
 
   this._handle_list_documents = function(status, msg)
   {
@@ -37,7 +35,6 @@ cls.ResourceManagerService = function(view, network_logger)
       d.original_url = d.url;
       d.url = new URI(d.url);
     });
-
 
     this._update({type: "_handle_list_documents"});
   };
@@ -57,21 +54,24 @@ cls.ResourceManagerService = function(view, network_logger)
 
     if (!this._document_resources[document_id].contains(r.uid))
       this._document_resources[document_id].push(r.uid);
-  }
+  };
 
   this._update = function(msg)
   {
     // bounce if _suppress_updates
-    if (this._suppress_updates)
+    if (this._suppress_updates_url)
     {
       if (msg && msg.type == "resource-update")
       {
         // suppress the uid altogether if its URL matches the one we are requesting
-        var r = this._network_logger.get_resources([msg.id]);
-        if (r && r[0] && r[0].url == this._suppress_updates_url)
+        var r = this._network_logger.get_resources([msg.id])[0];
+        if (r && r.url == this._suppress_updates_url)
           this._suppress_uids[msg.id] = true;
+
+        //  skip the update if it is about a suppressed uid
+        if (this._suppress_uids[msg.id])
+          return;
       }
-      return setTimeout(this._update_bound, THROTTLE_DELAY);
     }
 
     // build the context
@@ -124,7 +124,7 @@ cls.ResourceManagerService = function(view, network_logger)
             // set depth, pivotID and sameOrigin
             var p = a[document_id_index[d.parentDocumentID]] || {pivotID:d.windowID, depth:0};
             var id = p.pivotID + "_" + d.documentID;
-            d.depth = p.depth+1;
+            d.depth = p.depth + 1;
             d.pivotID = id;
             d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
 
@@ -133,7 +133,7 @@ cls.ResourceManagerService = function(view, network_logger)
             if (!hash.hasOwnProperty(id))
             {
               hash[id] = d.depth > 1;
-              ctx.groupOrder.forEach(function(g) { hash[id + "_"+ g] = true; });
+              ctx.groupOrder.forEach(function(g) { hash[id + "_" + g] = true; });
             }
           }
 
@@ -194,7 +194,6 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._update_bound = this._update.bind(this);
 
-
   this._on_debug_context_selected_bound = function()
   {
     this._reset();
@@ -215,7 +214,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
       if (event.shiftKey)
       {
-        pivotIDs.push.apply(pivotIDs, Object.keys(hash).filter( function(p) {
+        pivotIDs.push.apply(pivotIDs, Object.keys(hash).filter(function(p) {
           return p.startswith(pivotID + '_');
         }));
       }
@@ -225,7 +224,6 @@ cls.ResourceManagerService = function(view, network_logger)
       this._view.update();
     }
   }.bind(this);
-
 
   this._handle_resource_detail_bound = function(event, target)
   {
@@ -278,7 +276,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
     this.highlight_resource(uid);
     cls.ResourceDetailView.instance.show_resource(uid);
-  }
+  };
 
   this.highlight_next_resource_bound = function()
   {
@@ -292,7 +290,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this._resource_request_update_bound = function(msg)
   {
-    this._suppress_updates = (msg.type == "resource-request-id");
+    delete this._suppress_updates_url;
   }.bind(this);
 
   this._init = function()
@@ -312,7 +310,6 @@ cls.ResourceManagerService = function(view, network_logger)
     messages.add_listener('debug-context-selected', this._on_debug_context_selected_bound);
 
     listener = this._resource_request_update_bound;
-    messages.add_listener('resource-request-id', listener);
     messages.add_listener('resource-request-resource', listener);
     messages.add_listener('resource-request-fallback', listener);
 
@@ -335,7 +332,6 @@ cls.ResourceManagerService = function(view, network_logger)
     this._collapsed_hash = {};
     this._document_resources = {};
 
-    this._suppress_updates = false;
     this._suppress_uids = {};
     this._view.update();
   };
@@ -367,10 +363,9 @@ cls.ResourceManagerService = function(view, network_logger)
 
   this.request_resource_data = function(url, callback, data, resourceInfo)
   {
-    this._suppress_updates = true;
     this._suppress_updates_url = url;
     new cls.ResourceRequest(url, callback, data, resourceInfo);
-  }
+  };
 
   this._init();
 };
@@ -400,7 +395,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
       this._request_create_request();
     else
       this._fallback();
-  }
+  };
 
   this._fallback = function()
   {
@@ -408,7 +403,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
     window.messages.post("resource-request-fallback", {resource_id: this.resource_id});
 
     window.open(this.url);
-  }
+  };
 
   this._request_create_request = function()
   {
@@ -420,7 +415,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
     }
     else
       this._fallback();
-  }
+  };
 
   this._on_request_resource_id = function(status, message)
   {
@@ -430,14 +425,11 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
       var RESOURCE_ID = 0;
       this.resource_id = message[RESOURCE_ID];
 
-        // broadcast that we are working on the resource this.resource_id
-      window.messages.post("resource-request-id", {resource_id: this.resource_id});
-
       this._request_get_resource();
     }
     else
       this._fallback();
-  }
+  };
 
   this._request_get_resource = function()
   {
@@ -451,7 +443,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
 
       var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
       this._resource_manager.requestGetResource(tag, [this.resource_id, [transport_type, DECODE_TRUE, SIZE_LIMIT]]);
-  }
+  };
 
   this._on_request_get_resource = function(status, message)
   {
@@ -484,9 +476,9 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
     }
     else
       this._fallback();
-  }
+  };
 
   this._init(url, callback, data, resourceInfo);
-}
+};
 
 cls.ResourceRequest.prototype = new URIPrototype("url");
