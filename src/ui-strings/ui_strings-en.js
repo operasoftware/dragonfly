@@ -1446,7 +1446,7 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
 
-/* DESC:  Encoding of the resource */
+/* DESC:  Encoding of the resource. When available, we display the encoding ( e.g. UTF-8, ISO-8859-1, ... ) of a resource of a document ( web page ) when the user checks the details about this resource. */
 ui_strings.S_RESOURCE_ENCODING = "encoded in %s";
 
 /* DESC: Formatting the resource */
@@ -1464,7 +1464,7 @@ ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED = "No resource selected.";
 /* DESC: Display the mime type sent by the server and the mime type guessed by Opera/Dragonfly if there was any ambiguity */
 ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE = "%(SENT)s treated as %(GUESSED)s";
 
-/* DESC: Vector graphic ( used for SVG images. Otherwise we show the intrinsic dimension of the image ) */
+/* DESC: Vector graphic. Used to describe vector graphics ( as opposed to bitmap graphics where we show the intrinsic dimension ) when the user checks the detail view of a graphic resource of a document ( web page ). */
 ui_strings.S_RESOURCE_VECTOR_GRAPHIC = "vector graphic";
 
 /* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
