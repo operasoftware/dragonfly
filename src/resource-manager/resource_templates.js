@@ -316,8 +316,8 @@ templates.resource_detail =
 			['span',
 				(isError?info.responseCode+' - ':'')+
 				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
-				.replace('%(SENT)',info.mimeType)
-				.replace('%(GUESSED)',info.type)
+				.replace('%(SENT)s',info.mimeType)
+				.replace('%(GUESSED)s',info.type)
 				+(resource.data.meta?' ('+resource.data.meta+')':''),
 				'class','resource-detail-overview-type'+(isError?' resource-detail-error':'')
 			],
