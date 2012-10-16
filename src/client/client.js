@@ -617,7 +617,7 @@ ui_framework.layouts.resource_rough_layout =
   [
     {
       name: 'resource_tree_panel',
-      min_width: 150,
+      min_width: 172,
       width: 300, tabbar: { id: 'resources_tree', tabs: ['resource_tree_view'], is_hidden: true }
     },
     {
