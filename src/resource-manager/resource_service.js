@@ -36,7 +36,7 @@ cls.ResourceManagerService = function(view, network_logger)
       d.url = new URI(d.url);
     });
 
-    this._update({type: "_handle_list_documents"});
+    this._update();
   };
 
   this._list_documents = function()
@@ -88,13 +88,16 @@ cls.ResourceManagerService = function(view, network_logger)
 
     if (ctx.windowList.length)
     {
-      // get all the (non-suppressed) resources with content
+      // get all the (non-suppressed) resources with content, sorted by uid
       ctx.resourceList = (this._network_logger.get_resources() || [])
         .filter(function(v) {
           return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode != 204;
-        }, this);
+        }, this)
+        .sort(function(a, b) {
+          return a.uid > b.uid ? 1 : a.uid == b.uid ? 0 : -1;
+        });
 
-      ctx.documentResourceHash = {};
+      ctx.document_resource_hash = {};
 
       // mapping of the WindowIDs in the debugging context
       var window_id_index = {};
@@ -116,7 +119,7 @@ cls.ResourceManagerService = function(view, network_logger)
               null_document_id = true;
 
             if (d.resourceID != null)
-              ctx.documentResourceHash[d.resourceID] = d.documentID;
+              ctx.document_resource_hash[d.resourceID] = d.documentID;
 
             // populate document_id_index
             document_id_index[d.documentID] = i;
@@ -152,7 +155,7 @@ cls.ResourceManagerService = function(view, network_logger)
             unknown_document_id = true;
 
           // check if this is the top resource of a document
-          var documentID = ctx.documentResourceHash[r.resource_id];
+          var documentID = ctx.document_resource_hash[r.resource_id];
           if (documentID != null && documentID != r.document_id)
             r.document_id = documentID;
 

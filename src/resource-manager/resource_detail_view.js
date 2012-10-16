@@ -118,7 +118,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._tops = [];
     var _ele = container.querySelector("." + HIGHLIGHTED_LINE_CLASSNAME);
     if (_ele)
-      _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME)
+      _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME);
   }
 
   this.go_to_line = function(container, data)
@@ -129,7 +129,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._root_ele = container.querySelector("." + RESOURCE_DETAIL_CONTAINER_CLASSNAME);
     if (this._root_ele)
     {
-      this.clear_line_highlight(this._root_ele)
+      this.clear_line_highlight(this._root_ele);
       this._target_line = Number(data.lines[0]);
       this._highlight_line(this._root_ele);
     }
@@ -199,7 +199,7 @@ cls.ResourceDetailView.create_ui_widgets = function()
 {
   new ToolbarConfig(
   {
-    view:"resource_detail_view",
+    view: "resource_detail_view",
     groups:
     [
       {
@@ -224,23 +224,16 @@ cls.ResourceDetailView.create_ui_widgets = function()
     text_search.searchDelayed(target.value);
   };
 
-  ActionBroker.
-    get_instance().
-    get_global_handler().
-      register_shortcut_listener
-      (
-        "resource-text-search",
-        cls.Helpers.shortcut_search_cb.bind(text_search)
-      );
+  ActionBroker.get_instance().get_global_handler().register_shortcut_listener(
+    "resource-text-search",
+    cls.Helpers.shortcut_search_cb.bind(text_search)
+  );
 
   var on_view_created = function(msg)
   {
     if (msg.id === "resource_detail_view")
     {
-      var scroll_container = msg.container.querySelector(".request-details");
-      if (!scroll_container)
-        scroll_container = msg.container.querySelector(".resource-detail-container");
-
+      var scroll_container = msg.container.querySelector(".resource-detail-container");
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);
@@ -249,13 +242,13 @@ cls.ResourceDetailView.create_ui_widgets = function()
         );
       }
     }
-  }
+  };
 
   var on_view_destroyed = function(msg)
   {
     if (msg.id == "resource_detail_view")
       text_search.cleanup();
-  }
+  };
 
   window.messages.add_listener("view-created", on_view_created);
   window.messages.add_listener("view-destroyed", on_view_destroyed);

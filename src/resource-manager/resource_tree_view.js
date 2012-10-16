@@ -140,7 +140,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
 {
   new ToolbarConfig(
   {
-    view:"resource_tree_view",
+    view: "resource_tree_view",
     groups:
     [
       {
@@ -176,14 +176,10 @@ cls.ResourceTreeView.create_ui_widgets = function()
     text_search.searchDelayed(target.value);
   };
 
-  ActionBroker.
-    get_instance().
-    get_global_handler().
-      register_shortcut_listener
-      (
-        "resource-tree-text-search",
-        cls.Helpers.shortcut_search_cb.bind(text_search)
-      );
+  ActionBroker.get_instance().get_global_handler().register_shortcut_listener(
+    "resource-tree-text-search",
+    cls.Helpers.shortcut_search_cb.bind(text_search)
+  );
 
   var on_view_created = function(msg)
   {
@@ -199,13 +195,13 @@ cls.ResourceTreeView.create_ui_widgets = function()
         );
       }
     }
-  }
+  };
 
   var on_view_destroyed = function(msg)
   {
     if (msg.id == "resource_tree_view")
       text_search.cleanup();
-  }
+  };
 
   window.messages.add_listener("view-created", on_view_created);
   window.messages.add_listener("view-destroyed", on_view_destroyed);
