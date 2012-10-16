@@ -209,8 +209,8 @@ cls.ResourceUtil.get_meta_data = function(resourceInfo)
 
   if (resourceInfo.type == "image")
   {
-    var i=new Image();
-    i.src=data.content.stringData;
+    var i = new Image();
+    i.src = data.content.stringData;
     if (i.naturalWidth)
       return i.naturalWidth + "\u00D7" + i.naturalHeight;
     else

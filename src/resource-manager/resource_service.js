@@ -68,7 +68,7 @@ cls.ResourceManagerService = function(view, network_logger)
         if (r && r.url == this._suppress_updates_url)
           this._suppress_uids[msg.id] = true;
 
-        //  skip the update if it is about a suppressed uid
+        // skip the update if it is about a suppressed uid
         if (this._suppress_uids[msg.id])
           return;
       }
@@ -78,24 +78,19 @@ cls.ResourceManagerService = function(view, network_logger)
     var ctx = {};
 
     // get the order of the groups of resources
-    ctx.groupOrder = this._view.get_group_order();
+    ctx.group_order = this._view.get_group_order();
 
     // get list of window_contexts for which we saw the main_document
-    ctx.windowList = (this._network_logger.get_window_contexts() || [])
-      .filter(function(w) {
-        return w.saw_main_document;
-      });
+    ctx.windowList = (this._network_logger.get_window_contexts() || []).filter(function(w) {
+      return w.saw_main_document;
+    });
 
     if (ctx.windowList.length)
     {
-      // get all the (non-suppressed) resources with content, sorted by uid
-      ctx.resourceList = (this._network_logger.get_resources() || [])
-        .filter(function(v) {
-          return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode != 204;
-        }, this)
-        .sort(function(a, b) {
-          return a.uid > b.uid ? 1 : a.uid == b.uid ? 0 : -1;
-        });
+      // get all the (non-suppressed) resources with content
+      ctx.resourceList = (this._network_logger.get_resources() || []).filter(function(v) {
+        return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode != 204;
+      }, this);
 
       ctx.document_resource_hash = {};
 
@@ -110,39 +105,38 @@ cls.ResourceManagerService = function(view, network_logger)
       // set null_document_id flag,
       // augment the document objects,
       // set the default collapsed flags
-      ctx.documentList  = this._document_list
-        .filter(function(d, i, a) {
-          var inContext = window_id_index.hasOwnProperty(d.windowID);
+      ctx.documentList = this._document_list.filter(function(d, i, a) {
+        var inContext = window_id_index.hasOwnProperty(d.windowID);
 
-          if (inContext)
+        if (inContext)
+        {
+          if (!null_document_id && !d.documentID)
+            null_document_id = true;
+
+          if (d.resourceID != null)
+            ctx.document_resource_hash[d.resourceID] = d.documentID;
+
+          // populate document_id_index
+          document_id_index[d.documentID] = i;
+
+          // set depth, pivotID and sameOrigin
+          var p = a[document_id_index[d.parentDocumentID]] || {pivotID:d.windowID, depth:0};
+          var id = p.pivotID + "_" + d.documentID;
+          d.depth = p.depth + 1;
+          d.pivotID = id;
+          d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
+
+          // set the default collapsed flag
+          var hash = this._collapsed_hash;
+          if (!hash.hasOwnProperty(id))
           {
-            if (!null_document_id && !d.documentID)
-              null_document_id = true;
-
-            if (d.resourceID != null)
-              ctx.document_resource_hash[d.resourceID] = d.documentID;
-
-            // populate document_id_index
-            document_id_index[d.documentID] = i;
-
-            // set depth, pivotID and sameOrigin
-            var p = a[document_id_index[d.parentDocumentID]] || {pivotID:d.windowID, depth:0};
-            var id = p.pivotID + "_" + d.documentID;
-            d.depth = p.depth + 1;
-            d.pivotID = id;
-            d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
-
-            // set the default collapsed flag
-            var hash = this._collapsed_hash;
-            if (!hash.hasOwnProperty(id))
-            {
-              hash[id] = d.depth > 1;
-              ctx.groupOrder.forEach(function(g) { hash[id + "_" + g] = true; });
-            }
+            hash[id] = d.depth > 1;
+            ctx.group_order.forEach(function(g) { hash[id + "_" + g] = true; });
           }
+        }
 
-          return inContext;
-        }, this);
+        return inContext;
+      }, this);
 
       var unknown_document_id = false;
 
@@ -150,31 +144,37 @@ cls.ResourceManagerService = function(view, network_logger)
       // assign top resource to the right document,
       // add group to each resource,
       // sameOrigin flag to each resource
-      ctx.resourceList
-        .forEach(function(r) {
-          if (!unknown_document_id && !document_id_index.hasOwnProperty(r.document_id))
-            unknown_document_id = true;
+      // full_id ( pivot_ID + uid )
+      ctx.resourceList.forEach(function(r) {
+        if (!unknown_document_id && !document_id_index.hasOwnProperty(r.document_id))
+          unknown_document_id = true;
 
-          // check if this is the top resource of a document
-          var documentID = ctx.document_resource_hash[r.resource_id];
-          if (documentID != null && documentID != r.document_id)
-            r.document_id = documentID;
+        // check if this is the top resource of a document
+        var documentID = ctx.document_resource_hash[r.resource_id];
+        if (documentID != null && documentID != r.document_id)
+          r.document_id = documentID;
 
-          this._populate_document_resources(r);
+        this._populate_document_resources(r);
 
-          r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
-          var d = this._document_list[document_id_index[r.document_id]];
-          r.sameOrigin = cls.ResourceUtil.sameOrigin(d && d.url, r);
-        }, this);
+        r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
+        var d = this._document_list[document_id_index[r.document_id]];
+        r.sameOrigin = cls.ResourceUtil.sameOrigin(d && d.url, r);
+        r.full_id = ( d && d.pivotID ) + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
+
+      }, this);
+
+      // sort the resource by their full_id ( pivot + uid )
+      ctx.resourceList = ctx.resourceList.sort(function(a, b) {
+        return a.full_uid > b.full_uid ? 1 : a.full_uid == b.full_uid ? 0 : -1;
+      });
 
       // filter the list of window. Purge the ones with no documents
-      ctx.windowList = ctx.windowList
-      .filter(function(v) {
-        return ctx.documentList
-          .some(function(w) {
-            return v.id == w.windowID;
-          });
+      ctx.windowList = ctx.windowList.filter(function(v) {
+        return ctx.documentList.some(function(w) {
+          return v.id == w.windowID;
         });
+      });
+
 
       // request the list of documents if we have
       // an empty documentList
@@ -448,7 +448,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     if (status == SUCCESS && this._retries < MAX_RETRIES)
     {
-      var resourceData = new  cls.ResourceManager["1.2"].ResourceData(message);
+      var resourceData = new cls.ResourceManager["1.2"].ResourceData(message);
       if (resourceData.content)
       {
         // content -> mock a cls.NetworkLoggerEntry and instanciate a cls.ResourceInfo
