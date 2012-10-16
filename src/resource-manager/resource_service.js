@@ -105,6 +105,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
       var null_document_id = false;
       var document_id_index = {};
+
       // filter the documentId that belong in the windowIdList,
       // set null_document_id flag,
       // augment the document objects,
@@ -161,7 +162,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
           this._populate_document_resources(r);
 
-          r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING['*'];
+          r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
           var d = this._document_list[document_id_index[r.document_id]];
           r.sameOrigin = cls.ResourceUtil.sameOrigin(d && d.url, r);
         }, this);
@@ -207,18 +208,18 @@ cls.ResourceManagerService = function(view, network_logger)
     if (!this._context)
       return;
 
-    var pivot = target.get_ancestor('[data-expand-collapse-id]');
+    var pivot = target.get_ancestor("[data-expand-collapse-id]");
     if (pivot)
     {
       var hash = this._collapsed_hash;
-      var pivotID = pivot.getAttribute('data-expand-collapse-id');
+      var pivotID = pivot.getAttribute("data-expand-collapse-id");
       var pivotIDs = [pivotID];
       var collapsed = !hash[pivotID];
 
       if (event.shiftKey)
       {
         pivotIDs.push.apply(pivotIDs, Object.keys(hash).filter(function(p) {
-          return p.startswith(pivotID + '_');
+          return p.startswith(pivotID + "_");
         }));
       }
 
@@ -233,11 +234,11 @@ cls.ResourceManagerService = function(view, network_logger)
     if (!this._context)
       return;
 
-    var parent = target.get_ancestor('[data-resource-uid]');
-    if (!parent)
+    var parent = target.get_ancestor("[data-resource-uid]");
+    if (parent == null)
       return;
 
-    var uid = parent.getAttribute('data-resource-uid');
+    var uid = parent.getAttribute("data-resource-uid");
     this.highlight_resource(uid);
     cls.ResourceDetailView.instance.show_resource(uid);
   }.bind(this);
@@ -248,20 +249,17 @@ cls.ResourceManagerService = function(view, network_logger)
     if (this._selected_resource_uid == uid)
       return;
 
-    if (this._selected_resource_uid)
-    {
-      e = document.querySelector('[data-resource-uid="' + this._selected_resource_uid + '"]');
-      if (e)
-        e.classList.remove('resource-highlight');
-    }
+    e = document.querySelector(".resource-highlight");
+    if (e)
+      e.removeClass("resource-highlight");
 
     this._selected_resource_uid = uid;
     if (this._context)
       this._context.selectedResourceUID = uid;
 
-    e = document.querySelector('[data-resource-uid="' + this._selected_resource_uid + '"]');
+    e = document.querySelector("[data-resource-uid='" + this._selected_resource_uid + "']");
     if (e)
-      e.classList.add('resource-highlight');
+      e.addClass("resource-highlight");
   }.bind(this);
 
   this._highlight_sibling_resource = function(increment)
@@ -275,7 +273,7 @@ cls.ResourceManagerService = function(view, network_logger)
     if (pos == -1)
       uid = list[increment > 0 ? 0 : list.length - 1];
     else
-      uid = list[(list.length + pos + increment) % list.length];
+      uid = list[Math.min( Math.max(0, pos + increment), list.length - 1)];
 
     this.highlight_resource(uid);
     cls.ResourceDetailView.instance.show_resource(uid);
@@ -299,7 +297,7 @@ cls.ResourceManagerService = function(view, network_logger)
   this._init = function()
   {
     var listener;
-    var eh = window.eventHandlers;
+    var eh = window.event_handlers;
     eh.click["resources-expand-collapse"] = this._handle_expand_collapse_bound;
     eh.click["resource-detail"] = this._handle_resource_detail_bound;
 
@@ -310,11 +308,11 @@ cls.ResourceManagerService = function(view, network_logger)
     }
 
     var messages = window.messages;
-    messages.add_listener('debug-context-selected', this._on_debug_context_selected_bound);
+    messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
 
     listener = this._resource_request_update_bound;
-    messages.add_listener('resource-request-resource', listener);
-    messages.add_listener('resource-request-fallback', listener);
+    messages.add_listener("resource-request-resource", listener);
+    messages.add_listener("resource-request-fallback", listener);
 
     listener = this._update_bound;
     this._network_logger.add_listener("resource-update", listener);
@@ -344,24 +342,23 @@ cls.ResourceManagerService = function(view, network_logger)
     return this._context;
   };
 
-  this.get_resource = function(uid)
+  this._get_resource_by_key_value = function(key, value)
   {
     var ctx = this._context;
     if (!ctx)
         return null;
 
-    var resource = ctx.resourceList.filter(function(v) { return v.uid == uid; });
-    return resource && resource.last;
+    return ctx.resourceList.filter(function(v) { return v[key] == value; }).last;
+  };
+
+  this.get_resource = function(uid)
+  {
+    return this._get_resource_by_key_value('uid', uid);
   };
 
   this.get_resource_by_url = function(url)
   {
-    var ctx = this._context;
-    if (!ctx)
-      return null;
-
-    var resource = ctx.resourceList.filter(function(v) { return v.url == url; });
-    return resource && resource.last;
+    return this._get_resource_by_key_value('url', url);
   };
 
   this.request_resource_data = function(url, callback, data, resourceInfo)
@@ -388,13 +385,12 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     this.url = url;
     this.resourceInfo = resourceInfo;
-    this._calback_data = data;
+    this._callback_data = data;
     this._callback = callback;
     this._retries = 0;
 
-    this._tag_manager =  window.tag_manager;
     this._resource_manager = window.services["resource-manager"];
-    if (this._tag_manager && this._resource_manager)
+    if (this._resource_manager)
       this._request_create_request();
     else
       this._fallback();
@@ -413,7 +409,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
     if (this._resource_manager.requestCreateRequest)
     {
       var windowID = window.window_manager_data.get_debug_context();
-      var tag = this._tag_manager.set_callback(this, this._on_request_resource_id);
+      var tag = window.tag_manager.set_callback(this, this._on_request_resource_id);
       this._resource_manager.requestCreateRequest(tag, [windowID, this.url, "GET"]);
     }
     else
@@ -444,16 +440,16 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
         var transport_type = response_type == "datauri" ? TRANSPORT_DATA_URI : TRANSPORT_STRING;
       }
 
-      var tag = this._tag_manager.set_callback(this, this._on_request_get_resource);
+      var tag = window.tag_manager.set_callback(this, this._on_request_get_resource);
       this._resource_manager.requestGetResource(tag, [this.resource_id, [transport_type, DECODE_TRUE, SIZE_LIMIT]]);
   };
 
   this._on_request_get_resource = function(status, message)
   {
-    if (status == SUCCESS)
+    if (status == SUCCESS && this._retries < MAX_RETRIES)
     {
       var resourceData = new  cls.ResourceManager["1.2"].ResourceData(message);
-      if (this._retries == MAX_RETRIES || resourceData.content)
+      if (resourceData.content)
       {
         // content -> mock a cls.NetworkLoggerEntry and instanciate a cls.ResourceInfo
         this.requests_responses = [{responsebody: resourceData}];
@@ -467,7 +463,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
         window.messages.post("resource-request-resource", {resource_id: this.resource_id});
 
         // aaaand callback
-        this._callback(this.resourceInfo, this._calback_data);
+        this._callback(this.resourceInfo, this._callback_data);
       }
       else
       {

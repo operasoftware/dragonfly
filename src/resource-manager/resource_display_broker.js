@@ -48,6 +48,7 @@ cls.ResourceDisplayBroker = function()
         if (rt_id)
           url = window.helpers.resolveURLS(runtimes.getURI(rt_id), url);
       }
+
       id_or_url = url;
     }
 
