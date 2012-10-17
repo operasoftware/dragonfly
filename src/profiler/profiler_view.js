@@ -40,32 +40,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._children = {};
   this._children[TYPE_STYLE_RECALCULATION] = TYPE_CSS_SELECTOR_MATCHING;
 
-  this._tabledefs = {};
-  this._tabledefs[TYPE_CSS_SELECTOR_MATCHING] = {
-    idgetter: function(item) { return item.cssSelectorMatching.selector; },
-    columns: {
-      "selector": {
-        label: ui_strings.S_PROFILER_TYPE_SELECTOR,
-      },
-      "time": {
-        label: ui_strings.S_TABLE_HEADER_TIME,
-        align: "right",
-        renderer: (function(event) {
-          return this._templates.format_time(event.time);
-        }).bind(this),
-        classname: "profiler-details-time"
-      },
-      "hits": {
-        label: ui_strings.S_TABLE_HEADER_HITS,
-        align: "right",
-        renderer: function(event) {
-          return String(event.hits);
-        },
-        classname: "profiler-details-hits"
-      }
-    }
-  };
-
   this._default_types = [
     //TYPE_GENERIC,
     //TYPE_PROCESS,
@@ -92,24 +66,17 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._event_type = null;
     this._timeline_list = null;
     this._aggregated_list = null;
-    this._table = null;
-    this._details_time = 0;
     this._timeline_width = 0;
-  };
-
-  this._reset_details = function()
-  {
-    this._table = null;
-    this._details_time = 0;
   };
 
   this._start_profiler = function()
   {
     this._reset();
     this._zoomer.reset();
+    this._set_zoomer = true;
     this._container.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_PROFILING));
     this._profiler.start_profiler(this._handle_start_profiler_bound);
-    this._overlay.set_window_id(this._profiler.get_window_id());
+    this._overlay_service.set_window_id(this._profiler.get_window_id());
   };
 
   this._handle_start_profiler = function(status, msg)
@@ -168,6 +135,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       {
         if (this._timeline_list && this._timeline_list.interval)
         {
+          // TODO: should really be set according to the visible events
           this._x0 = this._timeline_list.interval.start;
           this._x1 = this._timeline_list.interval.end;
         }
@@ -200,13 +168,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     var timeline_list = this._timeline_list;
     var interval = timeline_list.interval;
-    var event_list = timeline_list.eventList;
-    var aggregated_event_list = this._get_aggregated_event_list(event_list);
-    var width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
-
-    event_list = event_list.filter(function(event) {
+    var event_list = timeline_list.eventList.filter(function(event) {
       return event.time > this._min_event_time;
     }, this);
+    var aggregated_event_list = this._get_aggregated_event_list(event_list);
+    var width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
 
     // TODO: Check if these are already appended
     var frag = document.createDocumentFragment();
@@ -215,24 +181,12 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     frag.appendChild(this._zoomer_ele);
     frag.appendChild(this._timeline_times_ele);
     frag.appendChild(this._timeline_ele);
-    frag.appendChild(this._details_ele);
 
     this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
     this._zoomer_times_ele.clearAndRender(this._templates.timeline_markers(0, interval.end, width));
-    this._zoomer_ele.clearAndRender(this._templates.event_list_full(event_list, interval, width));
-    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(interval.start, interval.end, width));
-    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
-
-    if (this._table && this._table.get_data())
-    {
-      frag.appendChild(this._status_ele);
-      this._details_ele.clearAndRender(this._templates.details(this._table));
-      this._status_ele.clearAndRender(this._templates.status(this._details_time));
-    }
-    else
-    {
-      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
-    }
+    this._zoomer_ele.clearAndRender(this._templates.event_list_full(event_list, interval.end, width));
+    this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(0, interval.end, width));
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, 0, interval.end, width));
 
     container.innerHTML = "";
     container.appendChild(frag);
@@ -241,6 +195,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._zoomer.set_zoomer_element(this._zoomer_ele);
     if (this._set_zoomer)
       this._zoomer.set_current_area();
+
+    // TODO: if _set_zoomer == false, reset()
   };
 
   this.createView = function(container)
@@ -256,10 +212,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._timeline_ele.className = "profiler-timeline";
     this._timeline_times_ele = document.createElement("div");
     this._timeline_times_ele.className = "profiler-timeline-background";
-    this._details_ele = document.createElement("div");
-    this._details_ele.className = "profiler-details-list";
-    this._status_ele = document.createElement("div");
-    this._status_ele.className = "profiler-status";
 
     if (this._timeline_list && this._timeline_list.eventList && this._timeline_list.eventList.length)
     {
@@ -285,13 +237,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._legend_ele = null;
     this._zoomer_ele = null;
     this._timeline_ele = null;
-    this._details_ele = null;
-    this._status_ele = null;
   };
 
   this.onresize = function()
   {
-    // TODO: don't update stuff that doesn't have to be updated, e.g.
+    // TODO: don't update stuff that don't have to be updated, e.g.
     // legend, details, status
     if (this._container)
       this._update_view();
@@ -318,54 +268,36 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   this._show_details_list = function()
   {
     var child_type = this._children[this._event_type];
-    this._status_ele.remove();
     if (child_type)
     {
-      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_CALCULATING));
       var config = {
         session_id: this._current_session_id,
         timeline_id: this._current_timeline_id,
         mode: MODE_REDUCE_UNIQUE_EVENTS,
         event_id: this._event_id,
         event_type_list: [child_type],
-        interval: [this._x0, this._x1] // TODO: take the interval of the parent event?
+        interval: [this._x0, this._x1]
       };
       this._profiler.get_events(this._handle_details_list_bound.bind(null, child_type), config);
     }
     else
     {
-      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
-      this._reset_details();
+      this._overlay.hide();
     }
   };
 
   this._handle_details_list = function(child_type, status, msg)
   {
-    var table_def = this._tabledefs[child_type];
-    this._table = new SortableTable(table_def,
-                                    null,
-                                    table_def.column_order,
-                                    "time",
-                                    null,
-                                    true,
-                                    "profiler");
     var event_list = new cls.Profiler["1.0"].EventList(msg);
     var data = event_list && event_list.eventList;
     if (data.length)
     {
-      this._table.set_data(data);
-      this._details_time = data.reduce(function(prev, curr) {
-        return prev + curr.time;
-      }, 0);
-      this._details_ele.clearAndRender(this._templates.details(this._table));
-      this._status_ele.clearAndRender(this._templates.status(this._details_time));
-      this._container.appendChild(this._details_ele);
-      this._container.appendChild(this._status_ele);
+      this._tooltip.hide();
+      this._overlay.show_data(data, child_type);
     }
     else
     {
-      this._details_ele.clearAndRender(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
-      this._status_ele.remove();
+      this._overlay.hide();
     }
   };
 
@@ -476,7 +408,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
           config.y += area.oy;
         }
 
-        this._overlay.create_overlay(null, config);
+        this._overlay_service.create_overlay(null, config);
       }
     }
   };
@@ -490,7 +422,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (timeline_event)
     {
       if (timeline_event.type === TYPE_PAINT)
-        this._overlay.remove_overlay();
+        this._overlay_service.remove_overlay();
     }
   };
 
@@ -510,7 +442,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._x0 = 0;
     this._x1 = interval.end;
     this._set_zoomer = false;
-    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, interval, this._event_id, width));
+    this._timeline_ele.clearAndRender(this._templates.event_list_all(event_list, 0, interval.end, width));
     this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(0, interval.end, width));
     this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
   };
@@ -555,7 +487,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._x0 = x0;
     this._x1 = x1;
     this._set_zoomer = true;
-    this._timeline_ele.render(this._templates.event_list_all(new_event_list, interval, this._event_id, width, x0, x1));
+    this._timeline_ele.render(this._templates.event_list_all(new_event_list, x0, x1, width));
     this._timeline_times_ele.clearAndRender(this._templates.timeline_markers(x0, x1, width));
     this._legend_ele.clearAndRender(this._templates.legend(aggregated_event_list));
   };
@@ -575,7 +507,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_timeline_ele_width = function()
   {
-    return this._timeline_width;
+    return this._timeline_width - 2; // TODO: constant
   };
 
   this._init = function(id, name, container_class, html, default_handler)
@@ -583,7 +515,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     View.prototype.init.call(this, id, name, container_class, html, default_handler);
     this.required_services = ["profiler"];
     this._profiler = new ProfilerService();
-    this._overlay = new OverlayService();
+    this._overlay_service = new OverlayService();
     this._templates = new ProfilerTemplates();
     this._has_overlay_service = false;
     this._old_session_id = null;
@@ -597,8 +529,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._legend_ele = null;
     this._zoomer_ele = null;
     this._timeline_ele = null;
-    this._details_ele = null;
-    this._status_ele = null;
 
     this._zoomer = new Zoomer({
       reset_to_default_area: this._reset_timeline_area.bind(this),
@@ -611,6 +541,9 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     Tooltips.register("profiler-tooltip-url", true, false);
     this._tooltip = Tooltips.register("profiler-event", true, false);
     this._tooltip.ontooltip = this._ontooltip.bind(this);
+
+    var overlay = new ProfilerOverlayView(id + "_overlay", "scroll");
+    this.register_overlay(overlay);
 
     this._handle_start_profiler_bound = this._handle_start_profiler.bind(this);
     this._handle_stop_profiler_bound = this._handle_stop_profiler.bind(this);
@@ -711,4 +644,89 @@ cls.Profiler["1.0"].Event.prototype =
     return this.cssSelectorMatching ? this.cssSelectorMatching.selector : null;
   }
 };
+
+var ProfilerOverlayView = function(id, container, html, default_handler, service)
+{
+  this._tabledefs = {};
+  this._tabledefs[ProfilerService.EventType.CSS_SELECTOR_MATCHING] = {
+    idgetter: function(item) { return item.cssSelectorMatching.selector; },
+    columns: {
+      "selector": {
+        label: ui_strings.S_PROFILER_TYPE_SELECTOR,
+      },
+      "time": {
+        label: ui_strings.S_TABLE_HEADER_TIME,
+        align: "right",
+        renderer: (function(event) {
+          return this._templates.format_time(event.time);
+        }).bind(this),
+        classname: "profiler-details-time"
+      },
+      "hits": {
+        label: ui_strings.S_TABLE_HEADER_HITS,
+        align: "right",
+        renderer: function(event) {
+          return String(event.hits);
+        },
+        classname: "profiler-details-hits"
+      }
+    }
+  };
+
+  this.createView = function(container)
+  {
+    this._container = container;
+    this._update_view();
+  };
+
+  this._update_view = function(table)
+  {
+    var template = [];
+    if (this._table && this._table.get_data())
+      template.extend(this._templates.details(this._table));
+    else
+      template.extend(this._templates.empty(ui_strings.S_PROFILER_NO_DETAILS));
+    this._container.clearAndRender(template);
+  }
+
+  this.ondestroy = function()
+  {
+  };
+
+  this.show_data = function(data, child_type)
+  {
+    var table_def = this._tabledefs[child_type];
+    this._table = new SortableTable(table_def,
+                                    null,
+                                    table_def.column_order,
+                                    "time",
+                                    null,
+                                    true,
+                                    "profiler");
+    this._table.set_data(data);
+    this._details_time = data.reduce(function(prev, curr) {
+      return prev + curr.time;
+    }, 0);
+
+    if (this.is_active)
+      this._update_view();
+    else
+      this.show();
+  };
+
+  this._init = function(id, container, html, default_handler, service)
+  {
+    this.init(id, container, html, default_handler, service);
+    this._templates = new ProfilerTemplates();
+    this.is_active = false; // TODO: should be set in OverlayView
+    this._container = null;
+    this._details_ele = null;
+    this._status_ele = null;
+    this._table = null;
+  };
+
+  this._init(id, container, html, default_handler, service);
+};
+
+ProfilerOverlayView.prototype = new OverlayView();
 

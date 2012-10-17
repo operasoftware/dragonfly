@@ -83,8 +83,10 @@ var ProfilerTemplates = function()
 
   var style_sheets = document.styleSheets;
   var profiler_event_decl = style_sheets.getDeclaration(".profiler-event");
+  var profiler_event_small_decl = style_sheets.getDeclaration(".profiler-event-small");
   var profiler_timeline_row_decl = style_sheets.getDeclaration(".profiler-timeline-row");
-  var BAR_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
+  var EVENT_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
+  var EVENT_SMALL_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_small_decl.minWidth) : 0;
   var BAR_HEIGHT = profiler_timeline_row_decl
                  ? (parseInt(style_sheets.getDeclaration(".profiler-timeline-row").height) +
                     parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingTop) +
@@ -152,7 +154,7 @@ var ProfilerTemplates = function()
     var MIN_MARKER_GAP = 80;
     var MIN_MARKERS = 2;
     var duration = Math.max(interval_end - interval_start, MIN_DURATION);
-    var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
+    var ms_unit = (container_width - EVENT_MIN_WIDTH) / duration;
     var cell_amount = Math.max(MIN_MARKERS, Math.round(container_width / MIN_MARKER_GAP));
     var marker_time = duration / cell_amount;
     var fractions = marker_time < 10 ? 1 : 0;
@@ -186,32 +188,28 @@ var ProfilerTemplates = function()
     return template;
   };
 
-  this.event_list_full = function(event_list, interval, container_width)
+  this.event_list_full = function(event_list, interval_end, container_width)
   {
     var template = [];
     if (event_list)
     {
-      var interval_start = 0;
-      var interval_end = interval.end;
-      var duration = Math.max(interval_end - interval_start, MIN_DURATION);
-      var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
+      var duration = Math.max(interval_end, MIN_DURATION);
+      var ms_unit = (container_width - EVENT_SMALL_MIN_WIDTH) / duration;
 
-      template.extend(event_list.map(this._full_timeline_event.bind(this, interval_start, ms_unit)));
+      template.extend(event_list.map(this._full_timeline_event.bind(this, 0, ms_unit)));
     }
     return template;
   };
 
-  this.event_list_all = function(event_list, interval, selected_id, container_width, start, end)
+  this.event_list_all = function(event_list, interval_start, interval_end, container_width)
   {
     var template = [];
     if (event_list)
     {
-      var interval_start = start || 0;
-      var interval_end = end || interval.end;
       var duration = Math.max(interval_end - interval_start, MIN_DURATION);
-      var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
+      var ms_unit = (container_width - EVENT_MIN_WIDTH) / duration;
 
-      template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit, selected_id)));
+      template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit)));
     }
     return template;
   };
@@ -232,8 +230,7 @@ var ProfilerTemplates = function()
     );
   };
 
-  // NOTE: the container_width is only needed for a workaround of a CORE bug
-  this._timeline_event = function(interval_start, ms_unit, selected_id, event)
+  this._timeline_event = function(interval_start, ms_unit, event)
   {
     var duration = Math.max(event.interval.end - event.interval.start, MIN_DURATION);
     var self_time_amount = duration
@@ -264,7 +261,6 @@ var ProfilerTemplates = function()
          ),
        "id", "profiler-event-" + event.eventID,
        "class", "profiler-event event-type-" + event.type +
-                (event.eventID == selected_id && is_expandable ? " selected" : "") +
                 (is_expandable ? " expandable" : " non-expandable"),
        "data-event-id", String(event.eventID),
        "data-event-type", String(event.type),
@@ -338,7 +334,7 @@ var ProfilerTemplates = function()
                  "class", "profiler-event-tooltip-label"
                 ],
                 this.format_time(event.interval.start) +
-                " (relative: " + this.format_time(event.interval.start - range_start) + ")"
+                " (rel: " + this.format_time(event.interval.start - range_start) + ")"
              ],
              ["li",
                 ["span",

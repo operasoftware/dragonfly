@@ -275,6 +275,7 @@ var ZoomerPrototype = function()
       var diff = mouse_x - this._to_right_x(this._overlay_right) - mouse_to_handle_diff;
       this.set_overlay_position(static_pos, this._to_right_x(this._overlay_right) + diff);
     }
+    this._request_update();
   };
 
   this.handle_ele_onkeydown = function(event)
@@ -397,7 +398,8 @@ var ZoomerPrototype = function()
       this._zoomer_ele.appendChild(this._overlay_ele);
     var ms_unit = this._model.get_model_element_width() / this._model.get_duration();
     var area = this._model.get_current_area();
-    this.set_overlay_position(Math.floor(area.x0 * ms_unit), Math.ceil(area.x1 * ms_unit), true);
+    this.set_overlay_position(Math.floor(area.x0 * ms_unit), Math.ceil(area.x1 * ms_unit));
+    this._update_overlay_position();
     this._model.set_area(area.x0, area.x1);
     this._finalize();
   };
@@ -429,12 +431,13 @@ var ZoomerPrototype = function()
     var left = this._overlay_left + left_diff;
     var right = this._overlay_right - right_diff;
     this.set_overlay_position(left, this._to_right_x(right));
+    this._request_update();
   };
 
   /**
    *
    */
-  this.set_overlay_position = function(left, right, immediate)
+  this.set_overlay_position = function(left, right)
   {
     if (left == null)
       left = 0;
@@ -442,10 +445,6 @@ var ZoomerPrototype = function()
       right = 0;
     this._overlay_left = Math.max(0, Math.min(left, right));
     this._overlay_right = Math.max(0, this._to_right_x(Math.max(left, right)));
-    if (!immediate)
-      this._request_update();
-    else
-      this._update();
   };
 
   /**
