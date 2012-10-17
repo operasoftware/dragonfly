@@ -123,14 +123,14 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this.go_to_line = function(container, data)
   {
-    if (!data || !data.lines || !data.lines.length)
+    if (!data || data.line == null)
       return;
 
     this._root_ele = container.querySelector("." + RESOURCE_DETAIL_CONTAINER_CLASSNAME);
     if (this._root_ele)
     {
       this.clear_line_highlight(this._root_ele);
-      this._target_line = Number(data.lines[0]);
+      this._target_line = data.line;
       this._highlight_line(this._root_ele);
     }
   };
@@ -161,7 +161,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
     var url = resource ? resource.url : key;
 
-    if (!this._show_resource(resource, data))
+    if (!resource || !this._show_resource(resource, data))
       service.request_resource_data(url, this.show_resource.bind(this), data, resource);
   };
 
