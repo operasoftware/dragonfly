@@ -9,18 +9,13 @@ cls.ResourceDisplayBroker = function()
 
   cls.ResourceDisplayBroker.instance = this;
 
-  this._show_resource = function(id_or_url, line)
+  this._show_resource = function(id_or_url, data)
   {
-    var data = {};
     var manager = window.services["resource-manager"];
     var view = window.views.resource_detail_view;
     if (manager && view)
     {
-      if (line)
-        data.lines = [line];
-
       view.show_resource(id_or_url, data);
-
       return true;
     }
     return false;
@@ -37,22 +32,26 @@ cls.ResourceDisplayBroker = function()
     var url = ele.getAttribute("data-resource-url");
     var line = ele.getAttribute("data-resource-line-number");
     var id_or_url = id;
-    var rt_id;
+    var runtime;
+    var data = {};
+
+    runtime = runtimes.getRuntime(ele.get_attr("parent-node-chain", "rt-id"));
+    if (runtime)
+      data.window_id = runtime.window_id;
 
     if (url)
     {
       // resolve the URL based on that of the runtime if we only have a relative path
-      if (url.indexOf("://") == -1)
-      {
-        rt_id = ele.get_attr("parent-node-chain", "rt-id");
-        if (rt_id)
-          url = window.helpers.resolveURLS(runtimes.getURI(rt_id), url);
-      }
+      if (runtime && url.contains("://"))
+        url = window.helpers.resolveURLS(runtime.uri, url);
 
       id_or_url = url;
     }
 
-    if (!this._show_resource(id_or_url, line) && url)
+    if(line)
+      data.line = Number(line);
+
+    if (!this._show_resource(id_or_url, data) && url)
       window.open(url);
   };
 

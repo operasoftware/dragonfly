@@ -385,7 +385,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     this.url = url;
     this.resourceInfo = resourceInfo;
-    this._callback_data = data;
+    this._data = data;
     this._callback = callback;
     this._retries = 0;
 
@@ -408,7 +408,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     if (this._resource_manager.requestCreateRequest)
     {
-      var windowID = window.window_manager_data.get_debug_context();
+      var windowID = this._data.window_id || window.window_manager_data.get_debug_context();
       var tag = window.tag_manager.set_callback(this, this._on_request_resource_id);
       this._resource_manager.requestCreateRequest(tag, [windowID, this.url, "GET"]);
     }
@@ -463,7 +463,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
         window.messages.post("resource-request-resource", {resource_id: this.resource_id});
 
         // aaaand callback
-        this._callback(this.resourceInfo, this._callback_data);
+        this._callback(this.resourceInfo, this._data);
       }
       else
       {
