@@ -6,13 +6,8 @@ window.cls || (window.cls = {});
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceTreeView = function(id, name, container_class, html, default_handler, network_logger) {
-  if (cls.ResourceTreeView.instance)
-  {
-    return cls.ResourceTreeView.instance;
-  }
-  cls.ResourceTreeView.instance = this;
-
+cls.ResourceTreeView = function(id, name, container_class, html, default_handler, resource_inspector)
+{
   //	const
   var THROTTLE_DELAY = 250;
   var GROUP_ORDER = [
@@ -25,10 +20,11 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   ];
 
   // "private"
-  this._service = new cls.ResourceManagerService(this, network_logger);
   this._loading = false;
 
   // public
+  this.service = resource_inspector;
+
   this.get_group_order = function()
   {
     return GROUP_ORDER;
@@ -39,8 +35,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
 
   this.createView = function(container)
   {
-    var service = this._service;
-    var ctx = this._service.get_resource_context();
+    var ctx = this.service.get_resource_context();
     var target = container.firstElementChild;
     var scrollTop = target?target.scrollTop:0;
     var scrollLeft = target?target.scrollLeft:0;
@@ -118,22 +113,28 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     this.update();
   }.bind(this);
 
-  var messages = window.messages;
-  messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
+  this._init = function()
+  {
+    this.id = id;
 
-  var doc_service = window.services["document-manager"];
-  doc_service.add_listener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-  doc_service.add_listener("documentloaded", this._on_documentloaded_bound);
+    var messages = window.messages;
+    messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
 
-  ActionHandlerInterface.apply(this);
-  this._handlers = {
-    "select-next-entry": this._service.highlight_next_resource_bound,
-    "select-previous-entry": this._service.highlight_previous_resource_bound
+    var doc_service = window.services["document-manager"];
+    doc_service.add_listener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
+    doc_service.add_listener("documentloaded", this._on_documentloaded_bound);
+
+    ActionHandlerInterface.apply(this);
+    this._handlers = {
+      "select-next-entry": this.service.highlight_next_resource_bound,
+      "select-previous-entry": this.service.highlight_previous_resource_bound
+    };
+    ActionBroker.get_instance().register_handler(this);
+
+    this.init(id, name, container_class, html, default_handler);
   };
-  this.id = id;
-  ActionBroker.get_instance().register_handler(this);
 
-  this.init(id, name, container_class, html, default_handler);
+  this._init(id, name, container_class, html, default_handler);
 };
 
 cls.ResourceTreeView.create_ui_widgets = function()
@@ -183,12 +184,11 @@ cls.ResourceTreeView.create_ui_widgets = function()
 
   var on_view_created = function(msg)
   {
-    if (msg.id === "resource_tree_view")
+    if (msg.id == "resource_tree_view")
     {
-      var scroll_container = msg.container;
-      if (scroll_container)
+      if (msg.container)
       {
-        text_search.setContainer(scroll_container);
+        text_search.setContainer(msg.container);
         text_search.set_query_selector(".resource-tree-resource-label");
         text_search.setFormInput(
           views.resource_tree_view.getToolbarControl(msg.container, "resource-tree-text-search")

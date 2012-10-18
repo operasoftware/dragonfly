@@ -6,17 +6,8 @@ window.cls || (window.cls = {});
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceDetailView = function(id, name, container_class, html, default_handler, network_logger)
+cls.ResourceDetailView = function(id, name, container_class, html, default_handler, resource_inspector)
 {
-  if (cls.ResourceDetailView.instance)
-  {
-    return cls.ResourceDetailView.instance;
-  }
-  cls.ResourceDetailView.instance = this;
-
-  this._service = new cls.ResourceManagerService(this, network_logger);
-
-
   this.createView = function(container)
   {
     if (this.resource && this.resource.data)
@@ -107,7 +98,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
       }
       child = child && child.nextSibling;
     }
-  }
+  };
 
   this.clear_line_highlight = function(container)
   {
@@ -119,7 +110,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     var _ele = container.querySelector("." + HIGHLIGHTED_LINE_CLASSNAME);
     if (_ele)
       _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME);
-  }
+  };
 
   this.go_to_line = function(container, data)
   {
@@ -142,7 +133,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
     this.data = data;
     this.resource = resource;
-    this._service.highlight_resource(resource.uid);
+    this.service.highlight_resource(resource.uid);
     this.update();
 
     return true;
@@ -156,7 +147,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this._show_resource_by_key = function(key, data)
   {
-    var service = this._service;
+    var service = this.service;
     var resource = service.get_resource(key) || service.get_resource_by_url(key);
 
     var url = resource ? resource.url : key;
@@ -189,10 +180,18 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this.update();
   }.bind(this);
 
-  var messages = window.messages;
-  messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
+  this._init = function(id, name, container_class, html, default_handler, resource_inspector)
+  {
+    this.id = id;
+    this.service = resource_inspector;
 
-  this.init(id, name, container_class, html, default_handler);
+    var messages = window.messages;
+    messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
+
+    this.init(id, name, container_class, html, default_handler);
+  };
+
+  this._init(id, name, container_class, html, default_handler, resource_inspector)
 };
 
 cls.ResourceDetailView.create_ui_widgets = function()

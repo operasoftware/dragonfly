@@ -3,17 +3,20 @@
 window.app.builders.ResourceManager["1.0"] = function(service)
 {
   var network_logger = new cls.NetworkLogger();
+  var resource_inspector = new cls.ResourceInspector(network_logger);
+
   new cls.ResourceTreeView("resource_tree_view",
-                           "Tree View",
                            "",
                            "",
                            "",
-                           network_logger);
+                           "",
+                           resource_inspector);
   new cls.ResourceDetailView("resource_detail_view",
-                             "Detail",
                              "",
                              "",
-                             network_logger);
+                             "",
+                             "",
+                             resource_inspector);
   cls.ResourceDetailView.create_ui_widgets();
   cls.ResourceTreeView.create_ui_widgets();
 

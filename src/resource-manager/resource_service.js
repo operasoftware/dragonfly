@@ -5,12 +5,8 @@ window.cls || (window.cls = {});
 /**
  *
  */
-cls.ResourceManagerService = function(view, network_logger)
+cls.ResourceInspector = function(network_logger)
 {
-  if (cls.ResourceManagerService.instance)
-    return cls.ResourceManagerService.instance;
-
-  cls.ResourceManagerService.instance = this;
 
   var THROTTLE_DELAY = 250;
   var TYPE_GROUP_MAPPING =
@@ -23,7 +19,6 @@ cls.ResourceManagerService = function(view, network_logger)
     "*": ui_strings.S_HTTP_LABEL_FILTER_OTHER
   };
 
-  this._view = view;
   this._network_logger = network_logger;
 
   this._handle_list_documents = function(status, msg)
@@ -56,8 +51,19 @@ cls.ResourceManagerService = function(view, network_logger)
       this._document_resources[document_id].push(r.uid);
   };
 
+  this.get_views = function()
+  {
+    if (this.tree_view == null)
+      this.tree_view = window.views.resource_tree_view;
+
+    if (this.detail_view == null)
+      this.detail_view = window.views.resource_detail_view;
+  };
+
   this._update = function(msg)
   {
+    this.get_views();
+
     // bounce if _suppress_updates
     if (this._suppress_updates_url)
     {
@@ -78,7 +84,7 @@ cls.ResourceManagerService = function(view, network_logger)
     var ctx = {};
 
     // get the order of the groups of resources
-    ctx.group_order = this._view.get_group_order();
+    ctx.group_order = this.tree_view.get_group_order();
 
     // get list of window_contexts for which we saw the main_document
     ctx.windowList = (this._network_logger.get_window_contexts() || []).filter(function(w) {
@@ -193,7 +199,7 @@ cls.ResourceManagerService = function(view, network_logger)
       this._context = null;
     }
 
-    this._view.update();
+    this.tree_view.update();
   };
 
   this._update_bound = this._update.bind(this);
@@ -225,7 +231,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
       pivotIDs.forEach(function(p) { hash[p] = collapsed; });
 
-      this._view.update();
+      this.tree_view.update();
     }
   }.bind(this);
 
@@ -240,7 +246,7 @@ cls.ResourceManagerService = function(view, network_logger)
 
     var uid = parent.getAttribute("data-resource-uid");
     this.highlight_resource(uid);
-    cls.ResourceDetailView.instance.show_resource(uid);
+    this.detail_view.show_resource(uid);
   }.bind(this);
 
   this.highlight_resource = function(uid)
@@ -276,7 +282,7 @@ cls.ResourceManagerService = function(view, network_logger)
       uid = list[Math.min( Math.max(0, pos + increment), list.length - 1)];
 
     this.highlight_resource(uid);
-    cls.ResourceDetailView.instance.show_resource(uid);
+      this.detail_view.show_resource(uid);
   };
 
   this.highlight_next_resource_bound = function()
@@ -334,7 +340,6 @@ cls.ResourceManagerService = function(view, network_logger)
     this._document_resources = {};
 
     this._suppress_uids = {};
-    this._view.update();
   };
 
   this.get_resource_context = function()
