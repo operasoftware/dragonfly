@@ -385,7 +385,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     this.url = url;
     this.resourceInfo = resourceInfo;
-    this._data = data;
+    this._data = data||{};
     this._callback = callback;
     this._retries = 0;
 

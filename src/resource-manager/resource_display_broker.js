@@ -32,10 +32,10 @@ cls.ResourceDisplayBroker = function()
     var url = ele.getAttribute("data-resource-url");
     var line = ele.getAttribute("data-resource-line-number");
     var id_or_url = id;
-    var runtime;
+    var runtime = runtimes.getRuntime(ele.get_attr("parent-node-chain", "rt-id"));
     var data = {};
 
-    runtime = runtimes.getRuntime(ele.get_attr("parent-node-chain", "rt-id"));
+    // get the window_id of the runtime so as to send the correct headers in createRequest
     if (runtime)
       data.window_id = runtime.window_id;
 
