@@ -25,21 +25,18 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		var tpl = {};
 
 		tpl.h2 = ["handler", "resources-expand-collapse"];
-		tpl.li =
-		[
-			"data-expand-collapse-id", pivot_id
-		];
+		tpl.li = ["data-expand-collapse-id", pivot_id];
 		tpl.button =
 		[
 			"input",
-			"type","button",
-			"class","button-expand-collapse"+(collapsed ? "-close" : "")
+			"type", "button",
+			"class", "button-expand-collapse" + (collapsed ? "-close" : "")
 		];
 
 		if (depth)
 			tpl.button.push("style", "margin-left:" + depth * DEPTH_IDENTATION + "px;");
 
-		return {collapsed:collapsed, tpl:tpl};
+		return {collapsed: collapsed, tpl: tpl};
 	};
 
 	this.update = function(context)
@@ -52,7 +49,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 		// filter the list of resources, set their is_visible flag and push the ones matching
 		context.resources = [];
-		context.resourceList.forEach(function(r) {
+		context.resource_list.forEach(function(r) {
 			var matches = (context.search_term == "" || r.url.contains(context.search_term));
 			r.is_visible = matches && !context.collapsed[r.pivot_id]
 
@@ -68,13 +65,13 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.windows = function(context)
 	{
-		context.windowList.forEach(this.window.bind(this, context));
+		context.window_list.forEach(this.window.bind(this, context));
 	};
 
 	this.window = function(context, w)
 	{
-		var windowInfo = window.window_manager_data.get_window(w.id);
-		if (!windowInfo)
+		var window_info = window.window_manager_data.get_window(w.id);
+		if (!window_info)
 			return [];
 
 		var extras = this._expander_extras(context, String(w.id));
@@ -84,7 +81,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 				["h2",
 					extras.tpl.button,
 					["span",
-						windowInfo.title,
+						window_info.title,
 						"class","resource-tree-window-label"
 					]
 				].concat(extras.tpl.h2),
@@ -97,18 +94,17 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.documents = function(context, wid, pid)
 	{
-		context.documentList.filter(function(d) {
-				return d.windowID == wid && d.parentDocumentID == pid;
-			}).forEach(
-				this.document.bind(this, context)
-			);
+		context.document_list.forEach(function(d) {
+			if (d.windowID == wid && d.parentDocumentID == pid)
+				this.document(context, d);
+		}, this);
 	};
 
 	this.document = function(context, d)
 	{
-		var documentResources = context.documentResources[d.documentID] || [];
+		var document_resources = context.document_resources[d.documentID] || [];
 		var resources = context.resources.filter(function(r) {
-				return documentResources.contains(r.uid);
+				return document_resources.contains(r.uid);
 			});
 
 		var depth = d.depth;
@@ -196,8 +192,10 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		{
 			var pos_first = r.url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
 			var pos_last = r.url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
+			var preffix = pos_first > 0 ? "…" : "";
+			var suffix = pos_last < r.url.length ? "…" : "";
 
-			partial_URL_match = (pos_first > 0 ? "…" : "") + r.url.substring(pos_first, pos_last) + (pos_last < r.url.length ? "…" : "");
+			partial_URL_match = preffix + r.url.substring(pos_first, pos_last) + suffix;
 		}
 
 		this.flat_list.push(
@@ -214,7 +212,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 					r.sameOrigin ? [] : ["span", r.host, "class", "resource-domain"],
 					"class", "resource-tree-resource"
 				],
-				"class", (context.selectedResourceUID == r.uid ? "resource-highlight" : ""),
+				"class", (context.selected_resource_uid == r.uid ? "resource-highlight" : ""),
 				"handler", "resource-detail",
 				"data-resource-uid", String(r.uid)
 			]
@@ -234,16 +232,16 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		if (!resource.data)
 			return this.no_data_available(resource);
 
-		var specificTemplate = this[resource.type]?resource.type:"text";
+		var specific_template = this[resource.type] ? resource.type : "text";
 
 		return(
 		["div",
-			this.overview(resource),	// overview
-			["div",	// specific template
-				this[specificTemplate](resource, resource.data),
-				"class","resource-detail-"+ specificTemplate +"-container"
+			this.overview(resource),
+			["div",
+				this[specific_template](resource, resource.data),
+				"class", "resource-detail-" + specific_template + "-container"
 			],
-			"class","resource-detail-container"
+			"class", "resource-detail-container"
 		]);
 	};
 
@@ -252,7 +250,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		return(
 		["div",
       ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED,
-      "class","resource-detail-container-empty"
+      "class", "resource-detail-container-empty"
     ]);
 	};
 
@@ -261,7 +259,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		return(
 		["div",
       ui_strings.S_RESOURCE_NO_DATA_AVAILABLE,
-      "class","resource-detail-container-empty"
+      "class", "resource-detail-container-empty"
     ]);
 	};
 
@@ -276,7 +274,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		return(
 		["div",
 			ui_strings.S_RESOURCE_FORMATTING_RESOURCE,
-			"class","resource-detail-container-empty"
+			"class", "resource-detail-container-empty"
     ]);
 	};
 
@@ -304,18 +302,18 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 				"class", "resource-detail-overview-url"
 			],
 			["span",
-				(isError ? info.responseCode + " - " : "")+
+				(isError ? info.responseCode + " - " : "") +
 				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
 				.replace("%(SENT)s", resource.data.mimeType)
-				.replace("%(GUESSED)s", resource.type)
-				+(info.characterEncoding && " " + ui_strings.S_RESOURCE_ENCODING.replace("%s", info.characterEncoding)),
+				.replace("%(GUESSED)s", resource.type) +
+				(info.characterEncoding && " " + ui_strings.S_RESOURCE_ENCODING.replace("%s", info.characterEncoding)),
 				"class", "resource-detail-overview-type" + (isError ? " resource-detail-error" : "")
 			],
 			["span",
-				cls.ResourceUtil.bytes_to_human_readable(info.size)
-				+(resource.data.meta ? " (" + resource.data.meta + ")" : ""),
+				cls.ResourceUtil.bytes_to_human_readable(info.size) +
+				(resource.data.meta ? " (" + resource.data.meta + ")" : ""),
 				"data-tooltip", "js-script-select",
-				"data-tooltip-text", info.size + " bytes",
+				"data-tooltip-text", info.size + " " + ui_strings.S_BYTES_UNIT,
 				"class", "resource-detail-overview-size"
 			],
 			"class", "resource-detail-overview"
@@ -326,9 +324,9 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 	{
 		var data = resource.data.content.stringData;
 		var pos = data.indexOf(",");
-		var base64 = data.lastIndexOf(";base64", pos) != -1;
+		var is_base64 = data.lastIndexOf(";base64", pos) != -1;
 
-		return ["pre", base64?atob(data.slice(pos + 1)) : data.slice(pos + 1)];
+		return ["pre", is_base64 ? atob(data.slice(pos + 1)) : data.slice(pos + 1)];
 	};
 
 	this.markup = function(resource)
@@ -375,16 +373,18 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.font = function(resource)
 	{
-		var styleRule = "@font-face{font-family:\"resource-" + resource.id + "\";src:url(\"" + resource.data.content.stringData + "\");}";
+		var font_face = "@font-face{font-family:\"resource-" + resource.uid + "\";src:url(\"" + resource.data.content.stringData + "\");}";
+		var inline_style = "font-size:64px;font-family:resource-" + resource.uid + ";";
+		var sample_string = "The quick brown fox jumps over the lazy dog 0123456789";
 
 		return(
 		["object",
 			["div",
-				"The quick brown fox jumps over the lazy dog 0123456789",
-				["style", styleRule],
-				"style", "font-family:resource-" + resource.id
+				sample_string,
+				["style", font_face],
+				"style", inline_style,
 			],
-			"data", "data:text/html;base64," + btoa("<!doctype html><style>" + styleRule + "</style><div contenteditable=\"true\" style=\"font-size:64px;margin:0;font-family:resource-" + resource.id + ";\">The quick brown fox jumps over the lazy dog 0123456789"),
+			"data", "data:text/html;base64," + btoa("<!doctype html><style>" + font_face + "</style><div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),
 			"class", "resource-detail-font"
 		]);
 	};
@@ -396,7 +396,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 			["div",
 				"Type not supported"
 			],
-			"type", "resource.mimeType",
+			"type", resource.mimeType,
 			"data", resource.data.content.stringData,
 			"class", "resource-detail-flash"
 		]);
@@ -407,7 +407,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		return (
 		["img",
 			"src", resource.data.content.stringData,
-			"class","resource-detail-image"
+			"class", "resource-detail-image"
 		]);
 	};
 });
