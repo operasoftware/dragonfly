@@ -145,11 +145,6 @@
   width: 250px;
 }
 
-.resource-tree-expand-collapse.close > ul
-{
-  display: none;
-}
-
 .button-expand-collapse,
 .button-expand-collapse-close
 {
@@ -169,8 +164,6 @@
   outline-offset: -2px;
 }
 
-/*.resource-tree-expand-collapse.close .button-expand-collapse*/
-/*.button-expand-collapse.close*/
 .button-expand-collapse-close
 {
   background-position: 1px 1px;
@@ -316,7 +309,6 @@ a.external:hover
   margin: 0;
 }
 
-/* zebra resources */
 .resource-tree-windows
 {
   width: 100%;
@@ -329,7 +321,7 @@ a.external:hover
   background-color: rgba(137, 173, 232, 0.196);
 }
 
-.resource-tree li > h2.resource-highlight
+.resource-highlight
 {
   color: #fff;
   background-color: rgba(55, 115, 211, 0.702);
@@ -362,15 +354,15 @@ h2 .resource-domain
   color: #6e7680;
 }
 
-h2.resource-highlight .resource-tree-count
+.resource-highlight .resource-tree-count
 {
   background-color: #8fb1e6;
 }
 
-h2.resource-highlight .resource-tree-count,
-h2.resource-highlight:hover .resource-tree-count,
-h2.resource-highlight .resource-domain,
-h2.resource-highlight:hover .resource-domain
+.resource-highlight .resource-tree-count,
+.resource-highlight:hover .resource-tree-count,
+.resource-highlight .resource-domain,
+.resource-highlight:hover .resource-domain
 {
   color: #fff;
 }
