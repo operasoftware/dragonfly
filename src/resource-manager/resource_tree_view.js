@@ -43,7 +43,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
 
     if (ctx)
     {
-      ctx.searchTerm = this.searchTerm || "";
+      ctx.search_term = this.search_term || "";
       tpl = templates.resource_tree.update(ctx);
     }
     else if (this._loading)
@@ -165,9 +165,9 @@ cls.ResourceTreeView.create_ui_widgets = function()
   text_search.add_listener("onbeforesearch", (function(msg)
   {
     var view = window.views.resource_tree_view;
-    if (view.searchTerm != msg.search_term)
+    if (view.search_term != msg.search_term)
     {
-      view.searchTerm = msg.search_term;
+      view.search_term = msg.search_term;
       view.update();
     }
   }).bind(text_search));
@@ -193,6 +193,7 @@ cls.ResourceTreeView.create_ui_widgets = function()
         text_search.setFormInput(
           views.resource_tree_view.getToolbarControl(msg.container, "resource-tree-text-search")
         );
+        window.views.resource_tree_view.search_term = "";
       }
     }
   };
@@ -200,7 +201,10 @@ cls.ResourceTreeView.create_ui_widgets = function()
   var on_view_destroyed = function(msg)
   {
     if (msg.id == "resource_tree_view")
+    {
       text_search.cleanup();
+      window.views.resource_tree_view.search_term = "";
+    }
   };
 
   window.messages.add_listener("view-created", on_view_created);

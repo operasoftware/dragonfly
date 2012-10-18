@@ -18,22 +18,16 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		return name;
 	};
 
-	this._expander_extras = function(context, pivotID, depth)
+	this._expander_extras = function(context, pivot_id, depth)
 	{
-		var hash = context.collapsed;
-
-		//	expand all pivots when searching
-		if (context.searchTerm != "")
-			hash[pivotID] = false;
-
-		var collapsed = hash[pivotID];
+		var collapsed = context.collapsed[pivot_id];
 
 		var tpl = {};
 
 		tpl.h2 = ["handler", "resources-expand-collapse"];
 		tpl.li =
 		[
-			"data-expand-collapse-id", pivotID
+			"data-expand-collapse-id", pivot_id
 		];
 		tpl.button =
 		[
@@ -51,7 +45,21 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	this.update = function(context)
 	{
 		this.flat_list = [];
-		context.visibleResources = [];
+
+		// expand all the pivots if there is a search_term
+		if (context.search_term != "")
+			Object.keys(context.collapsed).forEach(function(v) { context.collapsed[v] = false; });
+
+		// filter the list of resources, set their is_visible flag and push the ones matching
+		context.resources = [];
+		context.resourceList.forEach(function(r) {
+			var matches = (context.search_term == "" || r.url.contains(context.search_term));
+			r.is_visible = matches && !context.collapsed[r.pivot_id]
+
+			if (matches)
+				context.resources.push(r);
+		});
+
 		this.windows(context);
 		var tpl = ["div", ["ul", this.flat_list], "class", "resource-tree"];
 		delete this.flat_list;
@@ -90,7 +98,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	this.documents = function(context, wid, pid)
 	{
 		context.documentList.filter(function(d) {
-				return d.documentID != null && d.windowID == wid && d.parentDocumentID == pid;
+				return d.windowID == wid && d.parentDocumentID == pid;
 			}).forEach(
 				this.document.bind(this, context)
 			);
@@ -99,15 +107,12 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	this.document = function(context, d)
 	{
 		var documentResources = context.documentResources[d.documentID] || [];
-		var resources = context.resourceList.filter(function(r) {
-				if (context.searchTerm != "" && !r.url.contains(context.searchTerm))
-					return false;
-
+		var resources = context.resources.filter(function(r) {
 				return documentResources.contains(r.uid);
 			});
 
 		var depth = d.depth;
-		var extras = this._expander_extras(context, d.pivotID, depth);
+		var extras = this._expander_extras(context, d.pivot_id, depth);
 
 		this.flat_list.push(
 			["li",
@@ -144,9 +149,9 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		context.group_order.forEach(this.resource_group.bind(this, context, resources, d));
 	};
 
-	this.resource_group = function(context, resources_unfiltered, d, g)
+	this.resource_group = function(context, resources, d, g)
 	{
-		var resources = resources_unfiltered.filter(function(r) {
+		var resources = resources.filter(function(r) {
 			return r.group == g;
 		});
 
@@ -154,7 +159,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			return;
 
 		var depth = d.depth + 1;
-		var extras = this._expander_extras(context, d.pivotID + "_" + g, depth);
+		var extras = this._expander_extras(context, d.pivot_id + "_" + g, depth);
 
 		this.flat_list.push(
 			["li",
@@ -185,17 +190,15 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.resource = function(context, depth, r)
 	{
-		var search = context.searchTerm;
+		var search = context.search_term;
 		var partial_URL_match = "";
 		if (search != "")
 		{
-			var pos_first = r.url.indexOf(search) - this.URL_MATCH_CONTEXT_SIZE;
-			var pos_last = r.url.lastIndexOf(search) + this.URL_MATCH_CONTEXT_SIZE + search.length;
+			var pos_first = r.url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
+			var pos_last = r.url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
 
 			partial_URL_match = (pos_first > 0 ? "…" : "") + r.url.substring(pos_first, pos_last) + (pos_last < r.url.length ? "…" : "");
 		}
-
-		context.visibleResources.push(r.uid);
 
 		this.flat_list.push(
 			["li",
@@ -209,11 +212,11 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 					],
 					" ",
 					r.sameOrigin ? [] : ["span", r.host, "class", "resource-domain"],
-
-					"handler", "resource-detail",
-					"data-resource-uid", String(r.uid),
-					"class", "resource-tree-resource" + (context.selectedResourceUID == r.uid ?" resource-highlight" : "")
-				]
+					"class", "resource-tree-resource"
+				],
+				"class", (context.selectedResourceUID == r.uid ? "resource-highlight" : ""),
+				"handler", "resource-detail",
+				"data-resource-uid", String(r.uid)
 			]
 		);
 	};

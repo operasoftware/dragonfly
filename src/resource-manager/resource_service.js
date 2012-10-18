@@ -7,6 +7,9 @@ window.cls || (window.cls = {});
  */
 cls.ResourceInspector = function(network_logger)
 {
+  var EXPAND_COLLAPSE_ATTRIBUTE = "data-expand-collapse-id";
+  var RESOURCE_UID_ATTRIBUTE = "data-resource-uid";
+  var HIGHLIGHT_CLASSNAME = "resource-highlight";
 
   var THROTTLE_DELAY = 250;
   var TYPE_GROUP_MAPPING =
@@ -125,11 +128,11 @@ cls.ResourceInspector = function(network_logger)
           // populate document_id_index
           document_id_index[d.documentID] = i;
 
-          // set depth, pivotID and sameOrigin
-          var p = a[document_id_index[d.parentDocumentID]] || {pivotID:d.windowID, depth:0};
-          var id = p.pivotID + "_" + d.documentID;
+          // set depth, pivot_id and sameOrigin
+          var p = a[document_id_index[d.parentDocumentID]] || {pivot_id:d.windowID, depth:0};
+          var id = p.pivot_id + "_" + d.documentID;
           d.depth = p.depth + 1;
-          d.pivotID = id;
+          d.pivot_id = id;
           d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
 
           // set the default collapsed flag
@@ -145,33 +148,40 @@ cls.ResourceInspector = function(network_logger)
       }, this);
 
       var unknown_document_id = false;
-
+      // filter out resources pointing to an unknown document_id,
       // set unknown_document_id flag,
       // assign top resource to the right document,
       // add group to each resource,
-      // sameOrigin flag to each resource
-      // full_id ( pivot_ID + uid )
-      ctx.resourceList.forEach(function(r) {
-        if (!unknown_document_id && !document_id_index.hasOwnProperty(r.document_id))
-          unknown_document_id = true;
-
+      // sameOrigin flag to each resource,
+      // full_id ( pivot_id + group + uid ),
+      // pivot_id
+      ctx.resourceList = ctx.resourceList.filter(function(r) {
         // check if this is the top resource of a document
-        var documentID = ctx.document_resource_hash[r.resource_id];
-        if (documentID != null && documentID != r.document_id)
-          r.document_id = documentID;
+        var document_id = ctx.document_resource_hash[r.resource_id];
+        if (document_id != null && document_id != r.document_id)
+          r.document_id = document_id;
+
+        var d = this._document_list[document_id_index[r.document_id]];
+        if(!d)
+        {
+          unknown_document_id = true;
+          return false;
+        }
 
         this._populate_document_resources(r);
 
         r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
-        var d = this._document_list[document_id_index[r.document_id]];
-        r.sameOrigin = cls.ResourceUtil.sameOrigin(d && d.url, r);
-        r.full_id = ( d && d.pivotID ) + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
+        r.sameOrigin = cls.ResourceUtil.sameOrigin(d.url, r);
 
+        r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
+        r.pivot_id = d.pivot_id + "_" + r.group;
+
+        return true;
       }, this);
 
       // sort the resource by their full_id ( pivot + uid )
       ctx.resourceList = ctx.resourceList.sort(function(a, b) {
-        return a.full_uid > b.full_uid ? 1 : a.full_uid == b.full_uid ? 0 : -1;
+        return a.full_id > b.full_id ? 1 : a.full_id == b.full_id ? 0 : -1;
       });
 
       // filter the list of window. Purge the ones with no documents
@@ -185,7 +195,7 @@ cls.ResourceInspector = function(network_logger)
       // request the list of documents if we have
       // an empty documentList
       // or a resource pointing to an unknown document
-      // or a document does not have a documentID yet
+      // or a document does not have a document_id yet
       if (!ctx.documentList.length || unknown_document_id || null_document_id)
         this._list_documents();
 
@@ -214,22 +224,22 @@ cls.ResourceInspector = function(network_logger)
     if (!this._context)
       return;
 
-    var pivot = target.get_ancestor("[data-expand-collapse-id]");
+    var pivot = target.get_ancestor("[" + EXPAND_COLLAPSE_ATTRIBUTE + "]");
     if (pivot)
     {
       var hash = this._collapsed_hash;
-      var pivotID = pivot.getAttribute("data-expand-collapse-id");
-      var pivotIDs = [pivotID];
-      var collapsed = !hash[pivotID];
+      var pivot_id = pivot.getAttribute(EXPAND_COLLAPSE_ATTRIBUTE);
+      var pivot_ids = [pivot_id];
+      var collapsed = !hash[pivot_id];
 
       if (event.shiftKey)
       {
-        pivotIDs.push.apply(pivotIDs, Object.keys(hash).filter(function(p) {
-          return p.startswith(pivotID + "_");
+        pivot_ids.push.apply(pivot_ids, Object.keys(hash).filter(function(p) {
+          return p.startswith(pivot_id + "_");
         }));
       }
 
-      pivotIDs.forEach(function(p) { hash[p] = collapsed; });
+      pivot_ids.forEach(function(p) { hash[p] = collapsed; });
 
       this.tree_view.update();
     }
@@ -240,59 +250,70 @@ cls.ResourceInspector = function(network_logger)
     if (!this._context)
       return;
 
-    var parent = target.get_ancestor("[data-resource-uid]");
+    var parent = target.get_ancestor("[" + RESOURCE_UID_ATTRIBUTE + "]");
     if (parent == null)
       return;
 
-    var uid = parent.getAttribute("data-resource-uid");
+    var uid = parent.getAttribute(RESOURCE_UID_ATTRIBUTE);
     this.highlight_resource(uid);
     this.detail_view.show_resource(uid);
   }.bind(this);
 
   this.highlight_resource = function(uid)
   {
-    var e;
     if (this._selected_resource_uid == uid)
       return;
 
-    e = document.querySelector(".resource-highlight");
+    var e = document.querySelector("." + HIGHLIGHT_CLASSNAME);
     if (e)
-      e.removeClass("resource-highlight");
+      e.removeClass(HIGHLIGHT_CLASSNAME);
 
     this._selected_resource_uid = uid;
     if (this._context)
       this._context.selectedResourceUID = uid;
 
-    e = document.querySelector("[data-resource-uid='" + this._selected_resource_uid + "']");
+    e = document.querySelector("[" + RESOURCE_UID_ATTRIBUTE + "='" + this._selected_resource_uid + "']");
     if (e)
-      e.addClass("resource-highlight");
+    {
+      e.addClass(HIGHLIGHT_CLASSNAME);
+      // todo: scroll into view
+    }
   }.bind(this);
 
-  this._highlight_sibling_resource = function(increment)
+  this._highlight_sibling_resource = function(inc)
   {
-    if (!this._context || !this._context.visibleResources || !this._context.visibleResources.length)
+    if (!this._context)
       return;
 
+    // walk the list of resources in the "inc" direction, looking for the last visible
+    // resource before we reached the selected resource uid ( or the end of the list )
     var uid;
-    var list = this._context.visibleResources;
-    var pos = list.indexOf(this._selected_resource_uid);
-    if (pos == -1)
-      uid = list[increment > 0 ? 0 : list.length - 1];
-    else
-      uid = list[Math.min( Math.max(0, pos + increment), list.length - 1)];
+    var list = this._context.resourceList;
+    var i = inc < 0 ? list.length - 1 : 0;
 
-    this.highlight_resource(uid);
+    while (list[i] != null && list[i].uid != this._selected_resource_uid)
+    {
+      if (list[i].is_visible)
+        uid = list[i].uid;
+
+      i += inc;
+    }
+
+    if (uid != null)
+    {
+      this.highlight_resource(uid);
       this.detail_view.show_resource(uid);
+    }
   };
 
   this.highlight_next_resource_bound = function()
   {
-    this._highlight_sibling_resource(1);
+    this._highlight_sibling_resource(-1);
   }.bind(this);
 
   this.highlight_previous_resource_bound = function()
   {
-    this._highlight_sibling_resource(-1);
+    this._highlight_sibling_resource(1);
   }.bind(this);
 
   this._resource_request_update_bound = function(msg)
