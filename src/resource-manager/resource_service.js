@@ -128,12 +128,12 @@ cls.ResourceInspector = function(network_logger)
           // populate document_id_index
           document_id_index[d.documentID] = i;
 
-          // set depth, pivot_id and sameOrigin
+          // set depth, pivot_id and same_origin
           var p = a[document_id_index[d.parentDocumentID]] || {pivot_id: d.windowID, depth: 0};
           var id = p.pivot_id + "_" + d.documentID;
           d.depth = p.depth + 1;
           d.pivot_id = id;
-          d.sameOrigin = cls.ResourceUtil.sameOrigin(p.url, d.url);
+          d.same_origin = cls.ResourceUtil.sameOrigin(p.url, d.url);
 
           // set the default collapsed flag
           var hash = this._collapsed_hash;
@@ -152,7 +152,7 @@ cls.ResourceInspector = function(network_logger)
       // set unknown_document_id flag,
       // assign top resource to the right document,
       // add group to each resource,
-      // sameOrigin flag to each resource,
+      // same_origin flag to each resource,
       // full_id ( pivot_id + group + uid ),
       // pivot_id
       ctx.resource_list = ctx.resource_list.filter(function(r) {
@@ -171,7 +171,7 @@ cls.ResourceInspector = function(network_logger)
         this._populate_document_resources(r);
 
         r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
-        r.sameOrigin = cls.ResourceUtil.sameOrigin(d.url, r);
+        r.same_origin = cls.ResourceUtil.sameOrigin(d.url, r);
 
         r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
         r.pivot_id = d.pivot_id + "_" + r.group;
@@ -270,7 +270,7 @@ cls.ResourceInspector = function(network_logger)
 
     this._selected_resource_uid = uid;
     if (this._context)
-      this._context.selectedResourceUID = uid;
+      this._context.selected_resource_uid = uid;
 
     e = document.querySelector("[" + RESOURCE_UID_ATTRIBUTE + "='" + this._selected_resource_uid + "']");
     if (e)
@@ -387,16 +387,16 @@ cls.ResourceInspector = function(network_logger)
     return this._get_resource_by_key_value('url', url);
   };
 
-  this.request_resource_data = function(url, callback, data, resourceInfo)
+  this.request_resource_data = function(url, callback, data, resource_info)
   {
     this._suppress_updates_url = url;
-    new cls.ResourceRequest(url, callback, data, resourceInfo);
+    new cls.ResourceRequest(url, callback, data, resource_info);
   };
 
   this._init();
 };
 
-cls.ResourceRequest = function(url, callback, data, resourceInfo)
+cls.ResourceRequest = function(url, callback, data, resource_info)
 {
   var SUCCESS = 0;
   var TRANSPORT_STRING = 1;
@@ -407,10 +407,10 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
 
   var MAX_RETRIES = 3;
 
-  this._init = function(url, callback, data, resourceInfo)
+  this._init = function(url, callback, data, resource_info)
   {
     this.url = url;
-    this.resourceInfo = resourceInfo;
+    this.resource_info = resource_info;
     this._data = data||{};
     this._callback = callback;
     this._retries = 0;
@@ -434,9 +434,9 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     if (this._resource_manager.requestCreateRequest)
     {
-      var windowID = this._data.window_id || window.window_manager_data.get_debug_context();
+      var window_id = this._data.window_id || window.window_manager_data.get_debug_context();
       var tag = window.tag_manager.set_callback(this, this._on_request_resource_id);
-      this._resource_manager.requestCreateRequest(tag, [windowID, this.url, "GET"]);
+      this._resource_manager.requestCreateRequest(tag, [window_id, this.url, "GET"]);
     }
     else
       this._fallback();
@@ -474,27 +474,27 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
   {
     if (status == SUCCESS && this._retries < MAX_RETRIES)
     {
-      var resourceData = new cls.ResourceManager["1.2"].ResourceData(message);
-      if (resourceData.content)
+      var resource_data = new cls.ResourceManager["1.2"].ResourceData(message);
+      if (resource_data.content)
       {
         // content -> mock a cls.NetworkLoggerEntry and instanciate a cls.ResourceInfo
-        this.requests_responses = [{responsebody: resourceData}];
-        var resourceInfo = new cls.ResourceInfo(this);
-        if (!this.resourceInfo)
-            this.resourceInfo = resourceInfo;
+        this.requests_responses = [{responsebody: resource_data}];
+        var resource_info = new cls.ResourceInfo(this);
+        if (!this.resource_info)
+            this.resource_info = resource_info;
           else
-            this.resourceInfo.data = resourceInfo.data;
+            this.resource_info.data = resource_info.data;
 
         // broadcast that we got payload of the resource
         window.messages.post("resource-request-resource", {resource_id: this.resource_id});
 
         // aaaand callback
-        this._callback(this.resourceInfo, this._data);
+        this._callback(this.resource_info, this._data);
       }
       else
       {
         // no content -> guess the type and request using the appropriate transport mode
-        this.type = cls.ResourceUtil.guess_type(resourceData.mimeType, this.extension);
+        this.type = cls.ResourceUtil.guess_type(resource_data.mimeType, this.extension);
         this._request_get_resource();
         this._retries++;
       }
@@ -503,7 +503,7 @@ cls.ResourceRequest = function(url, callback, data, resourceInfo)
       this._fallback();
   };
 
-  this._init(url, callback, data, resourceInfo);
+  this._init(url, callback, data, resource_info);
 };
 
 cls.ResourceRequest.prototype = new URIPrototype("url");

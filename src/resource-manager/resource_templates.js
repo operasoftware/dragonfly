@@ -82,7 +82,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 					extras.tpl.button,
 					["span",
 						window_info.title,
-						"class","resource-tree-window-label"
+						"class", "resource-tree-window-label"
 					]
 				].concat(extras.tpl.h2),
 			].concat(extras.tpl.li)
@@ -107,36 +107,39 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 				return document_resources.contains(r.uid);
 			});
 
-		var depth = d.depth;
-		var extras = this._expander_extras(context, d.pivot_id, depth);
-
-		this.flat_list.push(
-			["li",
-				["h2",
-					extras.tpl.button,
-					["span",
-						this._get_short_distinguisher(d.url),
-						"class", "resource-tree-document-label",
-						"data-tooltip"," js-script-select",
-						"data-tooltip-text", d.original_url
-					],
-					" ",
-					d.sameOrigin ? [] : ["span", d.url.host, "class", "resource-domain"],
-					" ",
-					["span",
-						String(resources.length),
-						"class", "resource-tree-count"
-					]
-				].concat(extras.tpl.h2),
-			].concat(extras.tpl.li)
-		);
-
-		if (!extras.collapsed )
+		if (resources.length > 0)
 		{
-			if (resources.length)
-				this.resource_groups(context, resources, d);
+			var depth = d.depth;
+			var extras = this._expander_extras(context, d.pivot_id, depth);
 
-			this.documents(context, d.windowID, d.documentID);
+			this.flat_list.push(
+				["li",
+					["h2",
+						extras.tpl.button,
+						["span",
+							this._get_short_distinguisher(d.url),
+							"class", "resource-tree-document-label",
+							"data-tooltip", " js-script-select",
+							"data-tooltip-text", d.original_url
+						],
+						" ",
+						d.same_origin ? [] : ["span", d.url.host, "class", "resource-domain"],
+						" ",
+						["span",
+							String(resources.length),
+							"class", "resource-tree-count"
+						]
+					].concat(extras.tpl.h2),
+				].concat(extras.tpl.li)
+			);
+
+			if (!extras.collapsed )
+			{
+				if (resources.length)
+					this.resource_groups(context, resources, d);
+
+				this.documents(context, d.windowID, d.documentID);
+			}
 		}
 	};
 
@@ -179,7 +182,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			this.resources(context, resources, depth+1);
 	};
 
-	this.resources = function(context, resources,depth)
+	this.resources = function(context, resources, depth)
 	{
 		resources.forEach(this.resource.bind(this, context, depth));
 	};
@@ -209,7 +212,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 						"data-tooltip-text", r.url
 					],
 					" ",
-					r.sameOrigin ? [] : ["span", r.host, "class", "resource-domain"],
+					r.same_origin ? [] : ["span", r.host, "class", "resource-domain"],
 					"class", "resource-tree-resource"
 				],
 				"class", (context.selected_resource_uid == r.uid ? "resource-highlight" : ""),
@@ -282,12 +285,12 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 	{
 		var info =
 		{
-			"responseCode": resource.responsecode + " " + cls.ResourceUtil.http_status_codes[resource.responsecode],
+			"response_code": resource.responsecode + " " + cls.ResourceUtil.http_status_codes[resource.responsecode],
 			"size": resource.size || resource.data.contentLength || resource.data.content.length,
-			"characterEncoding": resource.encoding || resource.data.characterEncoding
+			"character_encoding": resource.encoding || resource.data.characterEncoding
 		};
 
-		var isError = resource.responsecode && ![200, 304].contains(resource.responsecode);
+		var is_error = resource.responsecode && ![200, 304].contains(resource.responsecode);
 
 		return (
 		["div",
@@ -302,12 +305,12 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 				"class", "resource-detail-overview-url"
 			],
 			["span",
-				(isError ? info.responseCode + " - " : "") +
+				(is_error ? info.response_code + " - " : "") +
 				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
 				.replace("%(SENT)s", resource.data.mimeType)
 				.replace("%(GUESSED)s", resource.type) +
-				(info.characterEncoding && " " + ui_strings.S_RESOURCE_ENCODING.replace("%s", info.characterEncoding)),
-				"class", "resource-detail-overview-type" + (isError ? " resource-detail-error" : "")
+				(info.character_encoding && " " + ui_strings.S_RESOURCE_ENCODING.replace("%s", info.character_encoding)),
+				"class", "resource-detail-overview-type" + (is_error ? " resource-detail-error" : "")
 			],
 			["span",
 				cls.ResourceUtil.bytes_to_human_readable(info.size) +
@@ -373,18 +376,24 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.font = function(resource)
 	{
-		var font_face = "@font-face{font-family:\"resource-" + resource.uid + "\";src:url(\"" + resource.data.content.stringData + "\");}";
-		var inline_style = "font-size:64px;font-family:resource-" + resource.uid + ";";
+		var font_family_name = "font" + resource.uid;
+		var style_sheet = "@font-face { font-family: \"" + font_family_name  + "\";" +
+										  "src: url(\"" + resource.data.content.stringData + "\"); }";
+		var inline_style = "font-size: 64px; font-family: " + font_family_name + ";" +
+											 "white-space: pre; word-break: break-all; " +
+											 "word-wrap: break-word; overflow-wrap: break-word;";
 		var sample_string = "The quick brown fox jumps over the lazy dog 0123456789";
 
 		return(
 		["object",
 			["div",
 				sample_string,
-				["style", font_face],
+				["style", style_sheet],
 				"style", inline_style,
 			],
-			"data", "data:text/html;base64," + btoa("<!doctype html><style>" + font_face + "</style><div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),
+			"data", "data:text/html;base64," +
+						  btoa("<!doctype html><style>" + style_sheet + "</style>" +
+						  "<div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),
 			"class", "resource-detail-font"
 		]);
 	};
