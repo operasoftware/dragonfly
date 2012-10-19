@@ -276,7 +276,18 @@ cls.ResourceInspector = function(network_logger)
     if (e)
     {
       e.addClass(HIGHLIGHT_CLASSNAME);
-      // todo: scroll into view
+
+      // scroll into view
+      var container = this.tree_view.get_container().firstChild;
+      var e_top = e.offsetTop;
+      var e_bottom = e_top + e.offsetHeight;
+      var container_top = container.scrollTop;
+      var container_height = container.offsetHeight;
+
+      if (e_top < container_top)
+          container.scrollTop = e_top;
+      else if (e_bottom > container_top + container_height)
+        container.scrollTop = e_bottom - container_height;
     }
   }.bind(this);
 
