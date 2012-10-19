@@ -12,8 +12,7 @@ cls.ResourceInspector = function(network_logger)
   var HIGHLIGHT_CLASSNAME = "resource-highlight";
 
   var THROTTLE_DELAY = 250;
-  var TYPE_GROUP_MAPPING =
-  {
+  var TYPE_GROUP_MAPPING = {
     "markup": ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
     "css": ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
     "script": ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
@@ -162,7 +161,7 @@ cls.ResourceInspector = function(network_logger)
           r.document_id = document_id;
 
         var d = this._document_list[document_id_index[r.document_id]];
-        if(!d)
+        if (!d)
         {
           unknown_document_id = true;
           return false;
@@ -378,12 +377,12 @@ cls.ResourceInspector = function(network_logger)
 
   this.get_resource = function(uid)
   {
-    return this._get_resource_by_key_value('uid', uid);
+    return this._get_resource_by_key_value("uid", uid);
   };
 
   this.get_resource_by_url = function(url)
   {
-    return this._get_resource_by_key_value('url', url);
+    return this._get_resource_by_key_value("url", url);
   };
 
   this.request_resource_data = function(url, callback, data, resource_info)
@@ -410,7 +409,7 @@ cls.ResourceRequest = function(url, callback, data, resource_info)
   {
     this.url = url;
     this.resource_info = resource_info;
-    this._data = data||{};
+    this._data = data || {};
     this._callback = callback;
     this._retries = 0;
 
@@ -480,9 +479,9 @@ cls.ResourceRequest = function(url, callback, data, resource_info)
         this.requests_responses = [{responsebody: resource_data}];
         var resource_info = new cls.ResourceInfo(this);
         if (!this.resource_info)
-            this.resource_info = resource_info;
-          else
-            this.resource_info.data = resource_info.data;
+          this.resource_info = resource_info;
+        else
+          this.resource_info.data = resource_info.data;
 
         // broadcast that we got payload of the resource
         window.messages.post("resource-request-resource", {resource_id: this.resource_id});

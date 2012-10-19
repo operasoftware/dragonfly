@@ -107,9 +107,9 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     this._line_found = false;
     this._target_line = 0;
     this._tops = [];
-    var _ele = container.querySelector("." + HIGHLIGHTED_LINE_CLASSNAME);
-    if (_ele)
-      _ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME);
+    var ele = container.querySelector("." + HIGHLIGHTED_LINE_CLASSNAME);
+    if (ele)
+      ele.removeClass(HIGHLIGHTED_LINE_CLASSNAME);
   };
 
   this.go_to_line = function(container, data)

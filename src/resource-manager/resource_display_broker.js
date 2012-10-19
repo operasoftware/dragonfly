@@ -48,7 +48,7 @@ cls.ResourceDisplayBroker = function()
       id_or_url = url;
     }
 
-    if(line)
+    if (line)
       data.line = Number(line);
 
     if (!this._show_resource(id_or_url, data) && url)

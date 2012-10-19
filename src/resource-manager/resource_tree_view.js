@@ -19,10 +19,8 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     ui_strings.S_HTTP_LABEL_FILTER_OTHER
   ];
 
-  // "private"
   this._loading = false;
 
-  // public
   this.service = resource_inspector;
 
   this.get_group_order = function()
@@ -37,8 +35,8 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   {
     var ctx = this.service.get_resource_context();
     var target = container.firstElementChild;
-    var scroll_top = target?target.scrollTop:0;
-    var scroll_left = target?target.scrollLeft:0;
+    var scroll_top = target ? target.scrollTop : 0;
+    var scroll_left = target ? target.scrollLeft : 0;
     var tpl;
 
     if (ctx)

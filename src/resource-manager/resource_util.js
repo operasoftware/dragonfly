@@ -404,16 +404,7 @@ cls.ResourceUtil.http_status_codes = {
 
 cls.ResourceUtil.sameOrigin = function(reference, url)
 {
-  if (!reference)
-    return true;
-
-  if (reference.protocol == url.protocol)
-  {
-    if (reference.host == url.host)
-      return true;
-    if (reference.host.match(new RegExp("\\." + url.host + "$")) != null)
-      return true;
-  }
-
-  return false;
+  return !reference ||
+    (reference.protocol == url.protocol &&
+      (reference.host == url.host || reference.host.endswith("." + url.host)));
 }

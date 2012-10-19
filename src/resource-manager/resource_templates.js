@@ -104,8 +104,8 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	{
 		var document_resources = context.document_resources[d.documentID] || [];
 		var resources = context.resources.filter(function(r) {
-				return document_resources.contains(r.uid);
-			});
+			return document_resources.contains(r.uid);
+		});
 
 		if (resources.length > 0)
 		{
@@ -190,7 +190,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	this.resource = function(context, depth, r)
 	{
 		var search = context.search_term;
-		var partial_URL_match = "";
+		var partial_url_match = "";
 		if (search != "")
 		{
 			var pos_first = r.url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
@@ -198,14 +198,14 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			var preffix = pos_first > 0 ? "…" : "";
 			var suffix = pos_last < r.url.length ? "…" : "";
 
-			partial_URL_match = preffix + r.url.substring(pos_first, pos_last) + suffix;
+			partial_url_match = preffix + r.url.substring(pos_first, pos_last) + suffix;
 		}
 
 		this.flat_list.push(
 			["li",
 				["h2",
 					["span",
-						partial_URL_match || this._get_short_distinguisher(r),
+						partial_url_match || this._get_short_distinguisher(r),
 						"class", "resource-tree-resource-label",
 						"style", "margin-left:" + (1 + depth) * DEPTH_IDENTATION + "px;",
 						"data-tooltip", "js-script-select",
@@ -222,7 +222,6 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		);
 	};
 });
-
 
 window.templates.resource_detail || (window.templates.resource_detail = new function()
 {
@@ -306,8 +305,8 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 			["span",
 				(is_error ? info.response_code + " - " : "") +
 				ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE
-				.replace("%(SENT)s", resource.data.mimeType)
-				.replace("%(GUESSED)s", resource.type) +
+					.replace("%(SENT)s", resource.data.mimeType)
+					.replace("%(GUESSED)s", resource.type) +
 				(info.character_encoding && " " + ui_strings.S_RESOURCE_ENCODING.replace("%s", info.character_encoding)),
 				"class", "resource-detail-overview-type" + (is_error ? " resource-detail-error" : "")
 			],

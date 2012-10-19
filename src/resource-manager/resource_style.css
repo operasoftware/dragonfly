@@ -318,13 +318,13 @@ a.external:hover
 
 .resource-tree li > h2:hover
 {
-  background-color: rgba(137, 173, 232, 0.196);
+  background-color: rgba(137, 173, 232, 0.2);
 }
 
 .resource-highlight
 {
   color: #fff;
-  background-color: rgba(55, 115, 211, 0.702);
+  background-color: rgba(55, 115, 211, 0.7);
 }
 
 h2 .resource-tree-count
