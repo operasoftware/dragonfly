@@ -191,7 +191,6 @@ cls.ResourceInspector = function(network_logger)
         });
       });
 
-
       // request the list of documents if we have
       // an empty document_list
       // or a resource pointing to an unknown document
@@ -332,7 +331,7 @@ cls.ResourceInspector = function(network_logger)
     {
       var broker = cls.ResourceDisplayBroker.get_instance();
       broker.show_resource_for_ele(target);
-    }
+    };
 
     var messages = window.messages;
     messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);

@@ -224,7 +224,6 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 });
 
 
-
 window.templates.resource_detail || (window.templates.resource_detail = new function()
 {
 	this.update = function(resource)

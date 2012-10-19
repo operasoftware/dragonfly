@@ -157,7 +157,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   };
 
   /*
-   *  The "key" can be URL, the UID of or an instance of cls.ResourceInfo
+   *  The "key" can be the UID of or an instance of cls.ResourceInfo or a URL
    *
    *  This flexibility helps other services to display a resource regardless of its "form".
    */
