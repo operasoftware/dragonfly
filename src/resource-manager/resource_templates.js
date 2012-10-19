@@ -179,7 +179,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		);
 
 		if (!extras.collapsed)
-			this.resources(context, resources, depth+1);
+			this.resources(context, resources, depth + 1);
 	};
 
 	this.resources = function(context, resources, depth)

@@ -91,7 +91,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
               }
             }
 
-            if ((c == CR) && (value.charAt(pos+1) == LF))
+            if ((c == CR) && (value.charAt(pos + 1) == LF))
               pos++;
           }
         }
@@ -157,12 +157,9 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   };
 
   /*
-   *  the "key" can be either:
-   *  * an instance of cls.ResourceInfo
-   *  * the UID of a cls.ResourceInfo
-   *  * a URL
+   *  The "key" can be URL, the UID of or an instance of cls.ResourceInfo
    *
-   *  That way it's easier for the other services to get a resource shown regardless of its "form".
+   *  This flexibility helps other services to display a resource regardless of its "form".
    */
   this.show_resource = function(key, data)
   {
