@@ -47,13 +47,13 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		if (context.search_term != "")
 			Object.keys(context.collapsed).forEach(function(v) { context.collapsed[v] = false; });
 
-		// filter the list of resources, set their is_visible flag and push the ones matching
+		// filter the list of resources, set their is_hidden flag and push the ones matching
 		context.resources = [];
 		context.resource_list.forEach(function(r) {
-			var matches = (context.search_term == "" || r.url.contains(context.search_term));
-			r.is_visible = matches && !context.collapsed[r.pivot_id]
+			r.is_hidden = context.collapsed[r.pivot_id] == true &&
+			  (context.search_term != "" && !r.url.contains(context.search_term));
 
-			if (matches)
+			if (!r.is_hidden)
 				context.resources.push(r);
 		});
 

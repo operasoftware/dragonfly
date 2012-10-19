@@ -85,9 +85,6 @@ cls.ResourceInspector = function(network_logger)
     // build the context
     var ctx = {};
 
-    // get the order of the groups of resources
-    ctx.group_order = this.tree_view.get_group_order();
-
     // get list of window_contexts for which we saw the main_document
     ctx.window_list = (this._network_logger.get_window_contexts() || []).filter(function(w) {
       return w.saw_main_document;
@@ -99,6 +96,13 @@ cls.ResourceInspector = function(network_logger)
       ctx.resource_list = (this._network_logger.get_resources() || []).filter(function(v) {
         return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode != 204;
       }, this);
+
+      ctx.selected_resource_uid = this._selected_resource_uid;
+      ctx.collapsed = this._collapsed_hash;
+      ctx.document_resources = this._document_resources;
+
+      // get the order of the groups of resources,
+      ctx.group_order = this.tree_view.get_group_order();
 
       ctx.document_resource_hash = {};
 
@@ -174,6 +178,7 @@ cls.ResourceInspector = function(network_logger)
 
         r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
         r.pivot_id = d.pivot_id + "_" + r.group;
+        r.is_hidden = ctx.collapsed[r.pivot_id] == true;
 
         return true;
       }, this);
@@ -197,9 +202,6 @@ cls.ResourceInspector = function(network_logger)
       if (!ctx.document_list.length || unknown_document_id || null_document_id)
         this._list_documents();
 
-      ctx._selected_resource_uid = this._selected_resource_uid;
-      ctx.document_resources = this._document_resources;
-      ctx.collapsed = this._collapsed_hash;
       this._context = ctx;
     }
     else
@@ -291,7 +293,7 @@ cls.ResourceInspector = function(network_logger)
 
     while (list[i] != null && list[i].uid != this._selected_resource_uid)
     {
-      if (list[i].is_visible)
+      if (!list[i].is_hidden)
         uid = list[i].uid;
 
       i += inc;
