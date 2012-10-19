@@ -1289,6 +1289,7 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 
 cls.ResourceInfo = function(entry)
 {
+  this.uid = entry.id;
   this.resource_id = entry.resource_id;
   this.url = entry.url;
   this.document_id = entry.document_id;
@@ -1299,13 +1300,15 @@ cls.ResourceInfo = function(entry)
 
   var last_response = entry.requests_responses && entry.requests_responses.last;
   if (last_response && last_response.responsebody)
-  {
     this.data = last_response.responsebody;
-    if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
-      this.data.meta = cls.ResourceUtil.get_meta_data(this);
-  }
-
-  this.uid = entry.id;
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
+
+cls.ResourceInfo.prototype.__defineGetter__("metadata", function()
+{
+  if(this._metadata === undefined && this.data != null)
+      this._metadata = cls.ResourceUtil.get_meta_data(this);
+
+  return this._metadata;
+});

@@ -51,7 +51,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		context.resources = [];
 		context.resource_list.forEach(function(r) {
 			r.is_hidden = context.collapsed[r.pivot_id] == true &&
-			  (context.search_term != "" && !r.url.contains(context.search_term));
+			  context.search_term != "" && !r.url.contains(context.search_term);
 
 			if (!r.is_hidden)
 				context.resources.push(r);
@@ -312,7 +312,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 			],
 			["span",
 				cls.ResourceUtil.bytes_to_human_readable(info.size) +
-				(resource.data.meta ? " (" + resource.data.meta + ")" : ""),
+				(resource.metadata ? " (" + resource.metadata + ")" : ""),
 				"data-tooltip", "js-script-select",
 				"data-tooltip-text", info.size + " " + ui_strings.S_BYTES_UNIT,
 				"class", "resource-detail-overview-size"
