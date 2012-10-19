@@ -298,7 +298,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 					resource.url,
 					"href", resource.url,
 					"target", "_blank",
-					"class", "external"
+					"class", "resource-detail-link"
 				],
 				"class", "resource-detail-overview-url"
 			],
