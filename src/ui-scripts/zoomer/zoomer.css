@@ -15,7 +15,8 @@
 .zoomer-overlay
 {
     position: absolute;
-    background-color: rgba(197, 218, 241, .5);
+    border: 1px solid rgba(55, 115, 211, 0.3);
+    background-color: rgba(137, 173, 232, 0.2);
     cursor: move;
     display: none;
 }
@@ -26,7 +27,6 @@
     top: 0;
     width: 1px;
     height: 100%;
-    background-color: #C5DAF1;
     cursor: ew-resize;
 }
 
