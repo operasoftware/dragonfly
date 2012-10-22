@@ -210,6 +210,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._zoomer_times_ele.className = "profiler-full-timeline-times";
     this._timeline_ele = document.createElement("div");
     this._timeline_ele.className = "profiler-timeline";
+    this._timeline_ele.setAttribute("handler", "profiler-event");
     this._timeline_times_ele = document.createElement("div");
     this._timeline_times_ele.className = "profiler-timeline-background";
 
@@ -260,8 +261,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_event_details = function(event, target)
   {
-    this._event_id = Number(target.getAttribute("data-event-id")) || null;
-    this._event_type = Number(target.getAttribute("data-event-type"));
+    this._event_id = Number(event.target.get_ancestor_attr("data-event-id")) || null;
+    this._event_type = Number(event.target.get_ancestor_attr("data-event-type"));
     this._show_details_list();
   };
 
@@ -375,7 +376,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._ontooltip = function(event, target)
   {
-    var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+    var id = Number(event.target.get_ancestor_attr("data-event-id"));
     var timeline_event = this._timeline_list.get_event_by_id(id);
     if (timeline_event)
     {
@@ -387,7 +388,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (!this._has_overlay_service)
       return;
-    var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+    var id = Number(target.get_ancestor_attr("data-event-id"));
     var timeline_event = this._timeline_list.get_event_by_id(id);
     if (timeline_event)
     {
@@ -507,7 +508,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._get_timeline_ele_width = function()
   {
-    return this._timeline_width - 2; // TODO: constant
+    return this._timeline_width;
   };
 
   this._init = function(id, name, container_class, html, default_handler)
@@ -556,7 +557,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
-    window.event_handlers.mousedown["profiler-event"] = this._get_event_details.bind(this);
+    window.event_handlers.click["profiler-event"] = this._get_event_details.bind(this);
     window.event_handlers.mouseover["profiler-event"] = this._show_event_details.bind(this);
     window.event_handlers.mouseout["profiler-event"] = this._hide_event_details.bind(this);
   };

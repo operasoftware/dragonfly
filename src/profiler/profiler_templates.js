@@ -130,15 +130,18 @@ var ProfilerTemplates = function()
                                : 0;
           template.push(
             ["div",
-               ["span",
-                  event_type_string_map[event.type],
-                "class", "profiler-legend-label"
-               ],
-               ["span",
-                  this.format_time(event.time, 0),
-                "class", "profiler-legend-time"
-               ],
-             "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? "" : " even"),
+              ["div",
+                ["span",
+                   event_type_string_map[event.type],
+                 "class", "profiler-legend-label"
+                ],
+                ["span",
+                   this.format_time(event.time, 0),
+                 "class", "profiler-legend-time"
+                ],
+               "class", "profiler-legend-row"
+              ],
+             "class", "profiler-timeline-row" + (index % 2 ? "" : " even"),
              "data-event-type", String(event.type),
              "handler", "profiler-event"
             ]
@@ -168,12 +171,12 @@ var ProfilerTemplates = function()
       template.push(
         ["div",
          "class", "profiler-timeline-marker",
-         "style", "left:" + left + "px"
+         "style", "left: " + left + "px"
         ],
         ["div",
            this.format_time(time, fractions),
          "class", "profiler-timeline-marker-time" + (i === 0 ? " first" : ""),
-         "style", "left:" + left + "px"
+         "style", "left: " + left + "px"
         ]
       );
     }
@@ -241,7 +244,6 @@ var ProfilerTemplates = function()
     var column = this._order.indexOf(event.type);
     var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
     var color = this._get_color_for_type(event.type);
-
     return (
       ["div",
        "style",
@@ -260,11 +262,9 @@ var ProfilerTemplates = function()
                                                   "transparent " + self_time_amount + "%);"
          ),
        "id", "profiler-event-" + event.eventID,
-       "class", "profiler-event event-type-" + event.type +
-                (is_expandable ? " expandable" : " non-expandable"),
+       "class", "profiler-event event-type-" + event.type + (is_expandable ? " expandable" : " non-expandable"),
        "data-event-id", String(event.eventID),
        "data-event-type", String(event.type),
-       "handler", "profiler-event",
        "data-tooltip", "profiler-event"
       ]
     );
