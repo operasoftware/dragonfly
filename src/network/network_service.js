@@ -1312,3 +1312,5 @@ cls.ResourceInfo.prototype.__defineGetter__("metadata", function()
 
   return this._metadata;
 });
+
+cls.ResourceInfo.prototype.__defineSetter__("metadata", function() {});
