@@ -42,17 +42,6 @@ cls.ResourceInspector = function(network_logger)
     window.services["document-manager"].requestListDocuments(tag, []);
   }.bind(this).throttle(THROTTLE_DELAY);
 
-  this._populate_document_resources = function(r)
-  {
-    var document_id = r.document_id;
-
-    if (!this._document_resources[document_id])
-      this._document_resources[document_id] = [];
-
-    if (!this._document_resources[document_id].contains(r.uid))
-      this._document_resources[document_id].push(r.uid);
-  };
-
   this.get_views = function()
   {
     if (this.tree_view == null)
@@ -99,7 +88,6 @@ cls.ResourceInspector = function(network_logger)
 
       ctx.selected_resource_uid = this._selected_resource_uid;
       ctx.collapsed = this._collapsed_hash;
-      ctx.document_resources = this._document_resources;
 
       // get the order of the groups of resources,
       ctx.group_order = this.tree_view.get_group_order();
@@ -171,14 +159,11 @@ cls.ResourceInspector = function(network_logger)
           return false;
         }
 
-        this._populate_document_resources(r);
-
         r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
         r.same_origin = cls.ResourceUtil.sameOrigin(d.url, r);
 
         r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
-        r.pivot_id = d.pivot_id + "_" + r.group;
-        r.is_hidden = ctx.collapsed[r.pivot_id] == true;
+        r.is_hidden = ctx.collapsed[d.pivot_id + "_" + r.group] == true;
 
         return true;
       }, this);
@@ -368,7 +353,6 @@ cls.ResourceInspector = function(network_logger)
 
     this._document_list = [];
     this._collapsed_hash = {};
-    this._document_resources = {};
 
     this._suppress_uids = {};
   };

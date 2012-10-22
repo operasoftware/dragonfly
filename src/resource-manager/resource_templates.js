@@ -102,9 +102,8 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.document = function(context, d)
 	{
-		var document_resources = context.document_resources[d.documentID] || [];
 		var resources = context.resources.filter(function(r) {
-			return document_resources.contains(r.uid);
+			return r.document_id == d.documentID;
 		});
 
 		if (resources.length > 0)
