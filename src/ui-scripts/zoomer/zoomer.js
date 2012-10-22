@@ -1,7 +1,6 @@
 "use strict";
 
 // TODO: when width is 1px and mousewheeling, don't move
-// TODO: prevent context menu
 
 /**
  * @constructor
@@ -318,6 +317,9 @@ var ZoomerPrototype = function()
     window.requestAnimationFrame(this._update_bound);
   };
 
+  /**
+   * Updates the overlay position and the model area.
+   */
   this._update = function()
   {
     this._update_overlay_position();
@@ -336,6 +338,9 @@ var ZoomerPrototype = function()
     this._overlay_ele.style.right = this._overlay_right + "px";
   };
 
+  /**
+   * Sets the model area.
+   */
   this._set_model_area = function()
   {
     var ms_unit = this._model.get_duration() / this._model.get_model_element_width();
@@ -352,6 +357,9 @@ var ZoomerPrototype = function()
     return this._zoomer_ele_width - left_x;
   };
 
+  /**
+   * Finalizes the setup by adding all events.
+   */
   this._finalize = function()
   {
     this._zoomer_ele.addEventListener("mousewheel", this._zoomer_ele_onmousewheel_bound);
@@ -362,6 +370,9 @@ var ZoomerPrototype = function()
     this._handle_right_ele.addEventListener("mousedown", this._handle_ele_onmousedown_bound);
   };
 
+  /**
+   * Resets the state of the overlay.
+   */
   this.reset = function()
   {
     this._overlay_left = 0;
@@ -405,7 +416,8 @@ var ZoomerPrototype = function()
   };
 
   /**
-   *
+   * Move the overlay. A negative value moves the overlay to the left,
+   * a positive to the right.
    */
   this.move_overlay = function(diff)
   {
@@ -420,7 +432,7 @@ var ZoomerPrototype = function()
   };
 
   /**
-   *
+   * Changes the size of the overlay.
    */
   this.change_overlay_size = function(left_diff, right_diff)
   {
@@ -435,7 +447,8 @@ var ZoomerPrototype = function()
   };
 
   /**
-   *
+   * Sets the left and right position of the overlay internally. To change
+   * the element position, _update_overlay_position has to be called.
    */
   this.set_overlay_position = function(left, right)
   {
