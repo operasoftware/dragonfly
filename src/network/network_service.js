@@ -1307,8 +1307,8 @@ cls.ResourceInfo.prototype = new URIPrototype("url");
 
 cls.ResourceInfo.prototype.__defineGetter__("metadata", function()
 {
-  if(this._metadata === undefined && this.data != null)
-      this._metadata = cls.ResourceUtil.get_meta_data(this);
+  if (this._metadata === undefined && this.data != null)
+    this._metadata = cls.ResourceUtil.get_meta_data(this);
 
   return this._metadata;
 });
