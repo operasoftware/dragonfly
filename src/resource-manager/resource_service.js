@@ -279,15 +279,14 @@ cls.ResourceInspector = function(network_logger)
 
       // scroll into view
       var container = this.tree_view.get_container().firstChild;
-      var e_top = e.offsetTop;
-      var e_bottom = e_top + e.offsetHeight;
-      var container_top = container.scrollTop;
-      var container_height = container.offsetHeight;
+      var y = container.scrollTop;
+      var max_y = e.offsetTop;
+      var min_y = max_y + e.offsetHeight - container.offsetHeight;
 
-      if (e_top < container_top)
-          container.scrollTop = e_top;
-      else if (e_bottom > container_top + container_height)
-        container.scrollTop = e_bottom - container_height;
+      if (y < min_y)
+        container.scrollTop = min_y;
+      else if (y > max_y)
+        container.scrollTop = max_y;
     }
   }.bind(this);
 
