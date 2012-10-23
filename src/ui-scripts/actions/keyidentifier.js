@@ -5,7 +5,7 @@
 
   /* private */
 
-  var EXCEPTIONS = ["Backspace", "Tab", "Enter", "Spacebar"];
+  var EXCEPTIONS = ["Backspace", "Esc", "Tab", "Enter", "Spacebar"];
 
   this._named_shortcuts = {};
   this._char_shortcuts = {};
