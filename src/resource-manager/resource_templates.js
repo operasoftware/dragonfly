@@ -7,10 +7,11 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	var URL_MATCH_CONTEXT_SIZE = 10;
 	var DEPTH_IDENTATION = 18;
 	var DISTINGUISHER_MAX_LENGTH = 64;
+	var flat_list;
 
 	this._get_short_distinguisher = function(url)
 	{
-		var name = url.filename || url.short_distinguisher || url;
+		var name = url.short_distinguisher;
 
 		if (name.length > this.DISTINGUISHER_MAX_LENGTH)
 			name = name.slice(0, this.DISTINGUISHER_MAX_LENGTH) + "…";
@@ -41,8 +42,6 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.update = function(context)
 	{
-		this.flat_list = [];
-
 		// expand all the pivots if there is a search_term
 		if (context.search_term != "")
 			Object.keys(context.collapsed).forEach(function(v) { context.collapsed[v] = false; });
@@ -57,12 +56,20 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 				context.resources.push(r);
 		});
 
+		flat_list = [];
 		this.windows(context);
-		var tpl = ["div", ["ul", this.flat_list], "class", "resource-tree"];
-		delete this.flat_list;
+		var tpl = ["div", ["ul", flat_list], "class", "resource-tree"];
+		flat_list = [];
+
 		return tpl;
 	};
 
+	/*
+	 * The following template methods push their result to the private variable
+	 * `flat_list` in order to create a lightweight flat list of windows, documents,
+	 * groups, resources, ...
+	 *
+	 */
 	this.windows = function(context)
 	{
 		context.window_list.forEach(this.window.bind(this, context));
@@ -72,11 +79,11 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	{
 		var window_info = window.window_manager_data.get_window(w.id);
 		if (!window_info)
-			return [];
+			return;
 
 		var extras = this._expander_extras(context, String(w.id));
 
-		this.flat_list.push(
+		flat_list.push(
 			["li",
 				["h2",
 					extras.tpl.button,
@@ -108,17 +115,16 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 		if (resources.length > 0)
 		{
-			var depth = d.depth;
-			var extras = this._expander_extras(context, d.pivot_id, depth);
+			var extras = this._expander_extras(context, d.pivot_id, d.depth);
 
-			this.flat_list.push(
+			flat_list.push(
 				["li",
 					["h2",
 						extras.tpl.button,
 						["span",
 							this._get_short_distinguisher(d.url),
 							"class", "resource-tree-document-label",
-							"data-tooltip", " js-script-select",
+							"data-tooltip", "kjs-script-select",
 							"data-tooltip-text", d.original_url
 						],
 						" ",
@@ -132,7 +138,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 				].concat(extras.tpl.li)
 			);
 
-			if (!extras.collapsed )
+			if (!extras.collapsed)
 			{
 				if (resources.length)
 					this.resource_groups(context, resources, d);
@@ -159,7 +165,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		var depth = d.depth + 1;
 		var extras = this._expander_extras(context, d.pivot_id + "_" + g, depth);
 
-		this.flat_list.push(
+		flat_list.push(
 			["li",
 				["h2",
 					extras.tpl.button,
@@ -194,13 +200,13 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		{
 			var pos_first = r.url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
 			var pos_last = r.url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
-			var preffix = pos_first > 0 ? "…" : "";
+			var prefix = pos_first > 0 ? "…" : "";
 			var suffix = pos_last < r.url.length ? "…" : "";
 
-			partial_url_match = preffix + r.url.substring(pos_first, pos_last) + suffix;
+			partial_url_match = prefix + r.url.substring(pos_first, pos_last) + suffix;
 		}
 
-		this.flat_list.push(
+		flat_list.push(
 			["li",
 				["h2",
 					["span",
@@ -208,7 +214,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 						"class", "resource-tree-resource-label",
 						"style", "margin-left:" + (1 + depth) * DEPTH_IDENTATION + "px;",
 						"data-tooltip", "js-script-select",
-						"data-tooltip-text", r.url
+						"data-tooltip-text", r.short_distinguisher
 					],
 					" ",
 					r.same_origin ? [] : ["span", r.host, "class", "resource-domain"],
@@ -232,14 +238,14 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		if (!resource.data)
 			return this.no_data_available(resource);
 
-		var specific_template = this[resource.type] ? resource.type : "text";
+		var type = this[resource.type] ? resource.type : "fallback";
 
 		return(
 		["div",
 			this.overview(resource),
 			["div",
-				this[specific_template](resource, resource.data),
-				"class", "resource-detail-" + specific_template + "-container"
+				this[type](resource, resource.data),
+				"class", "resource-detail-" + type + "-container"
 			],
 			"class", "resource-detail-container"
 		]);
@@ -280,14 +286,13 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.overview = function(resource)
 	{
-		var info =
-		{
+		var info = {
 			"response_code": resource.responsecode + " " + cls.ResourceUtil.http_status_codes[resource.responsecode],
 			"size": resource.size || resource.data.contentLength || resource.data.content.length,
 			"character_encoding": resource.encoding || resource.data.characterEncoding
 		};
 
-		var is_error = resource.responsecode && ![200, 304].contains(resource.responsecode);
+		var is_error = resource.error_in_current_response;
 
 		return (
 		["div",
@@ -395,16 +400,15 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		]);
 	};
 
-	this.flash = function(resource)
+	this.fallback = function(resource)
 	{
 		return(
-		["object",
-			["div",
-				"Type not supported"
-			],
-			"type", resource.mimeType,
-			"data", resource.data.content.stringData,
-			"class", "resource-detail-flash"
+		[
+			"a",
+			ui_strings.M_CONTEXTMENU_SHOW_RESOURCE,
+			"href", resource.url,
+			"target", "_blank",
+			"class", "resource-detail-link"
 		]);
 	};
 

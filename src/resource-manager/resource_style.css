@@ -57,11 +57,6 @@
   background-image: url("../ui-images/type_feed.png");
 }
 
-.resource-type-flash
-{
-  background-image: url("../ui-images/type_flash.png");
-}
-
 .resource-type-font
 {
   background-image: url("../ui-images/type_font.png");
@@ -228,7 +223,7 @@
 .resource-detail-text-container,
 .resource-detail-image-container,
 .resource-detail-others-container,
-.resource-detail-flash-container
+.resource-detail-fallback-container
 {
   padding: 8px;
 }

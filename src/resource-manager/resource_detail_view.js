@@ -133,7 +133,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
     this.data = data;
     this.resource = resource;
-    this.service.highlight_resource(resource.uid);
+    this._resource_inspector.highlight_resource(resource.uid);
     this.update();
 
     return true;
@@ -147,13 +147,13 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this._show_resource_by_key = function(key, data)
   {
-    var service = this.service;
-    var resource = service.get_resource(key) || service.get_resource_by_url(key);
+    var inspector = this._resource_inspector;
+    var resource = inspector.get_resource(key) || inspector.get_resource_by_url(key);
 
     var url = resource ? resource.url : key;
 
     if (!resource || !this._show_resource(resource, data))
-      service.request_resource_data(url, this.show_resource.bind(this), data, resource);
+      inspector.request_resource_data(url, this.show_resource.bind(this), data, resource);
   };
 
   /*
@@ -180,7 +180,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
   this._init = function(id, name, container_class, html, default_handler, resource_inspector)
   {
     this.id = id;
-    this.service = resource_inspector;
+    this._resource_inspector = resource_inspector;
 
     var messages = window.messages;
     messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);

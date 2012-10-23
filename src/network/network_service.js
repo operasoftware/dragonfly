@@ -1297,6 +1297,7 @@ cls.ResourceInfo = function(entry)
   this.window_id = entry.window_id;
   this.is_unloaded = entry.is_unloaded;
   this.responsecode = entry.current_responsecode;
+  this.error_in_current_response = entry.error_in_current_response;
 
   var last_response = entry.requests_responses && entry.requests_responses.last;
   if (last_response && last_response.responsebody)

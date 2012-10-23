@@ -19,9 +19,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     ui_strings.S_HTTP_LABEL_FILTER_OTHER
   ];
 
-  this._loading = false;
-
-  this.service = resource_inspector;
+  this._resource_inspector = resource_inspector;
 
   this.get_group_order = function()
   {
@@ -33,25 +31,14 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
 
   this.createView = function(container)
   {
-    var ctx = this.service.get_resource_context();
-    var target = container.firstElementChild;
-    var scroll_top = target ? target.scrollTop : 0;
-    var scroll_left = target ? target.scrollLeft : 0;
     var tpl;
+    var ctx = this._resource_inspector.get_resource_context();
+    var target = container.firstElementChild;
 
     if (ctx)
     {
       ctx.search_term = this.search_term || "";
       tpl = templates.resource_tree.update(ctx);
-    }
-    else if (this._loading)
-    {
-      tpl = (
-        ["div",
-         ["p", ui_strings.S_RESOURCE_LOADING_PAGE],
-         "class", "info-box"
-        ]
-      );
     }
     else
     {
@@ -67,13 +54,17 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
       );
     }
 
-    //  only render the template if it has changed ( using its JSON representation as hash )
+    //  Exit if the template has not changed since last time ( using its JSON representation as hash )
     var tpl_JSON = JSON.stringify(tpl);
-    if (!this.tpl_JSON || tpl_JSON.length != this.tpl_JSON.length || tpl_JSON != this.tpl_JSON)
-    {
-      container.clearAndRender(tpl);
-      this.tpl_JSON = tpl_JSON;
-    }
+    if (tpl_JSON == this.tpl_JSON)
+      return;
+
+    this.tpl_JSON = tpl_JSON;
+
+    var scroll_top = target ? target.scrollTop : 0;
+    var scroll_left = target ? target.scrollLeft : 0;
+
+    container.clearAndRender(tpl);
 
     target = container.firstElementChild;
     if (target)
@@ -93,39 +84,21 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
     container.clearAndRender(window.templates.disabled_view());
   };
 
-  this._on_abouttoloaddocument_bound = function()
-  {
-    this._loading = true;
-    this.update();
-  }.bind(this);
-
-  this._on_documentloaded_bound = function()
-  {
-    this._loading = false;
-    this.update();
-  }.bind(this);
-
-  this._on_debug_context_selected_bound = function()
-  {
-    this._loading = false;
-    this.update();
-  }.bind(this);
-
   this._init = function()
   {
     this.id = id;
 
     var messages = window.messages;
-    messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
+    messages.add_listener("debug-context-selected", this.update);
 
     var doc_service = window.services["document-manager"];
-    doc_service.add_listener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-    doc_service.add_listener("documentloaded", this._on_documentloaded_bound);
+    doc_service.add_listener("abouttoloaddocument", this.update);
+    doc_service.add_listener("documentloaded", this.update);
 
     ActionHandlerInterface.apply(this);
     this._handlers = {
-      "select-next-entry": this.service.highlight_next_resource_bound,
-      "select-previous-entry": this.service.highlight_previous_resource_bound
+      "select-next-entry": this._resource_inspector.highlight_next_resource_bound,
+      "select-previous-entry": this._resource_inspector.highlight_previous_resource_bound
     };
     ActionBroker.get_instance().register_handler(this);
 
