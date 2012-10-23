@@ -100,6 +100,7 @@ cls.ResourceUtil.mime_type_map = {
   "image/vnd.microsoft.icon": "image",
   "image/svg+xml": "image",
   "image/vnd.wap.wbmp": "image",
+  "image/webp": "image",
 
   "application/vnd.ms-fontobject": "font",
   "application/x-font-ttf": "font",

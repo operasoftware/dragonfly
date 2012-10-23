@@ -49,10 +49,9 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		// filter the list of resources, set their is_hidden flag and push the ones matching
 		context.resources = [];
 		context.resource_list.forEach(function(r) {
-			r.is_hidden = context.collapsed[r.pivot_id] == true &&
-			  context.search_term != "" && !r.url.contains(context.search_term);
+			r.is_hidden = context.collapsed[r.pivot_id] == true;
 
-			if (!r.is_hidden)
+			if (!r.is_hidden && context.search_term == "" || r.url.contains(context.search_term))
 				context.resources.push(r);
 		});
 
@@ -67,7 +66,8 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	/*
 	 * The following template methods push their result to the private variable
 	 * `flat_list` in order to create a lightweight flat list of windows, documents,
-	 * groups, resources, ...
+	 * groups, resources, ... This approach is also much easier than flattening a
+	 * big nested template.
 	 *
 	 */
 	this.windows = function(context)
@@ -214,7 +214,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 						"class", "resource-tree-resource-label",
 						"style", "margin-left:" + (1 + depth) * DEPTH_IDENTATION + "px;",
 						"data-tooltip", "js-script-select",
-						"data-tooltip-text", r.short_distinguisher
+						"data-tooltip-text", r.url
 					],
 					" ",
 					r.same_origin ? [] : ["span", r.host, "class", "resource-domain"],
