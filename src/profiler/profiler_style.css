@@ -2,7 +2,7 @@
 {
   position: absolute;
   left: 0;
-  top: 65px;
+  top: 72px;
   width: 160px;
   border-top: 1px solid rgba(0, 0, 0, 0.055);
   border-bottom: 1px solid rgba(0, 0, 0, 0.055);
@@ -14,7 +14,7 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 15px;
+  top: 22px;
   height: 26px; /* 8 types * 3px height + 2 extra for padding */
   border-top: 1px solid rgba(0, 0, 0, 0.055);
   border-bottom: 1px solid rgba(0, 0, 0, 0.055);
@@ -26,7 +26,7 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 15px;
+  top: 22px;
   height: 27px;
 }
 
@@ -35,7 +35,7 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 65px;
+  top: 72px;
   background-image: -o-linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 50%, transparent 50%);
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 50%, transparent 50%);
   background-position: 0 1px;
@@ -48,7 +48,7 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 65px;
+  top: 72px;
   border-top: 1px solid rgba(0, 0, 0, 0.055);
   border-bottom: 1px solid rgba(0, 0, 0, 0.055);
   overflow: hidden;
@@ -59,7 +59,7 @@
 {
   position: absolute;
   top: 211px;
-  bottom: 21px;
+  bottom: 22px;
   overflow: auto;
   width: 100%;
 }
@@ -159,7 +159,7 @@
 {
   font-size: 9px;
   position: absolute;
-  top: -12px;
+  top: -14px;
   color: #444;
   white-space: nowrap;
 }
@@ -221,17 +221,17 @@
 
 .event-type-3
 {
-  background-color: rgba(199, 199, 235, .6);
+  background-color: rgba(203, 190, 235, 0.6);
 }
 
 .event-type-3-selftime
 {
-  background-color: rgb(179, 176, 255);
+  background-color: rgba(184, 161, 255);
 }
 
 .event-type-4
 {
-  background-color: rgba(170, 193, 227, .6);
+  background-color: rgba(170, 193, 227, 0.6);
 }
 
 .event-type-4-selftime
@@ -241,17 +241,17 @@
 
 .event-type-5
 {
-  background-color: rgba(245, 225, 159, .6);
+  background-color: rgba(245, 225, 159, 0.6);
 }
 
 .event-type-5-selftime
 {
-  background-color: rgb(255, 225, 125);
+  background-color: rgb(255, 200, 82);
 }
 
 .event-type-6
 {
-  background-color: rgba(162, 222, 170, .6);
+  background-color: rgba(162, 222, 170, 0.6);
 }
 
 .event-type-6-selftime
@@ -261,37 +261,37 @@
 
 .event-type-7
 {
-  background-color: rgba(252, 177, 116, .6);
+  background-color: rgba(167, 233, 242, 0.6);
 }
 
 .event-type-7-selftime
 {
-  background-color: rgb(232, 130, 46);
+  background-color: rgb(61, 211, 242);
 }
 
 .event-type-8
 {
-  background-color: rgba(251, 207, 171, .6);
+  background-color: rgba(251, 207, 171, 0.6);
 }
 
 .event-type-8-selftime
 {
-  background-color: rgb(255, 192, 140);
+  background-color: rgb(255, 177, 115);
 }
 
 .event-type-10
 {
-  background-color: rgba(235, 191, 155, .6);
+  background-color: rgba(242, 187, 235, 0.6);
 }
 
 .event-type-10-selftime
 {
-  background-color: rgb(224, 148, 85);
+  background-color: rgb(250, 151, 237);
 }
 
 .event-type-11
 {
-  background-color: rgba(255, 156, 156, .6);
+  background-color: rgba(255, 156, 156, 0.6);
 }
 
 .event-type-11-selftime
