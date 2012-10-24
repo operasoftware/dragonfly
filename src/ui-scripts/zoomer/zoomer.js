@@ -12,8 +12,6 @@ var Zoomer = function(model, zoomer_ele)
 
 var ZoomerPrototype = function()
 {
-  var UPDATE_THRESHOLD = 50;
-
   this._init = function(model, zoomer_ele)
   {
     /**
@@ -58,19 +56,20 @@ var ZoomerPrototype = function()
      */
     this._last_update = 0;
 
-    this._zoomer_ele_onmousemove_bound = this.zoomer_ele_onmousemove.bind(this);
-    this._zoomer_ele_onmouseup_bound = this.zoomer_ele_onmouseup.bind(this);
-    this._zoomer_ele_onmousewheel_bound = this.zoomer_ele_onmousewheel.bind(this);
-    this._overlay_ele_onmousedown_bound = this.overlay_ele_onmousedown.bind(this);
-    this._overlay_ele_onmousemove_bound = this.overlay_ele_onmousemove.bind(this);
-    this._overlay_ele_onmouseup_bound = this.overlay_ele_onmouseup.bind(this);
-    this._overlay_ele_onmousewheel_bound = this.overlay_ele_onmousewheel.bind(this);
-    this._overlay_ele_onkeydown_bound = this.overlay_ele_onkeydown.bind(this);
-    this._overlay_ele_ondblclick_bound = this.overlay_ele_ondblclick.bind(this);
-    this._handle_ele_onmousedown_bound = this.handle_ele_onmousedown.bind(this);
-    this._handle_ele_onmousemove_bound = this.handle_ele_onmousemove.bind(this);
-    this._handle_ele_onmouseup_bound = this.handle_ele_onmouseup.bind(this);
-    this._handle_ele_onkeydown_bound = this.handle_ele_onkeydown.bind(this);
+    this._zoomer_ele_onmousedown_bound = this._zoomer_ele_onmousedown.bind(this);
+    this._zoomer_ele_onmousemove_bound = this._zoomer_ele_onmousemove.bind(this);
+    this._zoomer_ele_onmouseup_bound = this._zoomer_ele_onmouseup.bind(this);
+    this._zoomer_ele_onmousewheel_bound = this._zoomer_ele_onmousewheel.bind(this);
+    this._overlay_ele_onmousedown_bound = this._overlay_ele_onmousedown.bind(this);
+    this._overlay_ele_onmousemove_bound = this._overlay_ele_onmousemove.bind(this);
+    this._overlay_ele_onmouseup_bound = this._overlay_ele_onmouseup.bind(this);
+    this._overlay_ele_onmousewheel_bound = this._overlay_ele_onmousewheel.bind(this);
+    this._overlay_ele_onkeydown_bound = this._overlay_ele_onkeydown.bind(this);
+    this._overlay_ele_ondblclick_bound = this._overlay_ele_ondblclick.bind(this);
+    this._handle_ele_onmousedown_bound = this._handle_ele_onmousedown.bind(this);
+    this._handle_ele_onmousemove_bound = this._handle_ele_onmousemove.bind(this);
+    this._handle_ele_onmouseup_bound = this._handle_ele_onmouseup.bind(this);
+    this._handle_ele_onkeydown_bound = this._handle_ele_onkeydown.bind(this);
 
     this._update_bound = this._update.bind(this);
 
@@ -88,7 +87,7 @@ var ZoomerPrototype = function()
     this._zoomer_ele_dims = this._zoomer_ele.getBoundingClientRect();
     this._zoomer_ele_left = this._zoomer_ele_dims.left;
     this._zoomer_ele_width = this._zoomer_ele_dims.width - zoomer_ele_hor_borders;
-    this._zoomer_ele.addEventListener("mousedown", this.zoomer_ele_onmousedown.bind(this));
+    this._zoomer_ele.addEventListener("mousedown", this._zoomer_ele_onmousedown_bound);
   };
 
   this._set_up_overlay_ele = function()
@@ -117,7 +116,7 @@ var ZoomerPrototype = function()
   // Zoomer element event handlers
   //
 
-  this.zoomer_ele_onmousedown = function(event)
+  this._zoomer_ele_onmousedown = function(event)
   {
     if (event.which != 1)
       return;
@@ -131,7 +130,7 @@ var ZoomerPrototype = function()
     // TODO: need to remove e.g. mousehweel event handlers here
   };
 
-  this.zoomer_ele_onmousemove = function(event)
+  this._zoomer_ele_onmousemove = function(event)
   {
     document.documentElement.classList.add("overlay-size-change");
     var mouse_x = event.clientX - this._zoomer_ele_left;
@@ -149,7 +148,7 @@ var ZoomerPrototype = function()
     }
   };
 
-  this.zoomer_ele_onmousewheel = function(event)
+  this._zoomer_ele_onmousewheel = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
     var diff = (mouse_x < this._overlay_left) ? 5 : -5;
@@ -158,7 +157,7 @@ var ZoomerPrototype = function()
     event.stopPropagation();
   };
 
-  this.zoomer_ele_onmouseup = function(event)
+  this._zoomer_ele_onmouseup = function(event)
   {
     document.documentElement.classList.remove("overlay-size-change");
     document.removeEventListener("mousemove", this._zoomer_ele_onmousemove_bound);
@@ -174,7 +173,7 @@ var ZoomerPrototype = function()
   // Overlay element event handlers
   //
 
-  this.overlay_ele_onmousedown = function(event)
+  this._overlay_ele_onmousedown = function(event)
   {
     if (event.which != 1)
       return;
@@ -188,7 +187,7 @@ var ZoomerPrototype = function()
     event.preventDefault();
   };
 
-  this.overlay_ele_onmousemove = function(event)
+  this._overlay_ele_onmousemove = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
     var mouse_to_handle_diff = this._mouse_drag_start_x - this._overlay_start_left;
@@ -196,14 +195,14 @@ var ZoomerPrototype = function()
     this.move_overlay(diff);
   };
 
-  this.overlay_ele_onmousewheel = function(event)
+  this._overlay_ele_onmousewheel = function(event)
   {
     var diff = (event.wheelDelta < 0) ? 5 : -5;
     this.change_overlay_size(diff, -diff);
     event.stopPropagation();
   };
 
-  this.overlay_ele_onkeydown = function(event)
+  this._overlay_ele_onkeydown = function(event)
   {
     var width = this._to_right_x(this._overlay_right) - this._overlay_left;
     var diff = {
@@ -218,12 +217,12 @@ var ZoomerPrototype = function()
     event.stopPropagation();
   };
 
-  this.overlay_ele_ondblclick = function(event)
+  this._overlay_ele_ondblclick = function(event)
   {
     this.reset();
   };
 
-  this.overlay_ele_onmouseup = function(event)
+  this._overlay_ele_onmouseup = function(event)
   {
     document.documentElement.classList.remove("overlay-drag");
     document.removeEventListener("mousemove", this._overlay_ele_onmousemove_bound);
@@ -235,7 +234,7 @@ var ZoomerPrototype = function()
   // Overlay handle element event handlers
   //
 
-  this.handle_ele_onmousedown = function(event)
+  this._handle_ele_onmousedown = function(event)
   {
     if (event.which != 1)
       return;
@@ -251,7 +250,7 @@ var ZoomerPrototype = function()
     event.preventDefault();
   };
 
-  this.handle_ele_onmousemove = function(event)
+  this._handle_ele_onmousemove = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
     var is_left_handle = this._handle_ele == this._handle_left_ele;
@@ -267,17 +266,17 @@ var ZoomerPrototype = function()
     if (resize_left)
     {
       var diff = mouse_x - this._overlay_left - mouse_to_handle_diff;
-      this.set_overlay_position(this._overlay_left + diff, static_pos);
+      this._set_overlay_position(this._overlay_left + diff, static_pos);
     }
     else
     {
       var diff = mouse_x - this._to_right_x(this._overlay_right) - mouse_to_handle_diff;
-      this.set_overlay_position(static_pos, this._to_right_x(this._overlay_right) + diff);
+      this._set_overlay_position(static_pos, this._to_right_x(this._overlay_right) + diff);
     }
     this._request_update();
   };
 
-  this.handle_ele_onkeydown = function(event)
+  this._handle_ele_onkeydown = function(event)
   {
     var diff = {
       37: -1, // Arrow left
@@ -293,14 +292,13 @@ var ZoomerPrototype = function()
     }
     else
     {
-      // TODO: check this calculation
       if (this._overlay_left - diff < this._to_right_x(this._overlay_right))
         this.change_overlay_size(0, diff);
     }
     event.stopPropagation();
   };
 
-  this.handle_ele_onmouseup = function(event)
+  this._handle_ele_onmouseup = function(event)
   {
     document.documentElement.classList.remove("overlay-size-change");
     document.removeEventListener("mousemove", this._handle_ele_onmousemove_bound);
@@ -339,6 +337,20 @@ var ZoomerPrototype = function()
   };
 
   /**
+   * Sets the left and right position of the overlay internally. To change
+   * the element position, _update() has to be called.
+   */
+  this._set_overlay_position = function(left, right)
+  {
+    if (left == null)
+      left = 0;
+    else if (right == null)
+      right = 0;
+    this._overlay_left = Math.max(0, Math.min(left, right));
+    this._overlay_right = Math.max(0, this._to_right_x(Math.max(left, right)));
+  };
+
+  /**
    * Sets the model area.
    */
   this._set_model_area = function()
@@ -370,8 +382,12 @@ var ZoomerPrototype = function()
     this._handle_right_ele.addEventListener("mousedown", this._handle_ele_onmousedown_bound);
   };
 
+  //
+  // Public
+  //
+
   /**
-   * Resets the state of the overlay.
+   * Reset the state of the overlay.
    */
   this.reset = function()
   {
@@ -401,7 +417,7 @@ var ZoomerPrototype = function()
   };
 
   /**
-   * Sets the current state of the zoomer.
+   * Set the current state of the zoomer.
    */
   this.set_current_area = function()
   {
@@ -409,7 +425,7 @@ var ZoomerPrototype = function()
       this._zoomer_ele.appendChild(this._overlay_ele);
     var ms_unit = this._model.get_model_element_width() / this._model.get_duration();
     var area = this._model.get_current_area();
-    this.set_overlay_position(Math.floor(area.x0 * ms_unit), Math.ceil(area.x1 * ms_unit));
+    this._set_overlay_position(Math.floor(area.x0 * ms_unit), Math.ceil(area.x1 * ms_unit));
     this._update_overlay_position();
     this._model.set_area(area.x0, area.x1);
     this._finalize();
@@ -421,7 +437,7 @@ var ZoomerPrototype = function()
    */
   this.move_overlay = function(diff)
   {
-    if (diff == null)
+    if (!diff)
       return;
 
     if (diff < 0)
@@ -432,7 +448,7 @@ var ZoomerPrototype = function()
   };
 
   /**
-   * Changes the size of the overlay.
+   * Change the size of the overlay.
    */
   this.change_overlay_size = function(left_diff, right_diff)
   {
@@ -442,26 +458,21 @@ var ZoomerPrototype = function()
       right_diff = 0;
     var left = this._overlay_left + left_diff;
     var right = this._overlay_right - right_diff;
-    this.set_overlay_position(left, this._to_right_x(right));
+    this._set_overlay_position(left, this._to_right_x(right));
     this._request_update();
   };
 
   /**
-   * Sets the left and right position of the overlay internally. To change
-   * the element position, _update_overlay_position has to be called.
+   * Set the position of the overlay.
    */
   this.set_overlay_position = function(left, right)
   {
-    if (left == null)
-      left = 0;
-    else if (right == null)
-      right = 0;
-    this._overlay_left = Math.max(0, Math.min(left, right));
-    this._overlay_right = Math.max(0, this._to_right_x(Math.max(left, right)));
+    this._set_overlay_position(left, right);
+    this._request_update();
   };
 
   /**
-   * Sets the zoomer element.
+   * Set the zoomer element.
    */
   this.set_zoomer_element = function(ele)
   {
