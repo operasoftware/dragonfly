@@ -34,7 +34,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   var profiler_timeline_decl = document.styleSheets.getDeclaration(".profiler-timeline");
   var profiler_event_decl = document.styleSheets.getDeclaration(".profiler-event");
   var AGGREGATED_EVENTS_WIDTH = profiler_timeline_decl ? parseInt(profiler_timeline_decl.left) : 0;
-  var BAR_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
+  var EVENT_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 1;
 
   // Parent-children relationships
   this._children = {};
@@ -466,7 +466,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var width = this._timeline_width;
 
     var duration = Math.max(x1 - x0, ProfilerView.MIN_DURATION);
-    var ms_unit = (width - BAR_MIN_WIDTH) / duration;
+    var ms_unit = (width - EVENT_MIN_WIDTH) / duration;
     var new_event_list = [];
     for (var i = 0, event; event = timeline_list.eventList[i]; i++)
     {

@@ -15,9 +15,9 @@
   left: 160px;
   right: 0;
   top: 22px;
-  height: 26px; /* 8 types * 3px height + 2 extra for padding */
-  border-top: 1px solid rgba(0, 0, 0, 0.055);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+  height: 28px;
+  box-shadow: 0 1px inset rgba(0, 0, 0, 0.055),
+              0 -1px inset rgba(0, 0, 0, 0.055);
   overflow-x: hidden;
 }
 
@@ -26,8 +26,8 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 22px;
-  height: 27px;
+  top: 23px;
+  height: 26px;
 }
 
 .profiler-timeline-background
@@ -179,6 +179,7 @@
 {
   min-width: 1px;
   height: 3px;
+  margin-top: 2px;
   position: absolute;
 }
 
@@ -186,7 +187,7 @@
 {
   min-width: 3px;
   height: 12px;
-  margin: 4px 0;
+  margin: 5px 0;
   box-shadow: inset 0 2px rgba(255, 255, 255, 0.09),
               inset 0 0 0 1px rgba(0, 0, 0, 0.07),
               inset 0 -1px rgba(0, 0, 0, 0.05);

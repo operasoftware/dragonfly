@@ -85,13 +85,14 @@ var ProfilerTemplates = function()
   var profiler_event_decl = style_sheets.getDeclaration(".profiler-event");
   var profiler_event_small_decl = style_sheets.getDeclaration(".profiler-event-small");
   var profiler_timeline_row_decl = style_sheets.getDeclaration(".profiler-timeline-row");
-  var EVENT_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
-  var EVENT_SMALL_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_small_decl.minWidth) : 0;
-  var BAR_HEIGHT = profiler_timeline_row_decl
-                 ? (parseInt(style_sheets.getDeclaration(".profiler-timeline-row").height) +
-                    parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingTop) +
-                    parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
-                 : 0;
+  var EVENT_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 1;
+  var EVENT_SMALL_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_small_decl.minWidth) : 1;
+  var EVENT_HEIGHT = profiler_timeline_row_decl
+                   ? (parseInt(style_sheets.getDeclaration(".profiler-timeline-row").height) +
+                      parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingTop) +
+                      parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
+                   : 1;
+  var EVENT_SMALL_HEIGHT = profiler_event_decl ? parseInt(profiler_event_small_decl.height) : 1;
 
   var MIN_DURATION = ProfilerView.MIN_DURATION;
 
@@ -227,8 +228,8 @@ var ProfilerTemplates = function()
        "style",
          "width: " + width + "px; " +
          "left: " + left + "px; " +
-         "top: " + (column * 3 + 1) + "px;", // TODO: 3 -> constant
-       "class", "profiler-event-small event-type-" + event.type + "-selftime" // FIXME: not actually selftime
+         "top: " + (column * EVENT_SMALL_HEIGHT) + "px;",
+       "class", "profiler-event-small event-type-" + event.type + "-selftime" // not actually selftime, just using that color
       ]
     );
   };
@@ -249,7 +250,7 @@ var ProfilerTemplates = function()
        "style",
          "width: " + width + "px; " +
          "left: " + left + "px; " +
-         "top: " + (column * BAR_HEIGHT + 1) + "px; " +
+         "top: " + (column * EVENT_HEIGHT) + "px; " +
          (width > 46340 ? ("background-size: " + Math.floor(46340 / width * 100) + "%; ") : "") + // workaround for CORE-48579
          (HAS_UNPREFIXED_GRADIENTS
            ? "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
