@@ -55,6 +55,7 @@
 {
   width: 155px;
   position: relative;
+  overflow: hidden;
 }
 
 .profiler-status
@@ -119,18 +120,28 @@
 .profiler-legend-time
 {
   position: absolute;
-  right: 2px;
+  right: 0;
+  top: 0;
+  padding: 0 2px 0 4px;
+  background-color: #fff;
 }
 
-.profiler-timeline-row:hover
+.even .profiler-legend-time
 {
-  background: rgba(137, 173, 232, 0.2);
+  background-color: #f6f6f6;
+}
+
+.profiler-timeline-row:hover,
+.profiler-timeline-row:hover .profiler-legend-time
+{
+  background-color: #E7EEF9;
   color: #000;
 }
 
-.profiler-timeline-row:active
+.profiler-timeline-row:active,
+.profiler-timeline-row:active .profiler-legend-time
 {
-  background-color: rgba(55, 115, 211, 0.7);
+  background-color: #739DE0;
   color: #fff;
 }
 
