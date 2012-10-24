@@ -163,7 +163,8 @@ cls.ResourceInspector = function(network_logger)
         r.same_origin = cls.ResourceUtil.sameOrigin(d.url, r);
 
         r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
-        r.is_hidden = ctx.collapsed[d.pivot_id + "_" + r.group] == true;
+        r.pivot_id = d.pivot_id + "_" + r.group;
+        r.is_hidden = ctx.collapsed[r.pivot_id] == true;
 
         return true;
       }, this);
