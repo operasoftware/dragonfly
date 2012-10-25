@@ -1302,6 +1302,22 @@ cls.ResourceInfo = function(entry)
   var last_response = entry.requests_responses && entry.requests_responses.last;
   if (last_response && last_response.responsebody)
     this.data = last_response.responsebody;
+  else if (entry.protocol == "data:")
+  {
+    // populate the data in case of data: URI resource
+    var data = entry.url.slice(entry.protocol.length);
+    var pos = data.indexOf(",");
+    var is_base64 = data.lastIndexOf(";base64", pos) != -1;
+
+    this.data = {};
+    this.data.mimeType = data.slice(0, is_base64 ? data.indexOf(";") : pos);
+    this.data.content = {};
+    if (this.data.mimeType.startswith("text/"))
+      this.data.content.stringData = is_base64 ? atob(data.slice(pos + 1)) : data.slice(pos + 1);
+    else
+      this.data.content.stringData = entry.url;
+    this.data.content.length = this.data.content.stringData.length;
+  }
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");

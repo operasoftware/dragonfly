@@ -289,7 +289,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		var info = {
 			"response_code": resource.responsecode + " " + cls.ResourceUtil.http_status_codes[resource.responsecode],
 			"size": resource.size || resource.data.contentLength || resource.data.content.length,
-			"character_encoding": resource.encoding || resource.data.characterEncoding
+			"character_encoding": resource.encoding || resource.data.characterEncoding || ""
 		};
 
 		var is_error = resource.error_in_current_response;
