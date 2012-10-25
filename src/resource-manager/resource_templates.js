@@ -124,7 +124,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 						["span",
 							this._get_short_distinguisher(d.url),
 							"class", "resource-tree-document-label",
-							"data-tooltip", "kjs-script-select",
+							"data-tooltip", "js-script-select",
 							"data-tooltip-text", d.original_url
 						],
 						" ",
