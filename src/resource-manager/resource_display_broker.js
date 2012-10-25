@@ -42,7 +42,7 @@ cls.ResourceDisplayBroker = function()
     if (url)
     {
       // resolve the URL based on that of the runtime if we only have a relative path
-      if (runtime && url.contains("://"))
+      if (runtime && !url.contains("://"))
         url = window.helpers.resolveURLS(runtime.uri, url);
 
       id_or_url = url;
