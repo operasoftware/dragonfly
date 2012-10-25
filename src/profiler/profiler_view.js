@@ -242,8 +242,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this.onresize = function()
   {
-    // TODO: don't update stuff that don't have to be updated, e.g.
-    // legend, details, status
     if (this._container)
       this._update_view();
   };
@@ -336,7 +334,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     var button_title = this._profiler.is_active
                      ? ui_strings.S_BUTTON_STOP_PROFILER
-                     : ui_strings.S_BUTTON_START_PROFILER
+                     : ui_strings.S_BUTTON_START_PROFILER;
     window.toolbars[this.id].set_button_title("profiler-start-stop", button_title);
   };
 
@@ -353,14 +351,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         this._profiler.release_session(null, {session_id: this._old_session_id});
       this._reset();
     }
-  };
-
-  this._on_settings_initialized = function(msg)
-  {
-    //if (msg.view_id == "profiler_all")
-    //{
-    //  this._min_event_time = window.settings["profiler_all"].get("min-event-time")
-    //}
   };
 
   this._on_single_select_changed = function(msg)
@@ -553,7 +543,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
     window.messages.addListener("profile-enabled", this._on_profile_enabled.bind(this));
     window.messages.addListener("single-select-changed", this._on_single_select_changed.bind(this));
-    window.messages.addListener("settings-initialized", this._on_settings_initialized.bind(this));
 
     window.event_handlers.click["profiler-start-stop"] = this._start_stop_profiler.bind(this);
     window.event_handlers.click["profiler-reload-window"] = this._reload_window.bind(this);
@@ -588,20 +577,20 @@ ProfilerView.create_ui_widgets = function()
         name: "min-event-time",
         items: [
           {
-            text: "All",
-            title: "Show all events",
+            text: ui_strings.S_PROFILER_FILTER_ALL,
+            title: ui_strings.S_PROFILER_FILTER_ALL_TITLE,
             value: "0"
           },
           {
-            text: "> 1 ms",
-            title: "Show events with a self time of at least 1 ms",
+            text: ui_strings.S_PROFILER_FILTER_1MS,
+            title: ui_strings.S_PROFILER_FILTER_1MS_TITLE,
             value: "1"
           },
           {
-            text: "> 15 ms",
-            title: "Show events with a self time of at least 15 ms",
+            text: ui_strings.S_PROFILER_FILTER_15MS,
+            title: ui_strings.S_PROFILER_FILTER_15MS_TITLE,
             value: "15"
-          },
+          }
         ]
       }
     ]
