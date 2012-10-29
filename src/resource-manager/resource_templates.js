@@ -13,8 +13,8 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	{
 		var name = url.short_distinguisher;
 
-		if (name.length > this.DISTINGUISHER_MAX_LENGTH)
-			name = name.slice(0, this.DISTINGUISHER_MAX_LENGTH) + "…";
+		if (name.length > DISTINGUISHER_MAX_LENGTH)
+			name = name.slice(0, DISTINGUISHER_MAX_LENGTH) + "…";
 
 		return name;
 	};
@@ -128,7 +128,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 							"data-tooltip-text", d.original_url
 						],
 						" ",
-						d.same_origin ? [] : ["span", d.url.host, "class", "resource-domain"],
+						d.same_origin ? [] : ["span", d.url.host || d.url.protocol, "class", "resource-domain"],
 						" ",
 						["span",
 							String(resources.length),

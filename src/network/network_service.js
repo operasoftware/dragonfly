@@ -1310,10 +1310,10 @@ cls.ResourceInfo = function(entry)
     var is_base64 = data.lastIndexOf(";base64", pos) != -1;
 
     this.data = {};
-    this.data.mimeType = data.slice(0, is_base64 ? data.indexOf(";") : pos);
+    this.data.mimeType = data.slice(0, is_base64 ? data.indexOf(";") : pos) || "text/plain";
     this.data.content = {};
     if (this.data.mimeType.startswith("text/"))
-      this.data.content.stringData = is_base64 ? atob(data.slice(pos + 1)) : data.slice(pos + 1);
+      this.data.content.stringData = is_base64 ? atob(data.slice(pos + 1)) : decodeURIComponent(data.slice(pos + 1));
     else
       this.data.content.stringData = entry.url;
     this.data.content.length = this.data.content.stringData.length;
