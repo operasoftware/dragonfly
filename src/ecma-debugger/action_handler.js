@@ -184,8 +184,8 @@ window.eventHandlers.click['set-break-point'] = function(event)
       var span = li.querySelector(".line-number");
       line_number = span && Number(span.textContent);
     }
-    var script_id = window.views.js_source.getCurrentScriptId() ||
-                    Number(target.get_ancestor_attr("data-script-id"));
+    var script_id = Number(target.get_ancestor_attr("data-script-id")) ||
+                    window.views.js_source.getCurrentScriptId();
     if (script_id && line_number)
     {
       if (bps.script_has_breakpoint_on_line(script_id, line_number))
