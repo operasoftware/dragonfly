@@ -217,7 +217,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 						"data-tooltip-text", r.url
 					],
 					" ",
-					r.same_origin ? [] : ["span", r.host, "class", "resource-domain"],
+					r.same_origin ? [] : ["span", r.host || r.protocol, "class", "resource-domain"],
 					"class", "resource-tree-resource"
 				],
 				"class", (context.selected_resource_uid == r.uid ? "resource-highlight" : ""),
