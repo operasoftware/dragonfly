@@ -86,13 +86,13 @@ var ProfilerTemplates = function()
   var profiler_event_small_decl = style_sheets.getDeclaration(".profiler-event-small");
   var profiler_timeline_row_decl = style_sheets.getDeclaration(".profiler-timeline-row");
   var EVENT_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 1;
-  var EVENT_SMALL_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_small_decl.minWidth) : 1;
+  var EVENT_SMALL_MIN_WIDTH = profiler_event_small_decl ? parseInt(profiler_event_small_decl.minWidth) : 1;
   var EVENT_HEIGHT = profiler_timeline_row_decl
-                   ? (parseInt(style_sheets.getDeclaration(".profiler-timeline-row").height) +
-                      parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingTop) +
-                      parseInt(style_sheets.getDeclaration(".profiler-timeline-row").paddingBottom))
+                   ? (parseInt(profiler_timeline_row_decl.height) +
+                      parseInt(profiler_timeline_row_decl.paddingTop) +
+                      parseInt(profiler_timeline_row_decl.paddingBottom))
                    : 1;
-  var EVENT_SMALL_HEIGHT = profiler_event_decl ? parseInt(profiler_event_small_decl.height) : 1;
+  var EVENT_SMALL_HEIGHT = profiler_event_small_decl ? parseInt(profiler_event_small_decl.height) : 1;
 
   var MIN_DURATION = ProfilerView.MIN_DURATION;
 
@@ -335,7 +335,7 @@ var ProfilerTemplates = function()
                  "class", "profiler-event-tooltip-label"
                 ],
                 this.format_time(event.interval.start) +
-                " (rel: " + this.format_time(event.interval.start - range_start) + ")"
+                " (Δ: " + this.format_time(event.interval.start - range_start) + ")"
              ],
              ["li",
                 ["span",

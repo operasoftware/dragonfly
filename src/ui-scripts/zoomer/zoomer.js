@@ -476,6 +476,8 @@ var ZoomerPrototype = function()
    */
   this.set_zoomer_element = function(ele)
   {
+    if (!ele)
+      throw "The first argument to set_zoom_element has to be an element.";
     this._zoomer_ele = ele;
     this._set_up_zoomer_ele();
     this._set_up_overlay_ele();

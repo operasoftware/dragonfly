@@ -315,7 +315,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
         if (item.type == type)
         {
           item.time += event.time;
-          continue;
         }
       }
     });
@@ -378,7 +377,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (!this._has_overlay_service)
       return;
-    var id = Number(target.get_ancestor_attr("data-event-id"));
+    var id = Number(event.target.get_ancestor_attr("data-event-id"));
     var timeline_event = this._timeline_list.get_event_by_id(id);
     if (timeline_event)
     {
@@ -408,7 +407,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
   {
     if (!this._has_overlay_service)
       return;
-    var id = Number(target.get_attr("parent-node-chain", "data-event-id"));
+    var id = Number(event.target.get_attr("parent-node-chain", "data-event-id"));
     var timeline_event = this._timeline_list.get_event_by_id(id);
     if (timeline_event)
     {
