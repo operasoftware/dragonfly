@@ -392,7 +392,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
           y: area.y,
           w: area.w,
           h: area.h,
-          grid_color: event.shiftKey ? [255, 0, 0, 255] : null
+          grid_color: [255, 0, 0, 255]
         };
 
         if (window.services["profiler"].satisfies_version(1, 1))
