@@ -1,9 +1,6 @@
 ﻿window.templates || (window.templates = {});
 
 window.templates.storage = {
-  runtime_group_render: function(uri) {
-    return this.wrap_ellipsis(uri);
-  },
   wrap_ellipsis: function(elem) {
     var template = [
       "div",
