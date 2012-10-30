@@ -300,6 +300,11 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     }
   };
 
+  this._close_details_overlay = function(event, target)
+  {
+    this._overlay.hide();
+  };
+
   this._get_aggregated_event_list = function(event_list)
   {
     var list = this._default_types.map(function(type) {
@@ -313,9 +318,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       for (var i = 0, item; item = list[i]; i++)
       {
         if (item.type == type)
-        {
           item.time += event.time;
-        }
       }
     });
     return list;
@@ -539,6 +542,13 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._handle_stop_profiler_bound = this._handle_stop_profiler.bind(this);
     this._handle_timeline_list_bound = this._handle_timeline_list.bind(this);
     this._handle_details_list_bound = this._handle_details_list.bind(this);
+    this._close_details_overlay_bound = this._close_details_overlay.bind(this);
+
+    ActionHandlerInterface.apply(this);
+    this._handlers = {
+      "close-details": this._close_details_overlay_bound
+    };
+    ActionBroker.get_instance().register_handler(this);
 
     window.messages.addListener("profile-enabled", this._on_profile_enabled.bind(this));
     window.messages.addListener("single-select-changed", this._on_single_select_changed.bind(this));
