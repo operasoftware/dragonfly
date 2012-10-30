@@ -503,8 +503,8 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./overlay/overlay_service.js"/>
 
-<script src="./profiler/profiler.1.0.responses.getevents.js"/>
-<script src="./profiler/profiler.1.0.responses.stopprofiler.js"/>
+<script src="./profiler/profiler.1.1.responses.getevents.js"/>
+<script src="./profiler/profiler.1.1.responses.stopprofiler.js"/>
 <script src="./profiler/profiler_service.js"/>
 <script src="./profiler/profiler_view.js"/>
 <script src="./profiler/profiler_templates.js"/>

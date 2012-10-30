@@ -127,7 +127,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     if (status === SUCCESS)
     {
       // `timeline_id` is one of the IDs in `_timeline_modes`
-      this[timeline_id] = new cls.Profiler["1.0"].EventList(msg);
+      this[timeline_id] = new cls.Profiler["1.1"].Events(msg);
       var got_all_responses = this._timeline_modes.every(function(timeline_mode) {
         return this[timeline_mode.id];
       }, this);
@@ -287,7 +287,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
 
   this._handle_details_list = function(child_type, status, msg)
   {
-    var event_list = new cls.Profiler["1.0"].EventList(msg);
+    var event_list = new cls.Profiler["1.1"].Events(msg);
     var data = event_list && event_list.eventList;
     if (data.length)
     {
@@ -620,7 +620,7 @@ ProfilerView.create_ui_widgets = function()
  * @return {Event|null} An event in case one was found with ID `id`,
  *         otherwise `null`.
  */
-cls.Profiler["1.0"].EventList.prototype.get_event_by_id = function(id)
+cls.Profiler["1.1"].Events.prototype.get_event_by_id = function(id)
 {
   var events = this.eventList;
   if (events)
@@ -635,7 +635,7 @@ cls.Profiler["1.0"].EventList.prototype.get_event_by_id = function(id)
 };
 
 // These getters will be called when the table is created
-cls.Profiler["1.0"].Event.prototype =
+cls.Profiler["1.1"].Event.prototype =
 {
   set selector(value) {},
   get selector()
