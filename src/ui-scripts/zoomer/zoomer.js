@@ -1,7 +1,5 @@
 "use strict";
 
-// TODO: when width is 1px and mousewheeling, don't move
-
 /**
  * @constructor
  */
@@ -12,6 +10,9 @@ var Zoomer = function(model, zoomer_ele)
 
 var ZoomerPrototype = function()
 {
+  var MOUSEWHEEL_DIFF = 5;
+  var KEYDOWN_DIFF = 1;
+
   this._init = function(model, zoomer_ele)
   {
     /**
@@ -151,7 +152,7 @@ var ZoomerPrototype = function()
   this._zoomer_ele_onmousewheel = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    var diff = (mouse_x < this._overlay_left) ? 5 : -5;
+    var diff = (mouse_x < this._overlay_left) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
     diff *= (event.wheelDelta > 0) ? 1 : -1;
     this.move_overlay(diff);
     event.stopPropagation();
@@ -197,7 +198,7 @@ var ZoomerPrototype = function()
 
   this._overlay_ele_onmousewheel = function(event)
   {
-    var diff = (event.wheelDelta < 0) ? 5 : -5;
+    var diff = (event.wheelDelta < 0) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
     this.change_overlay_size(diff, -diff);
     event.stopPropagation();
   };
@@ -208,8 +209,8 @@ var ZoomerPrototype = function()
     var diff = {
       33: width,  // Page up
       34: -width, // Page down
-      37: -1,     // Arrow left
-      39: 1       // Arrow right
+      37: -KEYDOWN_DIFF, // Arrow left
+      39: KEYDOWN_DIFF   // Arrow right
     }[event.which];
     if (!diff)
       return;
@@ -279,8 +280,8 @@ var ZoomerPrototype = function()
   this._handle_ele_onkeydown = function(event)
   {
     var diff = {
-      37: -1, // Arrow left
-      39: 1   // Arrow right
+      37: -KEYDOWN_DIFF, // Arrow left
+      39: KEYDOWN_DIFF   // Arrow right
     }[event.which];
     if (!diff)
       return;

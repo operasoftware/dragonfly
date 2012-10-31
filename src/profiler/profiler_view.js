@@ -174,7 +174,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var aggregated_event_list = this._get_aggregated_event_list(event_list);
     var width = this._container.clientWidth - AGGREGATED_EVENTS_WIDTH;
 
-    // TODO: Check if these are already appended
     var frag = document.createDocumentFragment();
     frag.appendChild(this._legend_ele);
     frag.appendChild(this._zoomer_times_ele);
@@ -195,8 +194,6 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     this._zoomer.set_zoomer_element(this._zoomer_ele);
     if (this._set_zoomer)
       this._zoomer.set_current_area();
-
-    // TODO: if _set_zoomer == false, reset()
   };
 
   this.createView = function(container)
