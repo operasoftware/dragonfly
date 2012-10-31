@@ -442,7 +442,9 @@ var ZoomerPrototype = function()
       diff = Math.max(this._overlay_left + diff, 0) - this._overlay_left;
     else
       diff = Math.min(diff, this._overlay_right);
-    this.change_overlay_size(diff, diff);
+
+    if (diff != 0)
+      this.change_overlay_size(diff, diff);
   };
 
   /**
