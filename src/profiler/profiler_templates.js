@@ -124,30 +124,27 @@ var ProfilerTemplates = function()
         return prev + curr.time;
       }, 0);
       event_list.forEach(function(event, index) {
-        if (index !== -1)
-        {
-          var self_time_amount = total_time
-                               ? event.time / total_time * 100
-                               : 0;
-          template.push(
+        var self_time_amount = total_time
+                             ? event.time / total_time * 100
+                             : 0;
+        template.push(
+          ["div",
             ["div",
-              ["div",
-                ["span",
-                   event_type_string_map[event.type],
-                 "class", "profiler-legend-label"
-                ],
-                ["span",
-                   this.format_time(event.time, 0),
-                 "class", "profiler-legend-time"
-                ],
-               "class", "profiler-legend-row"
+              ["span",
+                 event_type_string_map[event.type],
+               "class", "profiler-legend-label"
               ],
-             "class", "profiler-timeline-row" + (index % 2 ? "" : " even"),
-             "data-event-type", String(event.type),
-             "handler", "profiler-event"
-            ]
-          );
-        }
+              ["span",
+                 this.format_time(event.time, 0),
+               "class", "profiler-legend-time"
+              ],
+             "class", "profiler-legend-row"
+            ],
+           "class", "profiler-timeline-row" + (index % 2 ? "" : " even"),
+           "data-event-type", String(event.type),
+           "handler", "profiler-event"
+          ]
+        );
       }, this);
       return template;
     }
@@ -200,7 +197,7 @@ var ProfilerTemplates = function()
       var duration = Math.max(interval_end, MIN_DURATION);
       var ms_unit = (container_width - EVENT_SMALL_MIN_WIDTH) / duration;
 
-      template.extend(event_list.map(this._full_timeline_event.bind(this, 0, ms_unit)));
+      template.extend(event_list.map(this._full_timeline_event.bind(this, ms_unit)));
     }
     return template;
   };
@@ -218,10 +215,11 @@ var ProfilerTemplates = function()
     return template;
   };
 
-  this._full_timeline_event = function(interval_start, ms_unit, event)
+  this._full_timeline_event = function(ms_unit, event)
   {
-    var width = Math.round((event.interval.end - event.interval.start) * ms_unit);
-    var left = Math.round((event.interval.start - interval_start) * ms_unit);
+    var duration = event.interval.end - event.interval.start;
+    var width = Math.round(duration * ms_unit); // min-width is specified
+    var left = Math.round((event.interval.start) * ms_unit);
     var column = this._order.indexOf(event.type);
     return (
       ["div",
@@ -240,10 +238,10 @@ var ProfilerTemplates = function()
     var self_time_amount = duration
                          ? (event.time / duration * 100).toFixed(2)
                          : 0;
-    var width = Math.round(duration * ms_unit);
+    var width = Math.round(duration * ms_unit); // min-width is specified
     var left = Math.round((event.interval.start - interval_start) * ms_unit);
     var column = this._order.indexOf(event.type);
-    var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
+    var is_expandable = this._expandables.contains(event.type) && event.childCount > 1;
     var color = this._get_color_for_type(event.type);
     return (
       ["div",
@@ -263,7 +261,8 @@ var ProfilerTemplates = function()
                                                   "transparent " + self_time_amount + "%);"
          ),
        "id", "profiler-event-" + event.eventID,
-       "class", "profiler-event event-type-" + event.type + (is_expandable ? " expandable" : " non-expandable"),
+       "class", "profiler-event event-type-" + event.type +
+                " profiler-event-" + (is_expandable ? "expandable" : "non-expandable"),
        "data-event-id", String(event.eventID),
        "data-event-type", String(event.type),
        "data-tooltip", "profiler-event"
