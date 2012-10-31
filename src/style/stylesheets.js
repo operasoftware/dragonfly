@@ -513,6 +513,15 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "-xv-voice-volume":
     return "";
 
+  case "align-content":
+    return "stretch";
+
+  case "align-items":
+    return "stretch";
+
+  case "align-self":
+    return "stretch";
+
   case "alignment-baseline":
     return "auto";
 
@@ -775,6 +784,27 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "filter":
     return "none";
 
+  case "flex":
+    return "0 1 auto";
+
+  case "flex-basis":
+    return "auto";
+
+  case "flex-direction":
+    return "row";
+
+  case "flex-flow":
+    return "row";
+
+  case "flex-grow":
+    return "0";
+
+  case "flex-shrink":
+    return "1";
+
+  case "flex-wrap":
+    return "nowrap";
+
   case "float":
     return "none";
 
@@ -822,6 +852,9 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
 
   case "input-format":
     return "";
+
+  case "justify-content":
+    return "flex-start";
 
   case "kerning":
     return "auto";
@@ -934,6 +967,9 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
   case "opacity":
     return "1";
 
+  case "order":
+    return "0";
+
   case "orientation":
     return "";
 
@@ -1014,6 +1050,9 @@ cls.Stylesheets.get_initial_value = function(prop, data, index_map)
 
   case "resolution":
     return "";
+
+  case "resize":
+    return "none";
 
   case "rest":
     return "";
