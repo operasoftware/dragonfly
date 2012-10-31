@@ -443,11 +443,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     var timeline_list = this._timeline_list;
     var interval = timeline_list.interval;
     var visible_event_list = timeline_list.eventList.filter(function(event) {
-      var start = event.interval.start;
-      var end = event.interval.end;
-      return ((start <= x0 && end >= x0) ||
-              (start >= x0 && start <= x1)) &&
-             event.time > this._min_event_time;
+      return (event.interval.start <= x1 || event.interval.end >= x0)
+             && event.time > this._min_event_time;
     }, this);
     var aggregated_event_list = this._get_aggregated_event_list(visible_event_list);
     var width = this._timeline_width;
