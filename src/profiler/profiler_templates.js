@@ -218,8 +218,8 @@ var ProfilerTemplates = function()
   this._full_timeline_event = function(ms_unit, event)
   {
     var duration = event.interval.end - event.interval.start;
-    var width = Math.round(duration * ms_unit); // min-width is specified
-    var left = Math.round((event.interval.start) * ms_unit);
+    var width = Math.round(duration * ms_unit); // min-width is specified in .profiler-event-small
+    var left = Math.round(event.interval.start * ms_unit);
     var column = this._order.indexOf(event.type);
     return (
       ["div",
@@ -238,7 +238,7 @@ var ProfilerTemplates = function()
     var self_time_amount = duration
                          ? (event.time / duration * 100).toFixed(2)
                          : 0;
-    var width = Math.round(duration * ms_unit); // min-width is specified
+    var width = Math.round(duration * ms_unit); // min-width is specified in .profiler-event
     var left = Math.round((event.interval.start - interval_start) * ms_unit);
     var column = this._order.indexOf(event.type);
     var is_expandable = this._expandables.contains(event.type) && event.childCount > 1;
