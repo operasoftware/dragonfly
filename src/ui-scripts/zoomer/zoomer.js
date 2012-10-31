@@ -128,7 +128,6 @@ var ZoomerPrototype = function()
     this._overlay_right = this._to_right_x(mouse_x);
     this._mouse_drag_start_x = mouse_x;
     event.preventDefault();
-    // TODO: need to remove e.g. mousehweel event handlers here
   };
 
   this._zoomer_ele_onmousemove = function(event)
