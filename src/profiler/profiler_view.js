@@ -455,7 +455,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
     for (var i = 0, event; event = timeline_list.eventList[i]; i++)
     {
       var ele = document.getElementById("profiler-event-" + event.eventID);
-      if (visible_event_list.indexOf(event) != -1)
+      if (visible_event_list.contains(event))
       {
         if (ele)
         {

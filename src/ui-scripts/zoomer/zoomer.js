@@ -153,7 +153,8 @@ var ZoomerPrototype = function()
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
     var diff = (mouse_x < this._overlay_left) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
-    diff *= (event.wheelDelta > 0) ? 1 : -1;
+    if (event.wheelDelta < 0)
+      diff = -diff;
     this.move_overlay(diff);
     event.stopPropagation();
   };
@@ -343,10 +344,6 @@ var ZoomerPrototype = function()
    */
   this._set_overlay_position = function(left, right)
   {
-    if (left == null)
-      left = 0;
-    else if (right == null)
-      right = 0;
     this._overlay_left = Math.max(0, Math.min(left, right));
     this._overlay_right = Math.max(0, this._to_right_x(Math.max(left, right)));
   };
@@ -455,8 +452,10 @@ var ZoomerPrototype = function()
   {
     if (left_diff == null)
       left_diff = 0;
-    else if (right_diff == null)
+
+    if (right_diff == null)
       right_diff = 0;
+
     var left = this._overlay_left + left_diff;
     var right = this._overlay_right - right_diff;
     this._set_overlay_position(left, this._to_right_x(right));
@@ -468,6 +467,12 @@ var ZoomerPrototype = function()
    */
   this.set_overlay_position = function(left, right)
   {
+    if (left == null)
+      left = 0;
+
+    if (right == null)
+      right = 0;
+
     this._set_overlay_position(left, right);
     this._request_update();
   };
