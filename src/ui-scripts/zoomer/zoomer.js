@@ -181,7 +181,6 @@ var ZoomerPrototype = function()
     document.documentElement.classList.add("overlay-drag");
     document.addEventListener("mousemove", this._overlay_ele_onmousemove_bound);
     document.addEventListener("mouseup", this._overlay_ele_onmouseup_bound);
-    document.addEventListener("keydown", this._overlay_ele_onkeydown_bound);
     this._overlay_start_left = this._overlay_left;
     this._mouse_drag_start_x = event.clientX - this._zoomer_ele_left;
     event.stopPropagation();
@@ -198,13 +197,18 @@ var ZoomerPrototype = function()
 
   this._overlay_ele_onmousewheel = function(event)
   {
-    var diff = (event.wheelDelta < 0) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
-    this.change_overlay_size(diff, -diff);
+    var diff = (event.wheelDelta > 0) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
+    this.change_overlay_size(-diff, diff);
     event.stopPropagation();
   };
 
   this._overlay_ele_onkeydown = function(event)
   {
+    // If this exists, we're currently resizing one of the edges,
+    // so don't resize the whole overlay.
+    if (this._handle_ele)
+      return;
+
     var width = this._to_right_x(this._overlay_right) - this._overlay_left;
     var diff = {
       33: width,  // Page up
@@ -212,9 +216,16 @@ var ZoomerPrototype = function()
       37: -KEYDOWN_DIFF, // Arrow left
       39: KEYDOWN_DIFF   // Arrow right
     }[event.which];
-    if (!diff)
-      return;
-    this.move_overlay(diff);
+    if (diff)
+      this.move_overlay(diff);
+
+    diff = {
+      38: KEYDOWN_DIFF, // Arrow up
+      40: -KEYDOWN_DIFF   // Arrow down
+    }[event.which];
+    if (diff)
+      this.change_overlay_size(-diff, diff);
+
     event.stopPropagation();
   };
 
@@ -228,7 +239,6 @@ var ZoomerPrototype = function()
     document.documentElement.classList.remove("overlay-drag");
     document.removeEventListener("mousemove", this._overlay_ele_onmousemove_bound);
     document.removeEventListener("mouseup", this._overlay_ele_onmouseup_bound);
-    document.removeEventListener("keydown", this._overlay_ele_onkeydown_bound);
   };
 
   //
@@ -377,6 +387,7 @@ var ZoomerPrototype = function()
     this._overlay_ele.addEventListener("dblclick", this._overlay_ele_ondblclick_bound);
     this._handle_left_ele.addEventListener("mousedown", this._handle_ele_onmousedown_bound);
     this._handle_right_ele.addEventListener("mousedown", this._handle_ele_onmousedown_bound);
+    document.addEventListener("keydown", this._overlay_ele_onkeydown_bound);
   };
 
   //
@@ -407,6 +418,7 @@ var ZoomerPrototype = function()
       this._overlay_ele.removeEventListener("dblclick", this._overlay_ele_ondblclick_bound);
       this._handle_left_ele.removeEventListener("mousedown", this._handle_ele_onmousedown_bound);
       this._handle_right_ele.removeEventListener("mousedown", this._handle_ele_onmousedown_bound);
+      document.removeEventListener("keydown", this._overlay_ele_onkeydown_bound);
     }
 
     if (this._zoomer_ele)
