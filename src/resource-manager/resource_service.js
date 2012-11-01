@@ -136,7 +136,9 @@ cls.ResourceInspector = function(network_logger)
         }
 
         return in_context;
-      }, this);
+      }, this).sort(function(a, b) {
+        return a.documentID - b.documentID;
+      });
 
       var unknown_document_id = false;
       // filter out resources pointing to an unknown document_id,
@@ -289,7 +291,7 @@ cls.ResourceInspector = function(network_logger)
 
     while (list[i] != null && list[i].uid != this._selected_resource_uid)
     {
-      if (!list[i].is_hidden)
+      if (list[i].is_selectable)
         uid = list[i].uid;
 
       i += inc;

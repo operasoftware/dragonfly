@@ -20,6 +20,7 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   ];
 
   this._resource_inspector = resource_inspector;
+  this.required_services = ["resource-manager", "document-manager"];
 
   this.get_group_order = function()
   {

@@ -51,14 +51,17 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		context.resource_list.forEach(function(r) {
 			r.is_hidden = context.collapsed[r.pivot_id] == true;
 
-			if (!r.is_hidden && context.search_term == "" || r.url.contains(context.search_term))
-				context.resources.push(r);
+			if (context.search_term == "")
+				r.is_selectable = !r.is_hidden;
+			else
+				r.is_selectable = r.url.contains(context.search_term);
 		});
 
 		flat_list = [];
 		this.windows(context);
 		var tpl = ["div", ["ul", flat_list], "class", "resource-tree"];
 		flat_list = [];
+		delete context.resources;
 
 		return tpl;
 	};
@@ -109,42 +112,51 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.document = function(context, d)
 	{
-		var resources = context.resources.filter(function(r) {
+		var resources = context.resource_list.filter(function(r) {
 			return r.document_id == d.documentID;
 		});
 
-		if (resources.length > 0)
+		var resource_count = resources.length;
+		if (context.search_term != "")
 		{
-			var extras = this._expander_extras(context, d.pivot_id, d.depth);
+			resources.forEach(function(r) {
+				if (!r.is_selectable)
+					resource_count--;
+			});
+		}
 
-			flat_list.push(
-				["li",
-					["h2",
-						extras.tpl.button,
-						["span",
-							this._get_short_distinguisher(d.url),
-							"class", "resource-tree-document-label",
-							"data-tooltip", "js-script-select",
-							"data-tooltip-text", d.original_url
-						],
-						" ",
-						d.same_origin ? [] : ["span", d.url.host || d.url.protocol, "class", "resource-different-origin"],
-						" ",
-						["span",
-							String(resources.length),
-							"class", "resource-tree-count"
-						]
-					].concat(extras.tpl.h2),
-				].concat(extras.tpl.li)
-			);
+		if (resource_count == 0)
+			return;
 
-			if (!extras.collapsed)
-			{
-				if (resources.length)
-					this.resource_groups(context, resources, d);
+		var extras = this._expander_extras(context, d.pivot_id, d.depth);
 
-				this.documents(context, d.windowID, d.documentID);
-			}
+		flat_list.push(
+			["li",
+				["h2",
+					extras.tpl.button,
+					["span",
+						this._get_short_distinguisher(d.url),
+						"class", "resource-tree-document-label",
+						"data-tooltip", "js-script-select",
+						"data-tooltip-text", d.original_url
+					],
+					" ",
+					d.same_origin ? [] : ["span", d.url.host || d.url.protocol, "class", "resource-different-origin"],
+					" ",
+					["span",
+						String(resource_count),
+						"class", "resource-tree-count"
+					]
+				].concat(extras.tpl.h2),
+			].concat(extras.tpl.li)
+		);
+
+		if (!extras.collapsed)
+		{
+			if (resources.length)
+				this.resource_groups(context, resources, d);
+
+			this.documents(context, d.windowID, d.documentID);
 		}
 	};
 
@@ -159,7 +171,16 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			return r.group == g;
 		});
 
-		if (!resources.length)
+		var resource_count = resources.length;
+		if (context.search_term != "")
+		{
+			resources.forEach(function(r) {
+				if (!r.is_selectable)
+					resource_count--;
+			});
+		}
+
+		if (resource_count == 0)
 			return;
 
 		var depth = d.depth + 1;
@@ -175,7 +196,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 					],
 					" ",
 					["span",
-						String(resources.length),
+						String(resource_count),
 						"class", "resource-tree-count"
 					],
 					"class", "resource-tree-group resource-tree-group-" + g.toLowerCase()
@@ -194,6 +215,9 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this.resource = function(context, depth, r)
 	{
+		if (!r.is_selectable)
+			return;
+
 		var search = context.search_term;
 		var partial_url_match = "";
 		if (search != "")
