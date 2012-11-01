@@ -47,7 +47,6 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			Object.keys(context.collapsed).forEach(function(v) { context.collapsed[v] = false; });
 
 		// filter the list of resources, set their is_hidden flag and push the ones matching
-		context.resources = [];
 		context.resource_list.forEach(function(r) {
 			r.is_hidden = context.collapsed[r.pivot_id] == true;
 
@@ -61,7 +60,6 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		this.windows(context);
 		var tpl = ["div", ["ul", flat_list], "class", "resource-tree"];
 		flat_list = [];
-		delete context.resources;
 
 		return tpl;
 	};
