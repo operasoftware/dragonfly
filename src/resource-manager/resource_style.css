@@ -339,12 +339,12 @@ h2:hover .resource-tree-count
   color: #3c3e42;
 }
 
-h2 .resource-domain
+h2 .resource-different-origin
 {
   color: #808080;
 }
 
-.resource-tree li > h2:hover .resource-domain:hover
+.resource-tree li > h2:hover .resource-different-origin:hover
 {
   color: #6e7680;
 }
@@ -356,13 +356,13 @@ h2 .resource-domain
 
 .resource-highlight .resource-tree-count,
 .resource-highlight:hover .resource-tree-count,
-.resource-highlight .resource-domain,
-.resource-highlight:hover .resource-domain
+.resource-highlight .resource-different-origin,
+.resource-highlight:hover .resource-different-origin
 {
   color: #fff;
 }
 
-.resource-domain::before
+.resource-different-origin::before
 {
  content: " – ";
 }

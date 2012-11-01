@@ -128,7 +128,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 							"data-tooltip-text", d.original_url
 						],
 						" ",
-						d.same_origin ? [] : ["span", d.url.host || d.url.protocol, "class", "resource-domain"],
+						d.same_origin ? [] : ["span", d.url.host || d.url.protocol, "class", "resource-different-origin"],
 						" ",
 						["span",
 							String(resources.length),
@@ -217,7 +217,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 						"data-tooltip-text", r.url
 					],
 					" ",
-					r.same_origin ? [] : ["span", r.host || r.protocol, "class", "resource-domain"],
+					r.same_origin ? [] : ["span", r.host || r.protocol, "class", "resource-different-origin"],
 					"class", "resource-tree-resource"
 				],
 				"class", (context.selected_resource_uid == r.uid ? "resource-highlight" : ""),

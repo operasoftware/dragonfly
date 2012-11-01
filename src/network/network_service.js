@@ -1312,10 +1312,12 @@ cls.ResourceInfo = function(entry)
     this.data = {};
     this.data.mimeType = data.slice(0, is_base64 ? data.indexOf(";") : pos) || "text/plain";
     this.data.content = {};
-    if (this.data.mimeType.startswith("text/"))
+
+    if (cls.ResourceUtil.mime_to_content_mode(this.data.mimeType) == "text")
       this.data.content.stringData = is_base64 ? atob(data.slice(pos + 1)) : decodeURIComponent(data.slice(pos + 1));
     else
       this.data.content.stringData = entry.url;
+
     this.data.content.length = this.data.content.stringData.length;
   }
 };
