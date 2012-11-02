@@ -189,7 +189,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
-<link rel="stylesheet" href="./ui-scripts/metadata_drawer/metadata_drawer.css"/>
 <link rel="stylesheet" href="./ui-scripts/ruler/style.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
@@ -221,6 +220,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/nodelistprototype.js"/>
 <script src="./lib/objectnamespace.js"/>
 <script src="./lib/operanamespace.js"/>
+<script src="./lib/functionprototype.js"/>
 <script src="./lib/datenamespace.js"/>
 <script src="./lib/stringprototype.js"/>
 <script src="./lib/stylesheetlistprototype.js"/>
@@ -508,14 +508,9 @@ window.load_screen_timeout = window.setTimeout(function()
 
 
 <script src="./resource-manager/resource_service.js"/>
-
-<script src="./resource-manager/resource_all_view.js"/>
 <script src="./resource-manager/resource_templates.js"/>
 <script src="./resource-manager/resource_util.js"/>
-<script src="./resource-manager/resource_base.js"/>
-<script src="./ui-scripts/metadata_drawer/metadata_drawer.js"/>
 <script src="./resource-manager/resource_display_broker.js"/>
-<script src="./resource-manager/opensingleresource.js"/>
 <script src="./resource-manager/resourcemanager.1.2.events.onurlload.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlredirect.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onurlfinished.js"/>
@@ -527,10 +522,12 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/resourcemanager.1.0.events.onresponseheader.js"/>
 <script src="./resource-manager/resourcemanager.1.0.events.onresponsefinished.js"/>
 <script src="./resource-manager/documentmanager.1.0.events.onabouttoloaddocument.js"/>
+<script src="./resource-manager/documentmanager.1.0.responses.listdocuments.js"/>
 <script src="./resource-manager/resourcemanager.1.2.events.onurlunload.js"/>
 <script src="./resource-manager/resourcemanager.1.2.responses.getresource.js"/>
+<script src="./resource-manager/resource_tree_view.js"/>
+<script src="./resource-manager/resource_detail_view.js"/>
 <script src="./resource-manager/resourcemanager.1.3.responses.createrequest.js"/>
-
 
 <script src="./network/network_service.js"/>
 <script src="./network/network_view.js"/>
