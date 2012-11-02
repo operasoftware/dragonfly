@@ -123,9 +123,6 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			});
 		}
 
-		if (resource_count == 0)
-			return;
-
 		var extras = this._expander_extras(context, d.pivot_id, d.depth);
 
 		flat_list.push(
