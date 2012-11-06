@@ -223,7 +223,7 @@ top-tabs .badge
 
 .profiler_mode
 {
-  background: url("../ui-images/mode_profiler.png");
+  background-image: url("../ui-images/mode_profiler.png");
   width: 25px;
 }
 

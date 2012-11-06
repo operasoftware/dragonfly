@@ -171,7 +171,7 @@ cls.RequestCraftingView = function(id, name, container_class, html, default_hand
     if (!urldata) { return; }
     var current = this._input.get_value();
     current = current.replace(/^(\w+? )(.*?)( .*)/, function(s, m1, m2, m3, all) {return m1 + urldata.path + " " + urldata.protocol + "/1.1" ; });
-    current = current.replace(/^Host: .*$?/m, "Host: " + urldata.host);
+    current = current.replace(/^Host: .*$/m, "Host: " + urldata.host);
     this._input.set_value(current);
   };
 

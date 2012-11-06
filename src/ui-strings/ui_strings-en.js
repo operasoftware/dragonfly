@@ -654,6 +654,9 @@ ui_strings.S_CONFIRM_SWITCH_TO_NETWORK_PROFILER = "To improve the accuracy of ti
 /* DESC: Label for the list of function when doing console.trace(). */
 ui_strings.S_CONSOLE_TRACE_LABEL = "Stack trace:";
 
+/* DESC: Text for a link to the contributors list. */
+ui_strings.S_CONTRIBUTORS = "Contributors";
+
 /* DESC: In 1 hour */
 ui_strings.S_COOKIE_MANAGER_IN_1_HOUR = "In 1 hour";
 
@@ -1357,7 +1360,7 @@ ui_strings.S_PROFILER_NO_DATA = "No data";
 ui_strings.S_PROFILER_NO_DETAILS = "No details";
 
 /* DESC: Message in the profiler when the profiler is active */
-ui_strings.S_PROFILER_PROFILING = "Profiling…";
+ui_strings.S_PROFILER_PROFILING = "Stop profiling to inspect the collected data.";
 
 /* DESC: Message in the profiler when the profiler failed */
 ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
@@ -1581,9 +1584,6 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 
-/* DESC: Button title for stopping the profiler */
-ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
-
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
 ui_strings.S_SWITCH_DETACH_WINDOW = "Undock into separate window";
 
@@ -1799,4 +1799,22 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 
 /* DESC: String shown instead of filename when file name is missing  */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
+
+/* DESC: Button text for filter showing all events */
+ui_strings.S_PROFILER_FILTER_ALL = "All";
+
+/* DESC: Button text for filter showing only events with a self time of at least 1 ms */
+ui_strings.S_PROFILER_FILTER_1MS = "> 1 ms";
+
+/* DESC: Button text for filter showing only events with a self time of at least 15 ms */
+ui_strings.S_PROFILER_FILTER_15MS = "> 15 ms";
+
+/* DESC: Button title for filter showing all events */
+ui_strings.S_PROFILER_FILTER_ALL_TITLE = "Show all events";
+
+/* DESC: Button title for filter showing only events with a self time of at least 1 ms */
+ui_strings.S_PROFILER_FILTER_1MS_TITLE = "Show events with a self time of at least 1 ms";
+
+/* DESC: Button title for filter showing only events with a self time of at least 15 ms */
+ui_strings.S_PROFILER_FILTER_15MS_TITLE = "Show events with a self time of at least 15 ms";
 
