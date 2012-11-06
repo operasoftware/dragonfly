@@ -215,6 +215,14 @@
           "down": "select-next-entry"
         }
       },
+      "resource_tree_view":
+      {
+        "default":
+        {
+          "up": "select-previous-entry",
+          "down": "select-next-entry"
+        }
+      },
       "search":
       {
         "default":
@@ -429,6 +437,14 @@
         "default":
         {
           "escape": "close-details",
+          "up": "select-previous-entry",
+          "down": "select-next-entry"
+        }
+      },
+      "resource_tree_view":
+      {
+        "default":
+        {
           "up": "select-previous-entry",
           "down": "select-next-entry"
         }

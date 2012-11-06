@@ -731,7 +731,7 @@ cls.RequestContextPrototype = function()
       entry.get_body_unsuccessful = entry.current_response.logger_entry_get_body_unsuccessful = true;
     }
     this.post_on_context_or_logger("resource-update", {id: entry.id, is_paused: this.is_paused});
-  };
+};
 };
 
 cls.RequestContext.prototype = new cls.RequestContextPrototype();
@@ -1070,11 +1070,7 @@ cls.NetworkLoggerEntryPrototype = function()
     if (!cls || !cls.ResourceUtil)
       return;
 
-    // For "application/octet-stream" we check by extension even though we have a mime
-    if (!this.mime || this.mime.toLowerCase() === "application/octet-stream")
-      this.type = cls.ResourceUtil.extension_type_map[this.extension];
-    else
-      this.type = cls.ResourceUtil.mime_to_type(this.mime);
+    this.type = cls.ResourceUtil.guess_type(this.mime, this.extension);
 
     if (this.current_response)
     {
@@ -1293,12 +1289,47 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 
 cls.ResourceInfo = function(entry)
 {
+  this.uid = entry.id;
+  this.resource_id = entry.resource_id;
   this.url = entry.url;
   this.document_id = entry.document_id;
   this.type = entry.type;
   this.window_id = entry.window_id;
   this.is_unloaded = entry.is_unloaded;
-  this.id = entry.id;
+  this.responsecode = entry.current_responsecode;
+  this.error_in_current_response = entry.error_in_current_response;
+
+  var last_response = entry.requests_responses && entry.requests_responses.last;
+  if (last_response && last_response.responsebody)
+    this.data = last_response.responsebody;
+  else if (entry.protocol == "data:")
+  {
+    // populate the data in case of data: URI resource
+    var data = entry.url.slice(entry.protocol.length);
+    var pos = data.indexOf(",");
+    var is_base64 = data.lastIndexOf(";base64", pos) != -1;
+
+    this.data = {};
+    this.data.mimeType = data.slice(0, is_base64 ? data.indexOf(";") : pos) || "text/plain";
+    this.data.content = {};
+
+    if (cls.ResourceUtil.mime_to_content_mode(this.data.mimeType) == "text")
+      this.data.content.stringData = is_base64 ? atob(data.slice(pos + 1)) : decodeURIComponent(data.slice(pos + 1));
+    else
+      this.data.content.stringData = entry.url;
+
+    this.data.content.length = this.data.content.stringData.length;
+  }
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
+
+cls.ResourceInfo.prototype.__defineGetter__("metadata", function()
+{
+  if (this._metadata === undefined && this.data != null)
+    this._metadata = cls.ResourceUtil.get_meta_data(this);
+
+  return this._metadata;
+});
+
+cls.ResourceInfo.prototype.__defineSetter__("metadata", function() {});

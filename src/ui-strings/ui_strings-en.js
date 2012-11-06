@@ -15,7 +15,7 @@ window.ui_strings.lang_code = "en";
 /* DESC: Confirm dialog text for asking if the user wants to redo the search because the context has changed. */
 ui_strings.D_REDO_SEARCH = "The searched document no longer exists.\nRepeat search in the current document?";
 
-/* DESC: Confirm dialog text for asking if the user wants to reload and reformat the scripts now. */
+/* DESC: Confirm dialog text for asking if the user wants to reload to reformat scripts after turning on/off script reformatting ("Pretty-print" in the UI). Alternative is to only have the change apply to scripts loaded afterwards. */
 ui_strings.D_REFORMAT_SCRIPTS = "Reload the page to reformat the scripts now?";
 
 /* DESC: Confirm dialog text for asking if the user wants to reload all scripts. */
@@ -44,6 +44,24 @@ ui_strings.M_CONTEXTMENU_ADD_WATCH = "Watch \"%s\"";
 
 /* DESC: Context menu item for collapsing a node subtree. */
 ui_strings.M_CONTEXTMENU_COLLAPSE_SUBTREE = "Collapse subtree";
+
+/* DESC: Generic context menu item to copy something. */
+ui_strings.M_CONTEXTMENU_COPY = "Copy";
+
+/* DESC: Context menu item to copy content, e.g of a file. */
+ui_strings.M_CONTEXTMENU_COPY_CONTENT = "Copy content";
+
+/* DESC: Context menu item to copy the CSS path. */
+ui_strings.M_CONTEXTMENU_COPY_CSS_PATH = "Copy CSS path";
+
+/* DESC: Context menu item to copy the markup. */
+ui_strings.M_CONTEXTMENU_COPY_MARKUP = "Copy markup";
+
+/* DESC: Context menu item to copy a URL. */
+ui_strings.M_CONTEXTMENU_COPY_URL = "Copy URL";
+
+/* DESC: Context menu item to copy the XPath expression. */
+ui_strings.M_CONTEXTMENU_COPY_XPATH = "Copy XPath";
 
 /* DESC: Context menu item, general "Delete" in a context, e.g. a breakpoint */
 ui_strings.M_CONTEXTMENU_DELETE = "Delete";
@@ -123,7 +141,7 @@ ui_strings.M_CONTEXTMENU_STORAGE_ADD = "Add item";
 /* DESC: Context menu item for deleting an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE = "Delete item";
 
-/* DESC: Context menu item for editing an item in the storage view, where %s is the domain name. */
+/* DESC: Context menu item for deleting items in the storage view, where %s is the domain name. */
 ui_strings.M_CONTEXTMENU_STORAGE_DELETE_ALL_FROM = "Delete all from %s";
 
 /* DESC: Context menu item for deleting multiple items in the storage view. */
@@ -131,6 +149,9 @@ ui_strings.M_CONTEXTMENU_STORAGE_DELETE_PLURAL = "Delete items";
 
 /* DESC: Context menu item for editing an item in the storage view. */
 ui_strings.M_CONTEXTMENU_STORAGE_EDIT = "Edit item";
+
+/* DESC: Label for breakpoint condition (lowercase), JavaScript to be evaluated when hitting the breakpoint, execution will only halt when returned value evaluates to true. */
+ui_strings.M_LABEL_BREAKPOINT_CONDITION = "condition";
 
 /* DESC: Label for option that clears all errors */
 ui_strings.M_LABEL_CLEAR_ALL_ERRORS = "Clear all errors";
@@ -417,10 +438,10 @@ ui_strings.M_VIEW_SUB_LABEL_PARENT_OFFSETS = "Parent Offsets";
 /* DESC: Anonymous function label. */
 ui_strings.S_ANONYMOUS_FUNCTION_NAME = "(anonymous)";
 
-/* DESC: Info in a tooltip that the according listener was set as attribute. */
+/* DESC: Info in a tooltip that the associated listener was set as attribute. */
 ui_strings.S_ATTRIBUTE_LISTENER = "Event handler";
 
-/* DESC: Generic label for a cancel button */
+/* DESC: Generic label for a 'cancel' button */
 ui_strings.S_BUTTON_CANCEL = "Cancel";
 
 /* DESC: Cancel button while the client is waiting for a host connection. */
@@ -516,10 +537,10 @@ ui_strings.S_BUTTON_LEAVE_ADVANCED_SEARCH_TOOLTIP = "Show search bar";
 /* DESC: Button label to show window for loading a PO file */
 ui_strings.S_BUTTON_LOAD_PO_FILE = "Load PO file";
 
-/* DESC: Generic label for a no button */
+/* DESC: Generic label for a 'no' button */
 ui_strings.S_BUTTON_NO = "No";
 
-/* DESC: Generic label for an OK button */
+/* DESC: Generic label for an 'OK' button */
 ui_strings.S_BUTTON_OK = "OK";
 
 /* DESC: Remove all event breakpoints */
@@ -531,7 +552,7 @@ ui_strings.S_BUTTON_RESET_ALL_TO_DEFAULTS = "Reset all to defaults";
 /* DESC: Button label to reset the fon selection to the default values */
 ui_strings.S_BUTTON_RESET_TO_DEFAULTS = "Reset default values";
 
-/* DESC: Generic label for a save button */
+/* DESC: Generic label for a 'save' button */
 ui_strings.S_BUTTON_SAVE = "Save";
 
 /* DESC: Search for an event in the event breakpoints view */
@@ -552,13 +573,16 @@ ui_strings.S_BUTTON_SHOW_REQUEST_RAW = "Raw";
 /* DESC: Show request summary. */
 ui_strings.S_BUTTON_SHOW_REQUEST_SUMMARY = "Summary";
 
+/* DESC: Button label to show ruler */
+ui_strings.S_BUTTON_SHOW_RULER = "Show ruler";
+
 /* DESC: Button label in settings to reset the element highlight to the default values */
 ui_strings.S_BUTTON_SPOTLIGHT_RESET_DEFAULT_COLORS = "Reset default colors";
 
-/* DESC: Button title for starting the profiler */
+/* DESC: Button title for starting the profiler. The profiler collects all events that happens on a page (parsing, layout etc.) and presents it in a timeline. Individual events can be clicked to give more information (e.g. timing). */
 ui_strings.S_BUTTON_START_PROFILER = "Start profiling";
 
-/* DESC: Button title for stopping the profiler */
+/* DESC: Button title for stopping the profiler. The profiler collects all events that happens on a page (parsing, layout etc.) and presents it in a timeline. Individual events can be clicked to give more information (e.g. timing). */
 ui_strings.S_BUTTON_STOP_PROFILER = "Stop profiling";
 
 /* DESC: Button label to delete all items in a storage, e.g. the local storage */
@@ -567,7 +591,7 @@ ui_strings.S_BUTTON_STORAGE_DELETE_ALL = "Delete All";
 /* DESC: Button label to store the color */
 ui_strings.S_BUTTON_STORE_COLOR = "Store color";
 
-/* DESC: Button to switch to network-profiler mode. */
+/* DESC: Button to switch to mode where accuracy of timing information is improved by turning off other services like e.g. JavaScript debugging. */
 ui_strings.S_BUTTON_SWITCH_TO_NETWORK_PROFILER = "Improve accuracy of timing information";
 
 /* DESC: Button label to take a screenshot */
@@ -588,7 +612,7 @@ ui_strings.S_BUTTON_TOGGLE_SETTINGS = "Settings";
 /* DESC: Button label to update the screenshot */
 ui_strings.S_BUTTON_UPDATE_SCREESHOT = "Update screenshot";
 
-/* DESC: Generic label for a yes button */
+/* DESC: Generic label for a 'yes' button */
 ui_strings.S_BUTTON_YES = "Yes";
 
 /* DESC: Unit string for bytes */
@@ -690,10 +714,10 @@ ui_strings.S_ERROR_LOG_CSS_FILTER = "Use CSS filter";
 /* DESC: Link in an event listener tooltip to the source position where the listener is added. */
 ui_strings.S_EVENT_LISTENER_ADDED_IN = "Added in %s";
 
-/* DESC: Info in an event listener tooltip that the according listener was added in the markup as element attribute. */
+/* DESC: Info in an event listener tooltip that the associated listener was added in the markup as element attribute. */
 ui_strings.S_EVENT_LISTENER_SET_AS_MARKUP_ATTR = "Set as markup attribute";
 
-/* DESC: Info in a tooltip that the according listener was set by the event target interface. */
+/* DESC: Info in a tooltip that the associated listener was set by the event target interface. */
 ui_strings.S_EVENT_TARGET_LISTENER = "Event listener";
 
 /* DESC: Event type for events in the profiler */
@@ -705,28 +729,28 @@ ui_strings.S_EVENT_TYPE_CSS_SELECTOR_MATCHING = "CSS selector matching";
 /* DESC: Event type for events in the profiler */
 ui_strings.S_EVENT_TYPE_DOCUMENT_PARSING = "Document parsing";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler for events that didn't end up in any other category. Currently not in use. */
 ui_strings.S_EVENT_TYPE_GENERIC = "Generic";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a layout happened on the page. */
 ui_strings.S_EVENT_TYPE_LAYOUT = "Layout";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, something was painted in the page. */
 ui_strings.S_EVENT_TYPE_PAINT = "Paint";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler for the whole Opera process. Currently not in use. */
 ui_strings.S_EVENT_TYPE_PROCESS = "Process";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a reflow happened in the page. */
 ui_strings.S_EVENT_TYPE_REFLOW = "Reflow";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a script was compiled. */
 ui_strings.S_EVENT_TYPE_SCRIPT_COMPILATION = "Script compilation";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, style was recalculated. */
 ui_strings.S_EVENT_TYPE_STYLE_RECALCULATION = "Style recalculation";
 
-/* DESC: Event type for events in the profiler */
+/* DESC: Event type for events in the profiler, a script ran. */
 ui_strings.S_EVENT_TYPE_THREAD_EVALUATION = "Thread evaluation";
 
 /* DESC: Context menu item for expanding CSS shorthands */
@@ -765,19 +789,19 @@ ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_REDIRECTING = "Redirecting";
 /* DESC: Label for http event sequence when the event was scheduled */
 ui_strings.S_HTTP_EVENT_SEQUENCE_INFO_SCHEDULING = "Scheduling request";
 
-/* DESC: Label for http event sequence when reading response body */
+/* DESC: Label for http event sequence when reading response body from a socket */
 ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_BODY = "Reading response body";
 
-/* DESC: Label for http event sequence when reading response header */
+/* DESC: Label for http event sequence when reading response header from a socket */
 ui_strings.S_HTTP_EVENT_SEQUENCE_READING_RESPONSE_HEADER = "Reading response header";
 
 /* DESC: Label for http event sequence when waiting for response from network */
 ui_strings.S_HTTP_EVENT_SEQUENCE_WAITING_FOR_RESPONSE = "Waiting for response";
 
-/* DESC: Label for http event sequence when writing request body */
+/* DESC: Label for http event sequence when writing request body to a socket */
 ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_BODY = "Writing request body";
 
-/* DESC: Label for http event sequence when writing request header */
+/* DESC: Label for http event sequence when writing request header to a socket */
 ui_strings.S_HTTP_EVENT_SEQUENCE_WRITING_REQUEST_HEADER = "Writing request header";
 
 /* DESC: First line of dialog that explains that the loading flow of the context is not shown completely */
@@ -791,6 +815,9 @@ ui_strings.S_HTTP_LABEL_DURATION = "Duration";
 
 /* DESC: label for the network filter that shows all items */
 ui_strings.S_HTTP_LABEL_FILTER_ALL = "All";
+
+/* DESC: label for the network filter that shows font items */
+ui_strings.S_HTTP_LABEL_FILTER_FONTS = "Fonts";
 
 /* DESC: label for the network filter that shows image items */
 ui_strings.S_HTTP_LABEL_FILTER_IMAGES = "Images";
@@ -924,7 +951,7 @@ ui_strings.S_INFO_INVERT_ELEMENT_HIGHLIGHT = "The element highlight color can be
 /* DESC: The info text to notify the user that the application is performing the search. */
 ui_strings.S_INFO_IS_SEARCHING = "Searching…";
 
-/* DESC: Info in an event listener tooltip that the according source file is missing. */
+/* DESC: Info in an event listener tooltip that the associated source file is missing. */
 ui_strings.S_INFO_MISSING_JS_SOURCE_FILE = "(Missing source file)";
 
 /* DESC: Info text in the network view when a page starts to load while screen updats are paused */
@@ -1071,7 +1098,7 @@ ui_strings.S_LABEL_DIALOG_DONT_SHOW_AGAIN = "Do not show again";
 /* DESC: Context menu entry that brings up "Edit" UI */
 ui_strings.S_LABEL_EDIT_WATCH = "Edit watch";
 
-/* DESC: Button label to enable the default debugger features. */
+/* DESC: Button label to re-enable the default debugger features when they were turned off for profiling purposes. */
 ui_strings.S_LABEL_ENABLE_DEFAULT_FEATURES = "Enable the default debugger features";
 
 /* DESC: Setting label to select the font face */
@@ -1197,10 +1224,10 @@ ui_strings.S_LABEL_UTIL_AREA = "Area";
 /* DESC: Scale */
 ui_strings.S_LABEL_UTIL_SCALE = "Scale";
 
-/* DESC: Info in an event listener tooltip that the according listener listens in the bubbling phase. */
+/* DESC: Info in an event listener tooltip that the associated listener listens in the bubbling phase. */
 ui_strings.S_LISTENER_BUBBLING_PHASE = "bubbling";
 
-/* DESC: Info in an event listener tooltip that the according listener listens in the capturing phase. */
+/* DESC: Info in an event listener tooltip that the associated listener listens in the capturing phase. */
 ui_strings.S_LISTENER_CAPTURING_PHASE = "capturing";
 
 /* DESC: Debug context menu */
@@ -1254,7 +1281,7 @@ ui_strings.S_NETWORK_HEADER_OVERRIDES_LABEL = "Enable global header overrides";
 /* DESC: Label for presets */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_LABEL = "Presets";
 
-/* DESC: Label for save nbutton */
+/* DESC: Label for save button */
 ui_strings.S_NETWORK_HEADER_OVERRIDES_PRESETS_SAVE = "Save";
 
 /* DESC: Label for selecting an empty preset */
@@ -1269,7 +1296,7 @@ ui_strings.S_NETWORK_NOT_REQUESTED = "No request made.";
 /* DESC: String used when there is a request body we can't show the contents of directly. */
 ui_strings.S_NETWORK_N_BYTE_BODY = "Request body of %s bytes";
 
-/* DESC: Name of networks raw-view setting, shows requests and responses parsed as opposed to raw */
+/* DESC: Name of networks raw-view setting that's changed in the toolbar of the network details view. Shows requests parsed as opposed to raw, on by default. The biggest difference is how request bodies are displayed, but also for example SPDY request headers won't show in raw mode. */
 ui_strings.S_NETWORK_PARSED_VIEW_LABEL = "Show in parsed mode";
 
 /* DESC: Name of entry in Network Log, used in summary at the end */
@@ -1299,7 +1326,7 @@ ui_strings.S_NETWORK_REQUEST_DETAIL_UNDISPLAYABLE_BODY_LABEL = "Unable to show d
 /* DESC: Message about there being no headers attached to a specific request or response */
 ui_strings.S_NETWORK_REQUEST_NO_HEADERS_LABEL = "No headers";
 
-/* DESC: Explanation about why a network entry doesn't have request data: Came from Cache */
+/* DESC: Explanation why a network request lacks headers. */
 ui_strings.S_NETWORK_SERVED_FROM_CACHE = "No request made. All data was retrieved from cache without accessing the network.";
 
 /* DESC: Unknown mime type for content */
@@ -1314,22 +1341,22 @@ ui_strings.S_NONE = "None";
 /* DESC: Info in the DOM side panel that the selected node has no event listeners attached. */
 ui_strings.S_NO_EVENT_LISTENER = "No event listeners";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the area of a paint event, e.g. "100×200" */
 ui_strings.S_PROFILER_AREA_DIMENSION = "Area";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the location of a paint event from top left, e.f. "(10, 20)" */
 ui_strings.S_PROFILER_AREA_LOCATION = "Location";
 
 /* DESC: Message in the profiler when the profiler is calculating */
 ui_strings.S_PROFILER_CALCULATING = "Calculating…";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the duration of an event, e.g. "20 ms" */
 ui_strings.S_PROFILER_DURATION = "Duration";
 
-/* DESC: Message in the profiler when no data was "captured" by the profiler */
+/* DESC: Message in the profiler when no data was "captured" by the profiler. I.e. nothing happened on the page between the time the profiler started and stopped. */
 ui_strings.S_PROFILER_NO_DATA = "No data";
 
-/* DESC: Message when an event in the profiler has no details */
+/* DESC: Message when an event in the profiler has no details, i.e. no child events with futher information. Currently not in use. */
 ui_strings.S_PROFILER_NO_DETAILS = "No details";
 
 /* DESC: Message in the profiler when the profiler is active */
@@ -1341,7 +1368,7 @@ ui_strings.S_PROFILER_PROFILING_FAILED = "Profiling failed";
 /* DESC: Message before activating the profiler profile */
 ui_strings.S_PROFILER_RELOAD = "To get accurate data from the profiler, all other features have to be disabled and the document has to be reloaded.";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the self time (technical term connected to to a profiler) of an event. The time spent inside that call, exluding the time of child calls. */
 ui_strings.S_PROFILER_SELF_TIME = "Self time";
 
 /* DESC: Message before starting the profiler */
@@ -1350,19 +1377,19 @@ ui_strings.S_PROFILER_START_MESSAGE = "Press the Record button to start profilin
 /* DESC: Label in a tooltip */
 ui_strings.S_PROFILER_START_TIME = "Start";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the total self time of all child events presented in the table when picking a parent event. */
 ui_strings.S_PROFILER_TOTAL_SELF_TIME = "Total self time";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the DOM event, e.g. "click" or "mousewheel" */
 ui_strings.S_PROFILER_TYPE_EVENT = "Event name";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the type of script, e.g. "inline" */
 ui_strings.S_PROFILER_TYPE_SCRIPT = "Script type";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the CSS selector */
 ui_strings.S_PROFILER_TYPE_SELECTOR = "Selector";
 
-/* DESC: Label in a tooltip */
+/* DESC: Label in a tooltip, the type of the thread, e.g. "Inline script" or "Event" */
 ui_strings.S_PROFILER_TYPE_THREAD = "Thread type";
 
 /* DESC: Remote debug guide, connection setup */
@@ -1443,10 +1470,31 @@ ui_strings.S_RESOURCE_ALL_TABLE_UNKNOWN_GROUP = "Unknown";
 /* DESC: Click reload button to fetch resources */
 ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES = "Click the reload button above to reload the debugged window and fetch its resources";
 
-/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number  */
+/* DESC: Encoding of the resource. When available, we display the encoding ( e.g. UTF-8, ISO-8859-1, ... ) of a resource of a document (webpage) when the user checks the details about this resource. */
+ui_strings.S_RESOURCE_ENCODING = "encoded in %s";
+
+/* DESC: Formatting the resource */
+ui_strings.S_RESOURCE_FORMATTING_RESOURCE = "Formatting the resource…";
+
+/* DESC: Loading page */
+ui_strings.S_RESOURCE_LOADING_PAGE = "Loading page…";
+
+/* DESC: No data available for the resource */
+ui_strings.S_RESOURCE_NO_DATA_AVAILABLE = "No data available for the resource.";
+
+/* DESC: No resource selected ( for the detail view ) */
+ui_strings.S_RESOURCE_NO_RESOURCE_SELECTED = "No resource selected.";
+
+/* DESC: Display the mime type sent by the server and the mime type guessed by Opera/Dragonfly if there was any ambiguity */
+ui_strings.S_RESOURCE_SENT_AND_GUESSED_TYPE = "%(SENT)s treated as %(GUESSED)s";
+
+/* DESC: For bitmap graphics we show the intrinsic dimension (WxH) when the user checks the detail view of a graphic resource of a document (webpage). When the image is of type vector graphics, there is no such dimension, and we instead substitute the text 'vector graphic' in parentheses. */
+ui_strings.S_RESOURCE_VECTOR_GRAPHIC = "vector graphic";
+
+/* DESC: Tooltip displayed when hovering the arrow going back in Return Values. The first variable is a file name, the second a line number */
 ui_strings.S_RETURN_VALUES_FUNCTION_FROM = "Returned from %s:%s";
 
-/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number  */
+/* DESC: Tooltip displayed when hovering the arrow going forward in Return Values. The first variable is a file name, the second a line number */
 ui_strings.S_RETURN_VALUES_FUNCTION_TO = "Returned to %s:%s";
 
 /* DESC: Label for the global scope in the Scope Chain. */
@@ -1536,7 +1584,7 @@ ui_strings.S_SWITCH_ATTACH_WINDOW = "Dock to main window";
 /* DESC: When enabled, the request log always scroll to the bottom on new requests */
 ui_strings.S_SWITCH_AUTO_SCROLL_REQUEST_LIST = "Auto-scroll request log";
 
-/* DESC: Button title for stopping the profiler */
+/* DESC: Button title for button that sets the start time to the first event, can be removed when DFL-3501 is integrated */
 ui_strings.S_SWITCH_CHANGE_START_TO_FIRST_EVENT = "Change start time to first event";
 
 /* DESC: Checkbox: undocks Opera Dragonfly into a separate window. */
@@ -1671,10 +1719,10 @@ ui_strings.S_SWITCH_UPDATE_GLOBAL_SCOPE = "Automatically update global scope";
 /* DESC: Spell HTML tag names upper or lower case. */
 ui_strings.S_SWITCH_USE_LOWER_CASE_TAG_NAMES = "Use lower case tag names for text/html";
 
-/* DESC: Table header in the profiler */
+/* DESC: Table header in the profiler, the number of times a selector was matched against elements in the DOM. */
 ui_strings.S_TABLE_HEADER_HITS = "Hits";
 
-/* DESC: Table header in the profiler */
+/* DESC: Table header in the profiler, the time spent on selector matching for this selector. */
 ui_strings.S_TABLE_HEADER_TIME = "Time";
 
 /* DESC: Entry format in the call stack view showing the function name, line number and script ID. Please do not modify the %(VARIABLE)s . */
@@ -1752,6 +1800,6 @@ ui_strings.S_TOGGLE_DOM_MODEBAR_HEADER = "Breadcrumb Trail";
 /* DESC: Label on button to pause/unpause updates of the network graph view */
 ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activity";
 
-/* DESC: String shown instead of filename when file name is missing  */
+/* DESC: String shown instead of filename when file name is missing */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
 
