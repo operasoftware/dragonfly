@@ -1,94 +1,141 @@
-﻿window.cls || (window.cls = {});
+﻿"use strict";
+
+window.cls || (window.cls = {});
 
 /**
  * @constructor
  * @extends ViewBase
  */
-cls.ResourceTreeView = function(id, name, container_class, html, default_handler, network_logger) {
-  if (cls.ResourceTreeView.instance)
-  {
-    return cls.ResourceTreeView.instance;
-  }
-  cls.ResourceTreeView.instance = this;
-
+cls.ResourceTreeView = function(id, name, container_class, html, default_handler, resource_inspector)
+{
   //	const
-  const THROTTLE_DELAY = 500;
+  var THROTTLE_DELAY = 250;
+  var GROUP_ORDER = [
+    ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
+    ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
+    ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
+    ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
+    ui_strings.S_HTTP_LABEL_FILTER_FONTS,
+    ui_strings.S_HTTP_LABEL_FILTER_OTHER
+  ];
 
-    // "private"
-  this._service = new cls.ResourceManagerService(this, network_logger);
-  this._loading = false;
+  this._next_render_time = 0;
+  this._resource_inspector = resource_inspector;
+  this.required_services = ["resource-manager", "document-manager"];
 
+  this.get_group_order = function()
+  {
+    return GROUP_ORDER;
+  };
 
-  // public
+  this.instant_update = function()
+  {
+    // Reset the _next_render_time to force an immediate render
+    this._next_render_time = 0;
+    this.update();
+  };
 
-  // throttle the update
-  this.update = this.update.bind(this).throttle(THROTTLE_DELAY);
+  this.update_bound = this.update.bind(this);
 
   this.createView = function(container)
   {
-    var service = this._service;
-    var ctx = this._service.get_resource_context();
-    var scrollTop = container.firstElementChild?container.firstElementChild.scrollTop:0;
+    var now = Date.now();
+    if (now >= this._next_render_time)
+    {
+      if (this._bounced_update)
+        this._bounced_update = clearTimeout(this._bounced_update);
 
-    if (ctx )//&& ctx.resourcesDict && Object.keys(ctx.resourcesDict).length)
-    {
-      container.clearAndRender( templates.resource_tree.update(ctx) );
+      this._render_view(container);
+      this._next_render_time = now + THROTTLE_DELAY;
     }
-    else if (this._loading)
+    else if (!this._bounced_update)
+      this._bounced_update = setTimeout(this.update_bound, THROTTLE_DELAY);
+	};
+
+  this._render_view = function(container)
+  {
+    var tpl;
+    var ctx = this._resource_inspector.get_resource_context();
+    var target = container.firstElementChild;
+
+    if (ctx)
     {
-      container.clearAndRender(
-        ['div',
-         ['p', ui_strings.S_RESOURCE_LOADING_PAGE],
-         'class', 'info-box'
-        ]
-      );
+      ctx.search_term = this.search_term || "";
+      tpl = templates.resource_tree.update(ctx);
     }
     else
     {
-      container.clearAndRender(
-        ['div',
-         ['span',
-          'class', 'container-button ui-button reload-window',
-          'handler', 'reload-window',
-          'tabindex', '1'],
-         ['p', ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
-         'class', 'info-box'
+      tpl = (
+        ["div",
+         ["span",
+          "class", "container-button ui-button reload-window",
+          "handler", "reload-window",
+          "tabindex", "1"],
+         ["p", ui_strings.S_RESOURCE_CLICK_BUTTON_TO_FETCH_RESOURCES],
+         "class", "info-box"
         ]
       );
     }
 
-    container.firstElementChild.scrollTop = scrollTop;
-	};
+    //  Exit if the template has not changed since last time ( using its JSON representation as hash )
+    var tpl_JSON = JSON.stringify(tpl);
+    if (tpl_JSON == this.tpl_JSON)
+      return;
+
+    this.tpl_JSON = tpl_JSON;
+
+    var scroll_top = target ? target.scrollTop : 0;
+    var scroll_left = target ? target.scrollLeft : 0;
+
+    container.clearAndRender(tpl);
+
+    target = container.firstElementChild;
+    if (target)
+    {
+      target.scrollTop = scroll_top;
+      target.scrollLeft = scroll_left;
+    }
+  };
+
+  this.ondestroy = function(container)
+  {
+    this.tpl_JSON = null;
+  };
 
   this.create_disabled_view = function(container)
   {
     container.clearAndRender(window.templates.disabled_view());
   };
 
-  this._on_abouttoloaddocument_bound = function()
+  this._init = function()
   {
-    this._loading = true;
-    this.update();
-  }.bind(this);
+    this.id = id;
 
-  this._on_documentloaded_bound = function()
-  {
-    this._loading = false;
-    this.update();
-  }.bind(this);
+    var messages = window.messages;
+    messages.add_listener("debug-context-selected", this.update_bound);
 
-  var doc_service = window.services['document-manager'];
-  doc_service.addListener("abouttoloaddocument", this._on_abouttoloaddocument_bound);
-  doc_service.addListener("documentloaded", this._on_documentloaded_bound);
+    var doc_service = window.services["document-manager"];
+    doc_service.add_listener("abouttoloaddocument", this.update_bound);
+    doc_service.add_listener("documentloaded", this.update_bound);
 
-  this.init(id, name, container_class, html, default_handler);
+    ActionHandlerInterface.apply(this);
+    this._handlers = {
+      "select-next-entry": this._resource_inspector.highlight_next_resource_bound,
+      "select-previous-entry": this._resource_inspector.highlight_previous_resource_bound
+    };
+    ActionBroker.get_instance().register_handler(this);
+
+    this.init(id, name, container_class, html, default_handler);
+  };
+
+  this._init(id, name, container_class, html, default_handler);
 };
 
 cls.ResourceTreeView.create_ui_widgets = function()
 {
   new ToolbarConfig(
   {
-    view:'resource_tree_view',
+    view: "resource_tree_view",
     groups:
     [
       {
@@ -99,53 +146,53 @@ cls.ResourceTreeView.create_ui_widgets = function()
             handler: "resource-tree-text-search",
             shortcuts: "resource-tree-text-search",
             title: ui_strings.S_SEARCH_INPUT_TOOLTIP,
-            label: ui_strings.S_INPUT_DEFAULT_TEXT_SEARCH
+            label: ui_strings.S_INPUT_DEFAULT_TEXT_FILTER,
+            type: "filter"
           }
         ]
       }
     ]
   });
 
-  var text_search = window.views.resource_detail_view.text_search = new TextSearch();
+  var text_search = window.views.resource_tree_view.text_search = new TextSearch();
 
-  window.eventHandlers.input["resource-tree-text-search"] = function(event, target)
+  text_search.add_listener("onbeforesearch", (function(msg)
+  {
+    var view = window.views.resource_tree_view;
+    view.search_term = msg.search_term;
+    view.instant_update();
+  }).bind(text_search));
+
+  window.event_handlers.input["resource-tree-text-search"] = function(event, target)
   {
     text_search.searchDelayed(target.value);
   };
 
-  ActionBroker.
-    get_instance().
-    get_global_handler().
-      register_shortcut_listener
-      (
-        "resource-tree-text-search",
-        cls.Helpers.shortcut_search_cb.bind(text_search)
-      );
+  ActionBroker.get_instance().get_global_handler().register_shortcut_listener(
+    "resource-tree-text-search",
+    cls.Helpers.shortcut_search_cb.bind(text_search)
+  );
 
   var on_view_created = function(msg)
   {
-    if (msg.id === "resource_tree_view")
+    if (msg.id == "resource_tree_view" && msg.container)
     {
-      var scroll_container = msg.container;
-      if (scroll_container)
-      {
-        text_search.setContainer(scroll_container);
-        text_search.set_query_selector('.resource-tree-resource-label');
-        text_search.setFormInput(
-          views.resource_tree_view.getToolbarControl(msg.container, "resource-tree-text-search")
-        );
-      }
+      text_search.setContainer(msg.container);
+      text_search.set_query_selector(".resource-tree-resource-label");
     }
-  }
+  };
 
   var on_view_destroyed = function(msg)
   {
     if (msg.id == "resource_tree_view")
+    {
       text_search.cleanup();
-  }
+      window.views.resource_tree_view.search_term = "";
+    }
+  };
 
-  window.messages.addListener("view-created", on_view_created);
-  window.messages.addListener("view-destroyed", on_view_destroyed);
-}
+  window.messages.add_listener("view-created", on_view_created);
+  window.messages.add_listener("view-destroyed", on_view_destroyed);
+};
 
 cls.ResourceTreeView.prototype = ViewBase;

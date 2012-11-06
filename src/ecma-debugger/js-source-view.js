@@ -395,9 +395,10 @@ cls.JsSourceView = function(id, name, container_class)
 
   var setScriptContext = function(script_id, line_no)
   {
-    source_content.innerHTML = "<div style='visibility:hidden'>" +
+    source_content.innerHTML = "<div style='visibility:hidden;float:left'>" +
       simple_js_parser.format(__current_script, getMaxLengthLineIndex() - 1, 1).join('') + "</div>";
-    var scrollWidth = __current_script.scroll_width = document.getElementById(SCROLL_CONTENT_ID).scrollWidth;
+    var scroll_width_target = source_content.firstElementChild || document.getElementById(SCROLL_CONTENT_ID);
+    var scrollWidth = __current_script.scroll_width = scroll_width_target.scrollWidth;
     var offsetWidth = document.getElementById(SCROLL_CONTENT_ID).offsetWidth;
     // ensure that a scrollbar is also displayed with very long one-liner scripts
     // max width which produces a scrollbar is 0x7FFF - 1
@@ -418,6 +419,14 @@ cls.JsSourceView = function(id, name, container_class)
     {
       __max_lines = __current_script.line_arr.length;
     }
+
+    if (__current_script.line_arr.length > __max_lines &&
+        scrollWidth <= offsetWidth && offsetWidth - scrollWidth < context['scrollbar-width'])
+    {
+      __max_lines -= 1;
+      __current_script.scroll_width += context['scrollbar-width'];
+    }
+
     var lines = document.querySelector(CONTAINER_LINE_NR_SELECTOR);
 
     if (lines)
@@ -849,7 +858,9 @@ cls.JsSourceView = function(id, name, container_class)
   }
 
 
-  /* action broker interface */
+  /* action handler interface */
+
+  ActionHandlerInterface.apply(this);
 
   /**
     * To handle a single action.

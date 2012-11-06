@@ -53,7 +53,6 @@ var URIPrototype = function(uri_prop_name)
     {
       if (!this._is_data_uri)
       {
-        this.pathname;
         var pos = this.pathname.lastIndexOf("/");
         if (pos > -1)
           this._filename = this.pathname.slice(pos + 1);

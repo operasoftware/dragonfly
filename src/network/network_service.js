@@ -2,6 +2,24 @@
 
 cls.NetworkLogger = function()
 {
+  this._filter_entries_by_list = function(ids, entry)
+  {
+    return ids.contains(entry.id);
+  };
+
+  this.get_resources = function(ids)
+  {
+    // ids is an optional array of entry ids.
+    var ctx = this.get_logger_context();
+    var entries = ctx && ctx.get_entries() || [];
+    if (ids)
+    {
+      var filter_bound = this._filter_entries_by_list.bind(this, ids);
+      entries = entries.filter(filter_bound);
+    }
+    return entries.map(function(entry) { return new cls.ResourceInfo(entry); } );
+  };
+
   this._get_matching_context = function(res_id)
   {
     var crafter_context = this._contexts[cls.NetworkLogger.CONTEXT_TYPE_CRAFTER];
@@ -39,11 +57,6 @@ cls.NetworkLogger = function()
     type = type || cls.NetworkLogger.CONTEXT_TYPE_MAIN;
     this._contexts[type] = null;
     this.post("context-removed", {"context_type": type});
-  };
-
-  this.remove_logger_request_context = function()
-  {
-    return this._remove_request_context(cls.NetworkLogger.CONTEXT_TYPE_LOGGER);
   };
 
   this.remove_crafter_request_context = function()
@@ -266,7 +279,8 @@ cls.NetworkLogger = function()
       // Guess what the matching entry is from here. This is normally much harder,
       // but we only want to do this workaround in this easy case anyway.
       var matching_entry = ctx.get_entries_with_res_id(data.resourceID)[0];
-      if (matching_entry.events.last &&
+      if (matching_entry &&
+          matching_entry.events.last &&
           matching_entry.events.last.name == "urlredirect")
       {
         remove_from_allocated_after_update = true;
@@ -379,33 +393,14 @@ cls.NetworkLogger = function()
     this._res_service.requestSetResponseMode(cls.TagManager.IGNORE_RESPONSE, resparg);
   }.bind(this);
 
-  this.get_resource_info = function(resource_id)
-  {
-    // Returns a ResourceInfo based on the most recent Entry with that resource_id.
-    var entry = this._current_context &&
-                this._current_context.get_entries_with_res_id(resource_id).last;
-    if (entry && entry.current_response && entry.current_response.responsebody)
-    {
-      return new cls.ResourceInfo(entry);
-    }
-    return null;
-  };
-
-  this.get_request_context = function()
-  {
-    return this._current_context;
-  };
-
   this.init();
 };
 cls.NetworkLogger.CONTEXT_TYPE_LOGGER = 1;
 cls.NetworkLogger.CONTEXT_TYPE_CRAFTER = 2;
 cls.NetworkLogger.CONTEXT_TYPE_MAIN = cls.NetworkLogger.CONTEXT_TYPE_LOGGER;
 
-cls.NetworkLogger.WindowContext = function(window_id, logger, context)
+cls.NetworkLogger.WindowContext = function(window_id)
 {
-  this._logger = logger;
-  this._context = context;
   this.id = window_id;
   this.saw_main_document = false;
   this.incomplete_warn_discarded = false;
@@ -414,22 +409,6 @@ cls.NetworkLogger.WindowContext = function(window_id, logger, context)
 
 cls.NetworkLogger.WindowContextPrototype = function()
 {
-  this._filter_entries = function(resource_ids, entry, index, entries)
-  {
-    // Skip an entry if an entry with the same resource_id is found further down the list.
-    var same_resource_id = window.helpers.eq("resource_id", entry.resource_id);
-    return this.entry_ids.contains(entry.id) &&
-           (!resource_ids || resource_ids.contains(entry.resource_id)) &&
-           entries.slice(index + 1).filter(same_resource_id).length == 0;
-  }
-
-  this.get_resources = function(resource_ids)
-  {
-    var filter_bound = this._filter_entries.bind(this, resource_ids);
-    var entries = this._context.get_entries().filter(filter_bound);
-    return entries.map(function(entry) { return new cls.ResourceInfo(entry);} );
-  };
-
   this.discard_incomplete_warning = function()
   {
     this.incomplete_warn_discarded = true;
@@ -445,6 +424,7 @@ cls.RequestContext = function(logger, is_main_context)
     is_blacklist: true
   };
   this.allocated_res_ids = [];
+  this._cleared_ids = [];
   this.is_paused = false;
   this.is_waiting_for_create_request = false;
   this._logger_entries = [];
@@ -471,6 +451,9 @@ cls.RequestContextPrototype = function()
 
   this._filter_function = function(item)
   {
+    if (this._cleared_ids.contains(item.id))
+      return false;
+
     var success = false;
     for (var i = 0, filter; filter = this._filters[i]; i++)
     {
@@ -493,16 +476,13 @@ cls.RequestContextPrototype = function()
 
   this.get_entries_filtered = function()
   {
-    return this.get_entries().filter(this._filter_function_bound);
+    var entries = this.is_paused ? this._paused_entries : this._logger_entries;
+    return entries.filter(this._filter_function_bound);
   };
 
   this.get_entries = function()
   {
-    var entries = this._logger_entries;
-    if (this.is_paused)
-      entries = this._paused_entries;
-
-    return entries;
+    return this._logger_entries;
   };
 
   this.get_entries_with_res_id = function(res_id)
@@ -583,19 +563,28 @@ cls.RequestContextPrototype = function()
     if (eventname == "urlload")
     {
       var id = this._get_uid();
-      logger_entry = new cls.NetworkLoggerEntry(id, event.resourceID, event.documentID, this.get_starttime());
+      logger_entry = new cls.NetworkLoggerEntry(id,
+                                                event.resourceID,
+                                                event.documentID,
+                                                event.windowID,
+                                                this.get_starttime());
       this._logger_entries.push(logger_entry);
+      if (this.after_clear)
+        this.after_clear = false;
       // Store the id in the list of entries in the window_context
       var window_context = event.windowID && this.get_window_context(event.windowID, true);
       if (window_context)
         window_context.entry_ids.push(id);
     }
     logger_entry.update(eventname, event);
+    this.post_on_context_or_logger("resource-update", {id: logger_entry.id, is_paused: this.is_paused});
+  };
 
-    if (!this.is_paused)
-    {
-      this.post_on_context_or_logger("resource-update", {id: event.resourceID});
-    }
+  this.clear = function()
+  {
+    var helpers = window.helpers;
+    this._cleared_ids.extend(this.get_entries().map(helpers.prop("id")));
+    this.after_clear = true;
   };
 
   this.post_on_context_or_logger = function(name, body)
@@ -617,9 +606,8 @@ cls.RequestContextPrototype = function()
     var window_context = this._window_contexts.filter(helpers.eq("id", window_id))[0];
     if (!window_context && force)
     {
-      window_context = new cls.NetworkLogger.WindowContext(window_id, this._logger, this);
+      window_context = new cls.NetworkLogger.WindowContext(window_id);
       this._window_contexts.push(window_context);
-      this.post_on_context_or_logger("window-context-added", {"window-context": window_context});
     }
     return window_context;
   };
@@ -707,15 +695,53 @@ cls.RequestContextPrototype = function()
     }
   };
 
+  this.get_resource = function(entry)
+  {
+    if (!entry)
+      return;
+    entry.called_get_body = true;
+    if (entry.current_response)
+      entry.current_response.logger_entry_called_get_body = true;
+    var content_mode = cls.ResourceUtil.mime_to_content_mode(entry.mime);
+    var transport_type = {"text": 1, "datauri": 3}[content_mode];
+    var tag = window.tag_manager.set_callback(this, this._handle_get_resource, [entry]);
+    var CONTENT_MODE_STRING = 1;
+    window.services["resource-manager"].requestGetResource(tag, [entry.resource_id,
+                                                                  [transport_type, CONTENT_MODE_STRING]]);
+  }
+
+  this._handle_get_resource = function(status, msg, entry)
+  {
+    if (!entry.current_response)
+    {
+      // This means there wasn't a request, we add a "response" though because that's where that data lives.
+      entry.current_response = new cls.NetworkLoggerResponse(entry);
+      entry.requests_responses.push(entry.current_response);
+    }
+
+    var SUCCESS = 0;
+    if (status == SUCCESS)
+    {
+      var data = new cls.ResourceManager["1.2"].ResourceData(msg);
+      entry.responsebody = data;
+      entry.current_response.update_responsebody(data);
+    }
+    else
+    {
+      entry.get_body_unsuccessful = entry.current_response.logger_entry_get_body_unsuccessful = true;
+    }
+    this.post_on_context_or_logger("resource-update", {id: entry.id, is_paused: this.is_paused});
+};
 };
 
 cls.RequestContext.prototype = new cls.RequestContextPrototype();
 
-cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttime)
+cls.NetworkLoggerEntry = function(id, resource_id, document_id, window_id, context_starttime)
 {
   this.id = id;
   this.resource_id = resource_id;
   this.document_id = document_id;
+  this.window_id = window_id;
   this.context_starttime = context_starttime;
   this.url = null;
   this.human_url = "No URL";
@@ -737,8 +763,8 @@ cls.NetworkLoggerEntry = function(id, resource_id, document_id, context_starttim
   this.error_in_current_response = false;
   this.called_get_body = false;
   this.get_body_unsuccessful = false;
-  this._current_request = null;
-  this._current_response = null;
+  this.current_request = null;
+  this.current_response = null;
   this._set_is_finished_on_responsefinished = false;
   this.crafter_request_id = null;
 };
@@ -948,39 +974,39 @@ cls.NetworkLoggerEntryPrototype = function()
     this.size = event.contentLength;
     this.is_finished = true;
     // Responses keep duplicates of the finished state. It's only relevant on the last one.
-    if (this._current_response)
-      this._current_response.logger_entry_is_finished = true;
+    if (this.current_response)
+      this.current_response.logger_entry_is_finished = true;
     this._guess_response_type();
     this._humanize_url();
   };
 
   this._update_event_request = function(event)
   {
-    this._current_request = new cls.NetworkLoggerRequest(this);
-    this.requests_responses.push(this._current_request);
-    this._current_request._update_event_request(event);
+    this.current_request = new cls.NetworkLoggerRequest(this);
+    this.requests_responses.push(this.current_request);
+    this.current_request._update_event_request(event);
   };
 
   this._update_event_requestheader = function(event)
   {
-    if (!this._current_request)
+    if (!this.current_request)
     {
       // This means we didn't see a request before that, CORE-47076
-      this._current_request = new cls.NetworkLoggerRequest(this);
-      this.requests_responses.push(this._current_request);
+      this.current_request = new cls.NetworkLoggerRequest(this);
+      this.requests_responses.push(this.current_request);
     }
-    this._current_request._update_event_requestheader(event);
+    this.current_request._update_event_requestheader(event);
   };
 
   this._update_event_requestfinished = function(event)
   {
-    if (!this._current_request)
+    if (!this.current_request)
     {
       // There should always be a request by now, but keep the data anyway.
-      this._current_request = new cls.NetworkLoggerRequest(this);
-      this.requests_responses.push(this._current_request);
+      this.current_request = new cls.NetworkLoggerRequest(this);
+      this.requests_responses.push(this.current_request);
     }
-    this._current_request._update_event_requestfinished(event);
+    this.current_request._update_event_requestfinished(event);
   };
 
   this._update_event_requestretry = function(event)
@@ -989,37 +1015,37 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this._update_event_response = function(event)
   {
-    if (this._current_request)
+    if (this.current_request)
     {
-      this._current_request.was_responded_to = true;
+      this.current_request.was_responded_to = true;
     }
     this.current_responsecode = event.responseCode;
     this.error_in_current_response = /^[45]/.test(this.current_responsecode);
-    this._current_response = new cls.NetworkLoggerResponse(this);
-    this.requests_responses.push(this._current_response);
-    this._current_response.update_event_response(event);
+    this.current_response = new cls.NetworkLoggerResponse(this);
+    this.requests_responses.push(this.current_response);
+    this.current_response.update_event_response(event);
   };
 
   this._update_event_responseheader = function(event)
   {
     // Sometimes we see no "response" event before we see responseheader,
     // therefore have to init NetworkLoggerResponse here. See CORE-43935.
-    if (!this._current_response)
+    if (!this.current_response)
     {
-      if (this._current_request)
+      if (this.current_request)
       {
-        this._current_request.was_responded_to = true;
+        this.current_request.was_responded_to = true;
       }
-      this._current_response = new cls.NetworkLoggerResponse(this);
-      this.requests_responses.push(this._current_response);
+      this.current_response = new cls.NetworkLoggerResponse(this);
+      this.requests_responses.push(this.current_response);
     }
-    this._current_response.update_event_responseheader(event);
+    this.current_response.update_event_responseheader(event);
   };
 
   this._update_event_responsefinished = function(event)
   {
-    if (this._current_response)
-      this._current_response.update_event_responsefinished(event);
+    if (this.current_response)
+      this.current_response.update_event_responsefinished(event);
 
     if (event.data && event.data.mimeType)
       this.mime = event.data && event.data.mimeType;
@@ -1041,17 +1067,17 @@ cls.NetworkLoggerEntryPrototype = function()
     // The first guess is made based on file extension. No response is needed for that.
     // The current response is updated though, at the time it will be the correct one.
     // Multiple responses can get different types in this way.
-    if (!cls || !cls.ResourceUtil || !cls.ResourceUtil.guess_type)
+    if (!cls || !cls.ResourceUtil)
       return;
 
     this.type = cls.ResourceUtil.guess_type(this.mime, this.extension);
 
-    if (this._current_response)
+    if (this.current_response)
     {
       // This could be only on the response. But as only the last response has body
       // that would complicate it for nothing.
-      this._current_response.logger_entry_mime = this.mime;
-      this._current_response.logger_entry_type = this.type;
+      this.current_response.logger_entry_mime = this.mime;
+      this.current_response.logger_entry_type = this.type;
     }
   };
 
@@ -1110,57 +1136,17 @@ cls.NetworkLoggerEntryPrototype = function()
     this.events.push(evt);
   };
 
-  this.check_to_get_body = function()
+  this.should_get_body = function()
   {
-    var should_get_body =
+    return (
       this.is_finished &&
       !this.called_get_body &&
-      (!this._current_response || !this._current_response.responsebody) &&
       // When we have a response, but didn't see responsefinished, there really is no
       // responsebody. Don't attempt to fetch it.
-      (!this._current_response || this._current_response.saw_responsefinished);
-
-    // Todo: The exception for !saw_responsefinished is AFAIR so we don't fetch a wrong result like a
-    // placeholder from Opera, but thee's currently no testcase for that.
-    // We could also avoid it when this.is_unloaded, but seems there it will
-    // just be unsuccessful and we handle that.
-
-    if (should_get_body)
-    {
-      // Decide if body should be fetched, for when content-tracking is off or it's a cached request.
-      this.called_get_body = true;
-      if (this._current_response)
-        this._current_response.logger_entry_called_get_body = true;
-      var content_mode = cls.ResourceUtil.mime_to_content_mode(this.mime);
-      var transport_type = {"text": 1, "datauri": 3}[content_mode];
-      var tag = window.tag_manager.set_callback(this, this._handle_get_resource);
-      var CONTENT_MODE_STRING = 1;
-      window.services["resource-manager"].requestGetResource(tag, [this.resource_id,
-                                                                    [transport_type, CONTENT_MODE_STRING]]);
-    }
-  };
-
-  this._handle_get_resource = function(status, msg)
-  {
-    if (!this._current_response)
-    {
-      // This means there wasn't a request, we add a "response" though because that's where that data lives.
-      this._current_response = new cls.NetworkLoggerResponse(this);
-      this.requests_responses.push(this._current_response);
-    }
-
-    var SUCCESS = 0;
-    if (status == SUCCESS)
-    {
-      var data = new cls.ResourceManager["1.2"].ResourceData(msg);
-      this.responsebody = data;
-      this._current_response.update_responsebody(data);
-    }
-    else
-    {
-      this.get_body_unsuccessful = this._current_response.logger_entry_get_body_unsuccessful = true;
-    }
-    window.messages.post("network-resource-updated", {id: this.resource_id});
+      (!this.current_response || !this.current_response.responsebody) &&
+      // Don't fetch a placeholder from Opera
+      (!this.current_response || this.current_response.saw_responsefinished)
+    );
   };
 
   this.__defineGetter__("duration", function()
@@ -1180,21 +1166,9 @@ cls.NetworkLoggerEntryPrototype = function()
 
   this.__defineGetter__("touched_network", function()
   {
-    return Boolean(this._current_request);
+    return Boolean(this.current_request);
   });
   this.__defineSetter__("touched_network", function(){});
-
-  this.__defineGetter__("current_response", function()
-  {
-    return this._current_response;
-  });
-  this.__defineSetter__("current_response", function(){});
-
-  this.__defineGetter__("current_request", function()
-  {
-    return this._current_request;
-  });
-  this.__defineSetter__("current_request", function(){});
 };
 
 cls.NetworkLoggerEntryPrototype.prototype = new URIPrototype("url");
@@ -1315,20 +1289,47 @@ cls.NetworkLoggerResponse.prototype = new cls.NetworkLoggerResponsePrototype();
 
 cls.ResourceInfo = function(entry)
 {
-  this.id = entry.resource_id;
+  this.uid = entry.id;
+  this.resource_id = entry.resource_id;
   this.url = entry.url;
   this.document_id = entry.document_id;
   this.type = entry.type;
+  this.window_id = entry.window_id;
   this.is_unloaded = entry.is_unloaded;
   this.responsecode = entry.current_responsecode;
+  this.error_in_current_response = entry.error_in_current_response;
 
-  var lastResponse = entry.requests_responses && entry.requests_responses.last;
-  if (lastResponse && lastResponse.responsebody)
+  var last_response = entry.requests_responses && entry.requests_responses.last;
+  if (last_response && last_response.responsebody)
+    this.data = last_response.responsebody;
+  else if (entry.protocol == "data:")
   {
-    this.data = lastResponse.responsebody;
-    if (cls.ResourceUtil && cls.ResourceUtil.get_meta_data)
-      this.data.meta = cls.ResourceUtil.get_meta_data(this);
+    // populate the data in case of data: URI resource
+    var data = entry.url.slice(entry.protocol.length);
+    var pos = data.indexOf(",");
+    var is_base64 = data.lastIndexOf(";base64", pos) != -1;
+
+    this.data = {};
+    this.data.mimeType = data.slice(0, is_base64 ? data.indexOf(";") : pos) || "text/plain";
+    this.data.content = {};
+
+    if (cls.ResourceUtil.mime_to_content_mode(this.data.mimeType) == "text")
+      this.data.content.stringData = is_base64 ? atob(data.slice(pos + 1)) : decodeURIComponent(data.slice(pos + 1));
+    else
+      this.data.content.stringData = entry.url;
+
+    this.data.content.length = this.data.content.stringData.length;
   }
 };
 
 cls.ResourceInfo.prototype = new URIPrototype("url");
+
+cls.ResourceInfo.prototype.__defineGetter__("metadata", function()
+{
+  if (this._metadata === undefined && this.data != null)
+    this._metadata = cls.ResourceUtil.get_meta_data(this);
+
+  return this._metadata;
+});
+
+cls.ResourceInfo.prototype.__defineSetter__("metadata", function() {});

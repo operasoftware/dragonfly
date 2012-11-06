@@ -1,0 +1,52 @@
+﻿.overlay-size-change,
+.overlay-size-change .zoomer-overlay,
+.overlay-size-change .zoomer-overlay-handle
+{
+    cursor: ew-resize;
+}
+
+.overlay-drag,
+.overlay-drag .zoomer-overlay,
+.overlay-drag .zoomer-overlay-handle
+{
+    cursor: move;
+}
+
+.zoomer-overlay
+{
+    position: absolute;
+    border: 1px solid rgba(55, 115, 211, 0.3);
+    background-color: rgba(137, 173, 232, 0.2);
+    cursor: move;
+    display: none;
+}
+
+.zoomer-overlay-handle
+{
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    cursor: ew-resize;
+}
+
+/* Make bigger handle areas for easier grabbing */
+.zoomer-overlay-handle::before
+{
+    content: "";
+    display: block;
+    height: 100%;
+    width: 5px;
+    margin-left: -2px;
+}
+
+.zoomer-overlay-handle-left
+{
+    left: 0;
+}
+
+.zoomer-overlay-handle-right
+{
+    right: 0;
+}
+

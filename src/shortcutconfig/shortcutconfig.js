@@ -12,6 +12,8 @@ cls.ShortcutConfigView = function(id, name, container_class)
 
   /* ActionHandler interface */
 
+  ActionHandlerInterface.apply(this);
+
   const
   GLOBAL_HANDLER = "global",
   MINUS = -1,

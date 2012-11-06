@@ -84,6 +84,8 @@ cls.ResourceUtil.mime_type_map = {
 
   "text/plain": "text",
 
+  "text/cache-manifest": "text",
+
   "application/x-javascript": "script",
   "application/javascript": "script",
   "text/javascript": "script",
@@ -98,6 +100,7 @@ cls.ResourceUtil.mime_type_map = {
   "image/vnd.microsoft.icon": "image",
   "image/svg+xml": "image",
   "image/vnd.wap.wbmp": "image",
+  "image/webp": "image",
 
   "application/vnd.ms-fontobject": "font",
   "application/x-font-ttf": "font",
@@ -109,6 +112,7 @@ cls.ResourceUtil.mime_type_map = {
   "font/otf": "font",
   "font/truetype": "font",
   "font/woff": "font", // not official, but seems to be common
+  "font/x-woff": "font",
 
   "audio/mid": "audio",
   "audio/mpeg": "audio",
@@ -177,7 +181,7 @@ cls.ResourceUtil.mime_to_type = function(mime, extension)
   if (mime)
   {
     return this.mime_type_map[mime.contains(";") ?
-                              mime.split(';')[0].trim() :
+                              mime.split(";")[0].trim() :
                               mime];
   }
 }
@@ -204,12 +208,12 @@ cls.ResourceUtil.get_meta_data = function(resourceInfo)
   if (!data)
     return;
 
-  if (resourceInfo.type == 'image')
+  if (resourceInfo.type == "image")
   {
-    var i=new Image();
-    i.src=data.content.stringData;
+    var i = new Image();
+    i.src = data.content.stringData;
     if (i.naturalWidth)
-      return i.naturalWidth + '\u00D7' + i.naturalHeight;
+      return i.naturalWidth + "\u00D7" + i.naturalHeight;
     else
       return ui_strings.S_RESOURCE_VECTOR_GRAPHIC;
   }
@@ -401,16 +405,7 @@ cls.ResourceUtil.http_status_codes = {
 
 cls.ResourceUtil.sameOrigin = function(reference, url)
 {
-  if (!reference)
-    return true;
-
-  if (reference.protocol == url.protocol)
-  {
-    if (reference.host == url.host)
-      return true;
-    if (reference.host.match(new RegExp('\\.' + url.host + '$')) != null)
-      return true;
-  }
-
-  return false;
+  return !reference ||
+    (reference.protocol == url.protocol &&
+      (reference.host == url.host || reference.host.endswith("." + url.host)));
 }

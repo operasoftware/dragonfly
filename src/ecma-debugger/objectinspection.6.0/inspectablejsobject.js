@@ -175,7 +175,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
       if (i == path.length - 1)
       {
         ret = sub_tree;
-        tree.get_chain(["protos", index]).delete(key);
+        tree.get_chain(["protos", index])["delete"](key);
         break;
       }
       tree = sub_tree;
@@ -435,7 +435,7 @@ cls.EcmascriptDebugger["6.0"].InspectableJSObject.prototype = new function()
     var index = path.pop()[PATH_PROTO_INDEX];
     var top = this._get_subtree(path);
     var removed = top.get(["protos", index]);
-    top.get("protos").delete(index);
+    top.get("protos")["delete"](index);
     this._cleanup_maps(removed);
   };
 
