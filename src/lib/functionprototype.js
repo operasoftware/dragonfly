@@ -1,24 +1,29 @@
 ﻿/**
  * Throttle the function to run at most every delay ms
  * @argument delay {Number}
+ *
+ * Note: Throttled methods are argument-less because we don't know which set of
+ * arguments ( among the ones passed to all the throttled calls ) to pass to the
+ * method it is eventually called. Instead they should use a state or context
+ * variable of their scope.
  */
-Function.prototype.throttle || (Function.prototype.throttle = function( delay )
+Function.prototype.throttle || (Function.prototype.throttle = function(delay)
 {
-  var _callback = this;
-  var _last = 0;
-  var _timeout = 0;
-  var _wrapped = function()
+  var callback = this;
+  var last = 0;
+  var timeout = 0;
+  var wrapped = function()
   {
-    _timeout = 0;
-    _last = Date.now();
-    _callback();
+    timeout = 0;
+    last = Date.now();
+    callback();
   };
 
   return function()
   {
-    if (_last < Date.now()-delay)
-      _wrapped();
-    else if (!_timeout)
-      _timeout = setTimeout(_wrapped, delay);
+    if (last < Date.now() - delay)
+      wrapped();
+    else if (!timeout)
+      timeout = setTimeout(wrapped, delay);
   }
 });

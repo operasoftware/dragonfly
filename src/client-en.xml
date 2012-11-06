@@ -189,7 +189,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./console-logger/consolelogger_style.css"/>
 <link rel="stylesheet" href="./ui-style/colorpickerstyle.css"/>
 <link rel="stylesheet" href="./ui-scripts/sortable_table/sortable_table.css"/>
-<link rel="stylesheet" href="./ui-scripts/metadata_drawer/metadata_drawer.css"/>
 <link rel="stylesheet" href="./ui-scripts/ruler/style.css"/>
 <link rel="stylesheet" href="./repl/repl_style.css"/>
 <link rel="stylesheet" href="./resource-manager/resource_style.css"/>
