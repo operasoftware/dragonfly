@@ -27,6 +27,11 @@ cls.ResourceInspector = function(network_logger)
   {
     this._document_list = new cls.DocumentManager["1.0"].DocumentList(msg).documentList;
 
+    this._document_list = this._document_list.filter(function(d) {
+      // discard documents that do not have a URL property yet
+      return Boolean(d.url);
+    });
+
     this._document_list.forEach(function(d) {
       // use the URL class
       d.original_url = d.url;
