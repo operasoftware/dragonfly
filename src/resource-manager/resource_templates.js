@@ -346,11 +346,16 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.text = function(resource)
 	{
-		var data = resource.data.content.stringData;
-		var pos = data.indexOf(",");
-		var is_base64 = data.lastIndexOf(";base64", pos) != -1;
+		var text = resource.data.content.stringData;
 
-		return ["pre", is_base64 ? atob(data.slice(pos + 1)) : data.slice(pos + 1)];
+		if (text.startswith("data:"))
+		{
+			var pos = text.indexOf(",");
+	 		var is_base64 = text.lastIndexOf(";base64", pos) != -1;
+	 		text = is_base64 ? atob(text.slice(pos + 1)) : text.slice(pos + 1);
+		}
+
+		return ["pre", text];
 	};
 
 	this.markup = function(resource)
