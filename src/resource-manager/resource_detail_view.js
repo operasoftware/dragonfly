@@ -214,6 +214,9 @@ cls.ResourceDetailView.create_ui_widgets = function()
   });
 
   var text_search = window.views.resource_detail_view.text_search = new TextSearch();
+  var TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES = ["markup", "css", "script", "text"].map( function(v) {
+    return ".resource-detail-" + v +"-container";
+  });
 
   window.event_handlers.input["resource-text-search"] = function(event, target)
   {
@@ -229,7 +232,8 @@ cls.ResourceDetailView.create_ui_widgets = function()
   {
     if (msg.id === "resource_detail_view")
     {
-      var scroll_container = msg.container.querySelector(".resource-detail-container");
+      var scroll_container = msg.container.querySelector(TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES);
+
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);

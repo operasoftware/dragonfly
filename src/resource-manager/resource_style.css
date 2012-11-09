@@ -184,7 +184,8 @@
 
 .resource-detail-script-container,
 .resource-detail-css-container,
-.resource-detail-markup-container
+.resource-detail-markup-container,
+.resource-detail-text-container
 {
   position: absolute;
   top: 55px;
