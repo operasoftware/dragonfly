@@ -11,7 +11,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this._get_short_distinguisher = function(url)
 	{
-		var name = url.short_distinguisher;
+		var name = url.short_distinguisher || url;
 
 		if (name.length > DISTINGUISHER_MAX_LENGTH)
 			name = name.slice(0, DISTINGUISHER_MAX_LENGTH) + "…";
@@ -89,8 +89,10 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 				["h2",
 					extras.tpl.button,
 					["span",
-						window_info.title,
-						"class", "resource-tree-window-label"
+						this._get_short_distinguisher(window_info.title),
+						"class", "resource-tree-window-label",
+						"data-tooltip", "js-script-select",
+						"data-tooltip-text", window_info.title
 					]
 				].concat(extras.tpl.h2),
 			].concat(extras.tpl.li)
