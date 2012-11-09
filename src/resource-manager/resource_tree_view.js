@@ -154,12 +154,13 @@ cls.ResourceTreeView.create_ui_widgets = function()
     ]
   });
 
+  var view = window.views.resource_tree_view;
   var text_search = window.views.resource_tree_view.text_search = new TextSearch();
   text_search.ignore_case = false;
 
   text_search.add_listener("onbeforesearch", (function(msg)
   {
-    var view = window.views.resource_tree_view;
+    view.last_view_event = "onbeforesearch";
     view.search_term = msg.search_term;
     view.instant_update();
   }).bind(text_search));
@@ -180,6 +181,11 @@ cls.ResourceTreeView.create_ui_widgets = function()
     {
       text_search.setContainer(msg.container);
       text_search.set_query_selector(".resource-tree-resource-label");
+
+      if (view.last_view_event != "onbeforesearch")
+        text_search.update();
+
+      view.last_view_event = "view-created";
     }
   };
 
