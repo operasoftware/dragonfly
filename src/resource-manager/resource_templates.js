@@ -351,8 +351,8 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		if (text.startswith("data:"))
 		{
 			var pos = text.indexOf(",");
-	 		var is_base64 = text.lastIndexOf(";base64", pos) != -1;
-	 		text = is_base64 ? atob(text.slice(pos + 1)) : text.slice(pos + 1);
+			var is_base64 = text.lastIndexOf(";base64", pos) != -1;
+			text = is_base64 ? atob(text.slice(pos + 1)) : text.slice(pos + 1);
 		}
 
 		return ["pre", text];
