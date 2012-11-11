@@ -919,7 +919,6 @@ cls.JsSourceView = function(id, name, container_class)
     "default": ui_strings.S_LABEL_KEYBOARDCONFIG_MODE_DEFAULT,
   }
 
-  const PAGE_SCROLL = 20;
   const ARROW_SCROLL = 2;
 
   this.scroll = function()
@@ -1045,8 +1044,14 @@ cls.JsSourceView = function(id, name, container_class)
   }.bind(this);
 
   this.required_services = ["ecmascript-debugger"];
-  this._handlers["scroll-page-up"] = this._scroll_lines.bind(this, -PAGE_SCROLL);
-  this._handlers["scroll-page-down"] = this._scroll_lines.bind(this, PAGE_SCROLL);
+  this._handlers["scroll-page-up"] = function()
+  {
+    this._scroll_lines(-__max_lines + 1);
+  }.bind(this);
+  this._handlers["scroll-page-down"] = function()
+  {
+    this._scroll_lines(__max_lines - 1);
+  }.bind(this);
   this._handlers["scroll-arrow-up"] = this._scroll_lines.bind(this, -ARROW_SCROLL);
   this._handlers["scroll-arrow-down"] = this._scroll_lines.bind(this, ARROW_SCROLL);
   this.init(id,
