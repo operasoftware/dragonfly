@@ -382,10 +382,10 @@ h2 .resource-different-origin
 .resource-tree-window-label,
 .resource-tree-document-label,
 .resource-tree-group-markup-label,
-.resource-tree-group-stylesheets-label,
-.resource-tree-group-scripts-label,
-.resource-tree-group-images-label,
-.resource-tree-group-fonts-label,
+.resource-tree-group-css-label,
+.resource-tree-group-script-label,
+.resource-tree-group-image-label,
+.resource-tree-group-font-label,
 .resource-tree-group-other-label
 {
   font-weight: bold;
@@ -415,22 +415,22 @@ h2 .resource-different-origin
   background-image: url("../ui-images/type_markup.png");
 }
 
-.resource-tree-group-stylesheets-label
+.resource-tree-group-css-label
 {
   background-image: url("../ui-images/type_style.png");
 }
 
-.resource-tree-group-scripts-label
+.resource-tree-group-script-label
 {
   background-image: url("../ui-images/type_script.png");
 }
 
-.resource-tree-group-images-label
+.resource-tree-group-image-label
 {
   background-image: url("../ui-images/type_picture.png");
 }
 
-.resource-tree-group-fonts-label
+.resource-tree-group-font-label
 {
   background-image: url("../ui-images/type_font.png");
 }

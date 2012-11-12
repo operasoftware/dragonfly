@@ -12,14 +12,6 @@ cls.ResourceInspector = function(network_logger)
   var HIGHLIGHT_CLASSNAME = "resource-highlight";
 
   var THROTTLE_DELAY = 250;
-  var TYPE_GROUP_MAPPING = {
-    "markup": ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
-    "css": ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
-    "script": ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
-    "image": ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
-    "font": ui_strings.S_HTTP_LABEL_FILTER_FONTS,
-    "*": ui_strings.S_HTTP_LABEL_FILTER_OTHER
-  };
 
   this._network_logger = network_logger;
 
@@ -55,6 +47,19 @@ cls.ResourceInspector = function(network_logger)
     if (this.detail_view == null)
       this.detail_view = window.views.resource_detail_view;
   };
+
+  this.get_group_order = function()
+  {
+    this.get_views();
+    if (this.group_order == null && this.tree_view != null)
+    {
+      this.group_order = this.tree_view.get_group_order();
+      this.group_order_type_index = {};
+      this.group_order.forEach( function(g, i) {
+        this.group_order_type_index[g.type] = i;
+      }, this);
+    }
+  }
 
   this._update = function(msg)
   {
@@ -95,7 +100,8 @@ cls.ResourceInspector = function(network_logger)
       ctx.collapsed = this._collapsed_hash;
 
       // get the order of the groups of resources,
-      ctx.group_order = this.tree_view.get_group_order();
+      this.get_group_order();
+      ctx.group_order = this.group_order;
 
       ctx.document_resource_hash = {};
 
@@ -136,7 +142,7 @@ cls.ResourceInspector = function(network_logger)
           if (!hash.hasOwnProperty(id))
           {
             hash[id] = d.depth > 1;
-            ctx.group_order.forEach(function(g) { hash[id + "_" + g] = true; });
+            ctx.group_order.forEach(function(g) { hash[id + "_" + g.type] = true; });
           }
         }
 
@@ -166,10 +172,10 @@ cls.ResourceInspector = function(network_logger)
           return false;
         }
 
-        r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
+        r.group = this.group_order_type_index.hasOwnProperty(r.type) ? r.type : ctx.group_order.last.type;
         r.same_origin = cls.ResourceUtil.sameOrigin(d.url, r);
 
-        r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
+        r.full_id = d.pivot_id + "_" + this.group_order_type_index[r.group] + r.group + "_" + r.uid;
         r.pivot_id = d.pivot_id + "_" + r.group;
         r.is_hidden = ctx.collapsed[r.pivot_id] == true;
 

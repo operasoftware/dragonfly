@@ -165,7 +165,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	this.resource_group = function(context, resources, d, g)
 	{
 		var resources = resources.filter(function(r) {
-			return r.group == g;
+			return r.group == g.type;
 		});
 
 		var resource_count = resources.length;
@@ -181,22 +181,22 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			return;
 
 		var depth = d.depth + 1;
-		var extras = this._expander_extras(context, d.pivot_id + "_" + g, depth);
+		var extras = this._expander_extras(context, d.pivot_id + "_" + g.type, depth);
 
 		flat_list.push(
 			["li",
 				["h2",
 					extras.tpl.button,
 					["span",
-						g,
-						"class", "resource-tree-group-" + g.toLowerCase() + "-label"
+						g.ui_string,
+						"class", "resource-tree-group-" + g.type.toLowerCase() + "-label"
 					],
 					" ",
 					["span",
 						String(resource_count),
 						"class", "resource-tree-count"
 					],
-					"class", "resource-tree-group resource-tree-group-" + g.toLowerCase()
+					"class", "resource-tree-group resource-tree-group-" + g.type.toLowerCase()
 				].concat(extras.tpl.h2),
 			].concat(extras.tpl.li)
 		);
