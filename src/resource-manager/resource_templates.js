@@ -405,7 +405,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 	this.font = function(resource)
 	{
 		var font_family_name = "font" + resource.uid;
-		var style_sheet = "@font-face { font-family: \"" + font_family_name  + "\";" +
+		var style_sheet = "@font-face { font-family: \"" + font_family_name + "\";" +
 										  "src: url(\"" + resource.data.content.stringData + "\"); }";
 		var inline_style = "font-size: 64px; font-family: " + font_family_name + ";" +
 											 "white-space: pre; word-break: break-all; " +
@@ -414,11 +414,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 		return(
 		["object",
-			["div",
-				sample_string,
-				["style", style_sheet],
-				"style", inline_style,
-			],
+//			this.fallback(resource),
 			"data", "data:text/html;base64," +
 						  btoa("<!doctype html><style>" + style_sheet + "</style>" +
 						  "<div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),
