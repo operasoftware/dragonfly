@@ -276,6 +276,9 @@ cls.ResourceInspector = function(network_logger)
     {
       e.addClass(HIGHLIGHT_CLASSNAME);
 
+      if (window.Tooltips)
+        window.Tooltips.hide_tooltip();
+
       // scroll into view
       var container = this.tree_view.get_container().firstChild;
       var y = container.scrollTop;
