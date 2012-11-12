@@ -280,7 +280,7 @@ cls.ResourceInspector = function(network_logger)
       var container = this.tree_view.get_container().firstChild;
       var y = container.scrollTop;
       var max_y = e.offsetTop;
-      var min_y = max_y + e.offsetHeight - container.offsetHeight;
+      var min_y = max_y + e.offsetHeight - container.clientHeight;
 
       if (y < min_y)
         container.scrollTop = min_y;
@@ -312,17 +312,18 @@ cls.ResourceInspector = function(network_logger)
     {
       this.highlight_resource(uid);
       this.detail_view.show_resource(uid);
+      return true;
     }
   };
 
   this.highlight_next_resource_bound = function()
   {
-    this._highlight_sibling_resource(-1);
+    return !this._highlight_sibling_resource(-1);
   }.bind(this);
 
   this.highlight_previous_resource_bound = function()
   {
-    this._highlight_sibling_resource(1);
+    return !this._highlight_sibling_resource(1);
   }.bind(this);
 
   this._resource_request_update_bound = function(msg)
