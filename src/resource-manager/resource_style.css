@@ -185,7 +185,8 @@
 .resource-detail-script-container,
 .resource-detail-css-container,
 .resource-detail-markup-container,
-.resource-detail-text-container
+.resource-detail-text-container,
+.resource-detail-font-container
 {
   position: absolute;
   top: 55px;
@@ -261,7 +262,15 @@ a.resource-detail-link:hover
 .resource-detail-font
 {
   width: 100%;
-  height: -o-content-size;
+  height: 100%;
+  border: 0;
+  font-size: 64px;
+  font-family: "the font";
+  box-sizing: border-box;
+  white-space: pre;
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .resource-detail-image

@@ -265,7 +265,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		["div",
 			this.overview(resource),
 			["div",
-				this[type](resource, resource.data),
+				this[type](resource),
 				"class", "resource-detail-" + type + "-container scroll"
 			],
 			"class", "resource-detail-container"
@@ -404,21 +404,12 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.font = function(resource)
 	{
-		var font_family_name = "font" + resource.uid;
-		var style_sheet = "@font-face { font-family: \"" + font_family_name + "\";" +
-										  "src: url(\"" + resource.data.content.stringData + "\"); }";
-		var inline_style = "font-size: 64px; font-family: " + font_family_name + ";" +
-											 "white-space: pre; word-break: break-all; " +
-											 "word-wrap: break-word; overflow-wrap: break-word;";
-		var sample_string = "The quick brown fox jumps over the lazy dog 0123456789";
+		var sample_string = window.settings.resource_detail_view.get("sample_string");
 
 		return(
-		["object",
-			this.fallback(resource),
-			"data", "data:text/html;base64," +
-						  btoa("<!doctype html><style>" + style_sheet + "</style>" +
-						  "<div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),
-			"class", "resource-detail-font"
+		[
+			["style", "@font-face { font-family: \"the font\"; src: url(\"" + resource.data.content.stringData + "\"); }"],
+			["textarea", sample_string, "class", "resource-detail-font", "handler", "resource-detail-font"]
 		]);
 	};
 

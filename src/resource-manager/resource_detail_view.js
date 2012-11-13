@@ -185,6 +185,11 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     var messages = window.messages;
     messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
 
+    window.event_handlers.input["resource-detail-font"] = function(event, target)
+    {
+      window.settings.resource_detail_view.set("sample_string", target.value);
+    };
+
     this.init(id, name, container_class, html, default_handler);
   };
 
@@ -193,6 +198,13 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
 cls.ResourceDetailView.create_ui_widgets = function()
 {
+  new Settings(
+    "resource_detail_view",
+    {
+      "sample_string": "The quick brown fox jumps over the lazy dog. 0123456789"
+    }
+  );
+
   new ToolbarConfig(
   {
     view: "resource_detail_view",
