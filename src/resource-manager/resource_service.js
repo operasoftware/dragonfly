@@ -105,18 +105,21 @@ cls.ResourceInspector = function(network_logger)
 
       ctx.document_resource_hash = {};
 
-      // mapping of the WindowIDs in the debugging context
-      var window_id_index = {};
-      ctx.window_list.forEach(function(w, i) { window_id_index[w.id] = i; });
-
-      var null_document_id = false;
-      var document_id_index = {};
       var lead = function(str, char, len)
       {
         str = String(str);
         return new Array((len || 8) - str.length + 1).join(char || "-") + str;
       };
 
+      // mapping of the WindowIDs in the debugging context + pivot_id
+      var window_id_index = {};
+      ctx.window_list.forEach(function(w, i) {
+        w.pivot_id = lead(w.id);
+        window_id_index[w.id] = i;
+      });
+
+      var null_document_id = false;
+      var document_id_index = {};
       // filter the documents that belong in the window_id list,
       // set null_document_id flag,
       // augment the document objects,
@@ -136,7 +139,9 @@ cls.ResourceInspector = function(network_logger)
           document_id_index[d.documentID] = i;
 
           // set depth, pivot_id and same_origin
-          var p = a[document_id_index[d.parentDocumentID]] || {pivot_id: lead(d.windowID), depth: 0};;
+          var p = a[document_id_index[d.parentDocumentID]];
+          if (!p)
+            p = {pivot_id: ctx.window_list[window_id_index[d.windowID]].pivot_id, depth: 0};
           var id = p.pivot_id + lead(d.documentID);
           d.depth = p.depth + 1;
           d.pivot_id = id;
@@ -246,7 +251,7 @@ cls.ResourceInspector = function(network_logger)
       if (event.shiftKey)
       {
         pivot_ids.push.apply(pivot_ids, Object.keys(hash).filter(function(p) {
-          return p.startswith(pivot_id + "_");
+          return p.startswith(pivot_id);
         }));
       }
 

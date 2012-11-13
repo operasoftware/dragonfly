@@ -82,7 +82,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		if (!window_info)
 			return;
 
-		var extras = this._expander_extras(context, String(w.id));
+		var extras = this._expander_extras(context, w.pivot_id);
 
 		flat_list.push(
 			["li",
