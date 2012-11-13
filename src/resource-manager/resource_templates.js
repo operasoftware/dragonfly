@@ -414,7 +414,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 		return(
 		["object",
-//			this.fallback(resource),
+			this.fallback(resource),
 			"data", "data:text/html;base64," +
 						  btoa("<!doctype html><style>" + style_sheet + "</style>" +
 						  "<div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),

@@ -111,6 +111,11 @@ cls.ResourceInspector = function(network_logger)
 
       var null_document_id = false;
       var document_id_index = {};
+      var lead = function(str, char, len)
+      {
+        str = String(str);
+        return new Array((len || 8) - str.length + 1).join(char || "-") + str;
+      };
 
       // filter the documents that belong in the window_id list,
       // set null_document_id flag,
@@ -131,8 +136,8 @@ cls.ResourceInspector = function(network_logger)
           document_id_index[d.documentID] = i;
 
           // set depth, pivot_id and same_origin
-          var p = a[document_id_index[d.parentDocumentID]] || {pivot_id: d.windowID, depth: 0};
-          var id = p.pivot_id + "_" + d.documentID;
+          var p = a[document_id_index[d.parentDocumentID]] || {pivot_id: lead(d.windowID), depth: 0};;
+          var id = p.pivot_id + lead(d.documentID);
           d.depth = p.depth + 1;
           d.pivot_id = id;
           d.same_origin = cls.ResourceUtil.sameOrigin(p.url, d.url);
@@ -147,9 +152,7 @@ cls.ResourceInspector = function(network_logger)
         }
 
         return in_context;
-      }, this).sort(function(a, b) {
-        return a.documentID - b.documentID;
-      });
+      }, this);
 
       var unknown_document_id = false;
       // filter out resources pointing to an unknown document_id,
@@ -175,7 +178,7 @@ cls.ResourceInspector = function(network_logger)
         r.group = this.group_order_type_index.hasOwnProperty(r.type) ? r.type : ctx.group_order.last.type;
         r.same_origin = cls.ResourceUtil.sameOrigin(d.url, r);
 
-        r.full_id = d.pivot_id + "_" + this.group_order_type_index[r.group] + r.group + "_" + r.uid;
+        r.full_id = d.pivot_id + " " + lead(this.group_order_type_index[r.group], " ") + r.group + "_" + r.uid;
         r.pivot_id = d.pivot_id + "_" + r.group;
         r.is_hidden = ctx.collapsed[r.pivot_id] == true;
 
@@ -192,6 +195,15 @@ cls.ResourceInspector = function(network_logger)
         return ctx.document_list.some(function(w) {
           return v.id == w.windowID;
         });
+      });
+
+      // sort the documents by their resources
+      var document_id_order = {};
+      ctx.resource_list.forEach(function(r, i) {
+        document_id_order[r.document_id] = i;
+      });
+      ctx.document_list = ctx.document_list.sort(function(a, b) {
+        return document_id_order[a.documentID] - document_id_order[b.documentID];
       });
 
       // request the list of documents if we have
