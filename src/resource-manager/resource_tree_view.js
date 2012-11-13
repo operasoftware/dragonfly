@@ -179,12 +179,15 @@ cls.ResourceTreeView.create_ui_widgets = function()
   {
     if (msg.id == "resource_tree_view" && msg.container)
     {
-      text_search.setContainer(msg.container);
-      text_search.set_query_selector(".resource-tree-resource-label");
+      var scroll_container = msg.container.querySelector(".resource-tree");
+      if (scroll_container)
+      {
+        text_search.setContainer(scroll_container);
+        text_search.set_query_selector(".resource-tree-resource-label");
 
-      if (view.last_view_event != "onbeforesearch")
-        text_search.update();
-
+        if (view.last_view_event != "onbeforesearch")
+          text_search.update();
+      }
       view.last_view_event = "view-created";
     }
   };

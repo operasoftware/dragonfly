@@ -266,7 +266,7 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 			this.overview(resource),
 			["div",
 				this[type](resource, resource.data),
-				"class", "resource-detail-" + type + "-container"
+				"class", "resource-detail-" + type + "-container scroll"
 			],
 			"class", "resource-detail-container"
 		]);
