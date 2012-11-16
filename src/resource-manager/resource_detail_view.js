@@ -226,7 +226,7 @@ cls.ResourceDetailView.create_ui_widgets = function()
   });
 
   var text_search = window.views.resource_detail_view.text_search = new TextSearch();
-  var TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES = ["markup", "css", "script", "text"].map( function(v) {
+  var TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES = ["markup", "css", "script", "text"].map(function(v) {
     return ".resource-detail-" + v + "-container";
   });
 

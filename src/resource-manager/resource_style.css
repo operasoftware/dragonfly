@@ -265,6 +265,7 @@ a.resource-detail-link:hover
   height: 100%;
   border: 0;
   font-size: 64px;
+  /* The @font-face declaration of "the font" is created by the resource_detail.font template */
   font-family: "the font";
   box-sizing: border-box;
   white-space: pre;
