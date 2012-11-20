@@ -11,12 +11,12 @@ cls.ResourceTreeView = function(id, name, container_class, html, default_handler
   //	const
   var THROTTLE_DELAY = 250;
   var GROUP_ORDER = [
-    ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
-    ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
-    ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
-    ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
-    ui_strings.S_HTTP_LABEL_FILTER_FONTS,
-    ui_strings.S_HTTP_LABEL_FILTER_OTHER
+    {"type": "markup", "ui_string": ui_strings.S_HTTP_LABEL_FILTER_MARKUP},
+    {"type": "css", "ui_string": ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS},
+    {"type": "script", "ui_string": ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS},
+    {"type": "image", "ui_string": ui_strings.S_HTTP_LABEL_FILTER_IMAGES},
+    {"type": "font", "ui_string": ui_strings.S_HTTP_LABEL_FILTER_FONTS},
+    {"type": "other", "ui_string": ui_strings.S_HTTP_LABEL_FILTER_OTHER}
   ];
 
   this._next_render_time = 0;
@@ -154,11 +154,12 @@ cls.ResourceTreeView.create_ui_widgets = function()
     ]
   });
 
+  var view = window.views.resource_tree_view;
   var text_search = window.views.resource_tree_view.text_search = new TextSearch();
 
   text_search.add_listener("onbeforesearch", (function(msg)
   {
-    var view = window.views.resource_tree_view;
+    view.last_view_event = "onbeforesearch";
     view.search_term = msg.search_term;
     view.instant_update();
   }).bind(text_search));
@@ -177,8 +178,16 @@ cls.ResourceTreeView.create_ui_widgets = function()
   {
     if (msg.id == "resource_tree_view" && msg.container)
     {
-      text_search.setContainer(msg.container);
-      text_search.set_query_selector(".resource-tree-resource-label");
+      var scroll_container = msg.container.querySelector(".resource-tree");
+      if (scroll_container)
+      {
+        text_search.setContainer(scroll_container);
+        text_search.set_query_selector(".resource-tree-resource-label");
+
+        if (view.last_view_event != "onbeforesearch")
+          text_search.update();
+      }
+      view.last_view_event = "view-created";
     }
   };
 
