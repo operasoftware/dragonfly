@@ -51,9 +51,15 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			r.is_hidden = context.collapsed[r.pivot_id] == true;
 
 			if (context.search_term == "")
+			{
 				r.is_selectable = !r.is_hidden;
+			}
 			else
-				r.is_selectable = r.url.contains(context.search_term);
+			{
+				if (!r.lowercase_url)
+					r.lowercase_url = r.url.toLowerCase();
+				r.is_selectable = r.lowercase_url.contains(context.search_term);
+			}
 		});
 
 		flat_list = [];
@@ -219,8 +225,8 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		var partial_url_match = "";
 		if (search != "")
 		{
-			var pos_first = r.url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
-			var pos_last = r.url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
+			var pos_first = r.lowercase_url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
+			var pos_last = r.lowercase_url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
 			var prefix = pos_first > 0 ? "…" : "";
 			var suffix = pos_last < r.url.length ? "…" : "";
 

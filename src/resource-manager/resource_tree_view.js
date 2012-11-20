@@ -156,7 +156,6 @@ cls.ResourceTreeView.create_ui_widgets = function()
 
   var view = window.views.resource_tree_view;
   var text_search = window.views.resource_tree_view.text_search = new TextSearch();
-  text_search.ignore_case = false;
 
   text_search.add_listener("onbeforesearch", (function(msg)
   {
