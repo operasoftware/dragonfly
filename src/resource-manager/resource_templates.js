@@ -11,7 +11,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 
 	this._get_short_distinguisher = function(url)
 	{
-		var name = url.short_distinguisher;
+		var name = url.short_distinguisher || url;
 
 		if (name.length > DISTINGUISHER_MAX_LENGTH)
 			name = name.slice(0, DISTINGUISHER_MAX_LENGTH) + "…";
@@ -51,9 +51,15 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			r.is_hidden = context.collapsed[r.pivot_id] == true;
 
 			if (context.search_term == "")
+			{
 				r.is_selectable = !r.is_hidden;
+			}
 			else
-				r.is_selectable = r.url.contains(context.search_term);
+			{
+				if (!r.lowercase_url)
+					r.lowercase_url = r.url.toLowerCase();
+				r.is_selectable = r.lowercase_url.contains(context.search_term);
+			}
 		});
 
 		flat_list = [];
@@ -82,15 +88,17 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		if (!window_info)
 			return;
 
-		var extras = this._expander_extras(context, String(w.id));
+		var extras = this._expander_extras(context, w.pivot_id);
 
 		flat_list.push(
 			["li",
 				["h2",
 					extras.tpl.button,
 					["span",
-						window_info.title,
-						"class", "resource-tree-window-label"
+						this._get_short_distinguisher(window_info.title),
+						"class", "resource-tree-window-label",
+						"data-tooltip", "js-script-select",
+						"data-tooltip-text", window_info.title
 					]
 				].concat(extras.tpl.h2),
 			].concat(extras.tpl.li)
@@ -163,7 +171,7 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 	this.resource_group = function(context, resources, d, g)
 	{
 		var resources = resources.filter(function(r) {
-			return r.group == g;
+			return r.group == g.type;
 		});
 
 		var resource_count = resources.length;
@@ -179,22 +187,22 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 			return;
 
 		var depth = d.depth + 1;
-		var extras = this._expander_extras(context, d.pivot_id + "_" + g, depth);
+		var extras = this._expander_extras(context, d.pivot_id + "_" + g.type, depth);
 
 		flat_list.push(
 			["li",
 				["h2",
 					extras.tpl.button,
 					["span",
-						g,
-						"class", "resource-tree-group-" + g.toLowerCase() + "-label"
+						g.ui_string,
+						"class", "resource-tree-group-" + g.type.toLowerCase() + "-label"
 					],
 					" ",
 					["span",
 						String(resource_count),
 						"class", "resource-tree-count"
 					],
-					"class", "resource-tree-group resource-tree-group-" + g.toLowerCase()
+					"class", "resource-tree-group resource-tree-group-" + g.type.toLowerCase()
 				].concat(extras.tpl.h2),
 			].concat(extras.tpl.li)
 		);
@@ -217,8 +225,8 @@ window.templates.resource_tree || (window.templates.resource_tree = new function
 		var partial_url_match = "";
 		if (search != "")
 		{
-			var pos_first = r.url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
-			var pos_last = r.url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
+			var pos_first = r.lowercase_url.indexOf(search) - URL_MATCH_CONTEXT_SIZE;
+			var pos_last = r.lowercase_url.lastIndexOf(search) + URL_MATCH_CONTEXT_SIZE + search.length;
 			var prefix = pos_first > 0 ? "…" : "";
 			var suffix = pos_last < r.url.length ? "…" : "";
 
@@ -263,8 +271,8 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 		["div",
 			this.overview(resource),
 			["div",
-				this[type](resource, resource.data),
-				"class", "resource-detail-" + type + "-container"
+				this[type](resource),
+				"class", "resource-detail-" + type + "-container scroll"
 			],
 			"class", "resource-detail-container"
 		]);
@@ -346,11 +354,16 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.text = function(resource)
 	{
-		var data = resource.data.content.stringData;
-		var pos = data.indexOf(",");
-		var is_base64 = data.lastIndexOf(";base64", pos) != -1;
+		var text = resource.data.content.stringData;
 
-		return ["pre", is_base64 ? atob(data.slice(pos + 1)) : data.slice(pos + 1)];
+		if (text.startswith("data:"))
+		{
+			var pos = text.indexOf(",");
+			var is_base64 = text.lastIndexOf(";base64", pos) != -1;
+			text = is_base64 ? atob(text.slice(pos + 1)) : text.slice(pos + 1);
+		}
+
+		return ["pre", text];
 	};
 
 	this.markup = function(resource)
@@ -397,25 +410,12 @@ window.templates.resource_detail || (window.templates.resource_detail = new func
 
 	this.font = function(resource)
 	{
-		var font_family_name = "font" + resource.uid;
-		var style_sheet = "@font-face { font-family: \"" + font_family_name  + "\";" +
-										  "src: url(\"" + resource.data.content.stringData + "\"); }";
-		var inline_style = "font-size: 64px; font-family: " + font_family_name + ";" +
-											 "white-space: pre; word-break: break-all; " +
-											 "word-wrap: break-word; overflow-wrap: break-word;";
-		var sample_string = "The quick brown fox jumps over the lazy dog 0123456789";
+		var sample_string = window.settings.resource_detail_view.get("sample_string");
 
 		return(
-		["object",
-			["div",
-				sample_string,
-				["style", style_sheet],
-				"style", inline_style,
-			],
-			"data", "data:text/html;base64," +
-						  btoa("<!doctype html><style>" + style_sheet + "</style>" +
-						  "<div contenteditable=\"true\" style=\"" + inline_style + "\">" + sample_string),
-			"class", "resource-detail-font"
+		[
+			["style", "@font-face { font-family: \"the font\"; src: url(\"" + resource.data.content.stringData + "\"); }"],
+			["textarea", sample_string, "class", "resource-detail-font", "handler", "resource-detail-font"]
 		]);
 	};
 

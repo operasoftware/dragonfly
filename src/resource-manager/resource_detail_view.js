@@ -185,6 +185,11 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     var messages = window.messages;
     messages.add_listener("debug-context-selected", this._on_debug_context_selected_bound);
 
+    window.event_handlers.input["resource-detail-font"] = function(event, target)
+    {
+      window.settings.resource_detail_view.set("sample_string", target.value);
+    };
+
     this.init(id, name, container_class, html, default_handler);
   };
 
@@ -193,6 +198,13 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
 cls.ResourceDetailView.create_ui_widgets = function()
 {
+  new Settings(
+    "resource_detail_view",
+    {
+      "sample_string": "The quick brown fox jumps over the lazy dog. 0123456789"
+    }
+  );
+
   new ToolbarConfig(
   {
     view: "resource_detail_view",
@@ -214,6 +226,9 @@ cls.ResourceDetailView.create_ui_widgets = function()
   });
 
   var text_search = window.views.resource_detail_view.text_search = new TextSearch();
+  var TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES = ["markup", "css", "script", "text"].map(function(v) {
+    return ".resource-detail-" + v + "-container";
+  });
 
   window.event_handlers.input["resource-text-search"] = function(event, target)
   {
@@ -229,7 +244,8 @@ cls.ResourceDetailView.create_ui_widgets = function()
   {
     if (msg.id === "resource_detail_view")
     {
-      var scroll_container = msg.container.querySelector(".resource-detail-container");
+      var scroll_container = msg.container.querySelector(TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES);
+
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);
