@@ -184,7 +184,9 @@
 
 .resource-detail-script-container,
 .resource-detail-css-container,
-.resource-detail-markup-container
+.resource-detail-markup-container,
+.resource-detail-text-container,
+.resource-detail-font-container
 {
   position: absolute;
   top: 55px;
@@ -260,7 +262,16 @@ a.resource-detail-link:hover
 .resource-detail-font
 {
   width: 100%;
-  height: -o-content-size;
+  height: 100%;
+  border: 0;
+  font-size: 64px;
+  /* The @font-face declaration of "the font" is created by the resource_detail.font template */
+  font-family: "the font";
+  box-sizing: border-box;
+  white-space: pre;
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .resource-detail-image
@@ -282,6 +293,17 @@ a.resource-detail-link:hover
   overflow: auto;
 }
 
+.resource-tree ul
+{
+  display: table;
+  min-width: 100%;
+}
+
+.resource-tree li
+{
+  display: table-row;
+}
+
 .resource-tree li > h2
 {
   box-sizing: border-box;
@@ -292,7 +314,7 @@ a.resource-detail-link:hover
   min-width: 100%;
   display: block;
   font-size: 11px;
-  line-height: 24px;
+  line-height: 20px;
   vertical-align: middle;
 }
 
@@ -311,12 +333,12 @@ a.resource-detail-link:hover
   margin: 4px 0;
 }
 
-.resource-tree li > h2:hover
+.resource-tree li:hover
 {
   background-color: rgba(137, 173, 232, 0.2);
 }
 
-.resource-highlight
+.resource-tree li.resource-highlight
 {
   color: #fff;
   background-color: rgba(55, 115, 211, 0.7);
@@ -333,7 +355,7 @@ h2 .resource-tree-count
   vertical-align: middle;
 }
 
-h2:hover .resource-tree-count
+li:hover .resource-tree-count
 {
   background-color: #cfd6e0;
   color: #3c3e42;
@@ -344,7 +366,7 @@ h2 .resource-different-origin
   color: #808080;
 }
 
-.resource-tree li > h2:hover .resource-different-origin:hover
+.resource-tree li:hover .resource-different-origin:hover
 {
   color: #6e7680;
 }
@@ -370,10 +392,10 @@ h2 .resource-different-origin
 .resource-tree-window-label,
 .resource-tree-document-label,
 .resource-tree-group-markup-label,
-.resource-tree-group-stylesheets-label,
-.resource-tree-group-scripts-label,
-.resource-tree-group-images-label,
-.resource-tree-group-fonts-label,
+.resource-tree-group-css-label,
+.resource-tree-group-script-label,
+.resource-tree-group-image-label,
+.resource-tree-group-font-label,
 .resource-tree-group-other-label
 {
   font-weight: bold;
@@ -403,22 +425,22 @@ h2 .resource-different-origin
   background-image: url("../ui-images/type_markup.png");
 }
 
-.resource-tree-group-stylesheets-label
+.resource-tree-group-css-label
 {
   background-image: url("../ui-images/type_style.png");
 }
 
-.resource-tree-group-scripts-label
+.resource-tree-group-script-label
 {
   background-image: url("../ui-images/type_script.png");
 }
 
-.resource-tree-group-images-label
+.resource-tree-group-image-label
 {
   background-image: url("../ui-images/type_picture.png");
 }
 
-.resource-tree-group-fonts-label
+.resource-tree-group-font-label
 {
   background-image: url("../ui-images/type_font.png");
 }
