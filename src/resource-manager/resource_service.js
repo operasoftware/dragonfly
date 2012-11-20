@@ -12,14 +12,6 @@ cls.ResourceInspector = function(network_logger)
   var HIGHLIGHT_CLASSNAME = "resource-highlight";
 
   var THROTTLE_DELAY = 250;
-  var TYPE_GROUP_MAPPING = {
-    "markup": ui_strings.S_HTTP_LABEL_FILTER_MARKUP,
-    "css": ui_strings.S_HTTP_LABEL_FILTER_STYLESHEETS,
-    "script": ui_strings.S_HTTP_LABEL_FILTER_SCRIPTS,
-    "image": ui_strings.S_HTTP_LABEL_FILTER_IMAGES,
-    "font": ui_strings.S_HTTP_LABEL_FILTER_FONTS,
-    "*": ui_strings.S_HTTP_LABEL_FILTER_OTHER
-  };
 
   this._network_logger = network_logger;
 
@@ -56,6 +48,19 @@ cls.ResourceInspector = function(network_logger)
       this.detail_view = window.views.resource_detail_view;
   };
 
+  this.get_group_order = function()
+  {
+    this.get_views();
+    if (this.group_order == null && this.tree_view != null)
+    {
+      this.group_order = this.tree_view.get_group_order();
+      this.group_order_type_index = {};
+      this.group_order.forEach(function(g, i) {
+        this.group_order_type_index[g.type] = i;
+      }, this);
+    }
+  }
+
   this._update = function(msg)
   {
     this.get_views();
@@ -87,63 +92,77 @@ cls.ResourceInspector = function(network_logger)
     if (ctx.window_list.length)
     {
       // get all the (non-suppressed) resources with content
-      ctx.resource_list = (this._network_logger.get_resources() || []).filter(function(v) {
-        return !this._suppress_uids.hasOwnProperty(v.uid) && v.responsecode != 204;
+      ctx.resource_list = (this._network_logger.get_resources() || []).filter(function(resource) {
+        return !this._suppress_uids.hasOwnProperty(resource.uid) && resource.responsecode != 204;
       }, this);
 
       ctx.selected_resource_uid = this._selected_resource_uid;
       ctx.collapsed = this._collapsed_hash;
 
       // get the order of the groups of resources,
-      ctx.group_order = this.tree_view.get_group_order();
+      this.get_group_order();
+      ctx.group_order = this.group_order;
 
       ctx.document_resource_hash = {};
 
-      // mapping of the WindowIDs in the debugging context
+      var lead = function(str, char, len)
+      {
+        str = String(str);
+        return new Array((len || 8) - str.length + 1).join(char || "-") + str;
+      };
+
+      // mapping of the WindowIDs in the debugging context + pivot_id
       var window_id_index = {};
-      ctx.window_list.forEach(function(w, i) { window_id_index[w.id] = i; });
+      ctx.window_list.forEach(function(w, i) {
+        w.pivot_id = lead(w.id);
+        window_id_index[w.id] = i;
+      });
 
       var null_document_id = false;
       var document_id_index = {};
-
       // filter the documents that belong in the window_id list,
       // set null_document_id flag,
       // augment the document objects,
       // set the default collapsed flags
-      ctx.document_list = this._document_list.filter(function(d, i, a) {
-        var in_context = window_id_index.hasOwnProperty(d.windowID);
+      ctx.document_list = this._document_list.filter(function(document, document_index, document_list) {
+        var in_context = window_id_index.hasOwnProperty(document.windowID);
 
         if (in_context)
         {
-          if (!null_document_id && !d.documentID)
+          if (!null_document_id && !document.documentID)
             null_document_id = true;
 
-          if (d.resourceID != null)
-            ctx.document_resource_hash[d.resourceID] = d.documentID;
+          if (document.resourceID != null)
+            ctx.document_resource_hash[document.resourceID] = document.documentID;
 
           // populate document_id_index
-          document_id_index[d.documentID] = i;
+          document_id_index[document.documentID] = document_index;
 
           // set depth, pivot_id and same_origin
-          var p = a[document_id_index[d.parentDocumentID]] || {pivot_id: d.windowID, depth: 0};
-          var id = p.pivot_id + "_" + d.documentID;
-          d.depth = p.depth + 1;
-          d.pivot_id = id;
-          d.same_origin = cls.ResourceUtil.sameOrigin(p.url, d.url);
+          var parent_document = document_list[document_id_index[document.parentDocumentID]];
+          if (!parent_document)
+          {
+            parent_document = {
+              "pivot_id": ctx.window_list[window_id_index[document.windowID]].pivot_id,
+              "depth": 0
+            };
+          }
+          var id = parent_document.pivot_id + lead(document.documentID);
+          document.depth = parent_document.depth + 1;
+          document.pivot_id = id;
+          document.same_origin = cls.ResourceUtil.sameOrigin(parent_document.url, document.url);
 
           // set the default collapsed flag
           var hash = this._collapsed_hash;
           if (!hash.hasOwnProperty(id))
           {
-            hash[id] = d.depth > 1;
-            ctx.group_order.forEach(function(g) { hash[id + "_" + g] = true; });
+            hash[id] = document.depth > 1;
+            ctx.group_order.forEach(function(g) { hash[id + "_" + g.type] = true; });
           }
         }
 
         return in_context;
-      }, this).sort(function(a, b) {
-        return a.documentID - b.documentID;
-      });
+      }, this);
 
       var unknown_document_id = false;
       // filter out resources pointing to an unknown document_id,
@@ -153,25 +172,25 @@ cls.ResourceInspector = function(network_logger)
       // same_origin flag to each resource,
       // full_id ( pivot_id + group + uid ),
       // pivot_id
-      ctx.resource_list = ctx.resource_list.filter(function(r) {
+      ctx.resource_list = ctx.resource_list.filter(function(resource) {
         // check if this is the top resource of a document
-        var document_id = ctx.document_resource_hash[r.resource_id];
-        if (document_id != null && document_id != r.document_id)
-          r.document_id = document_id;
+        var document_id = ctx.document_resource_hash[resource.resource_id];
+        if (document_id != null && document_id != resource.document_id)
+          resource.document_id = document_id;
 
-        var d = this._document_list[document_id_index[r.document_id]];
-        if (!d)
+        var document = this._document_list[document_id_index[resource.document_id]];
+        if (!document)
         {
           unknown_document_id = true;
           return false;
         }
 
-        r.group = TYPE_GROUP_MAPPING[r.type] || TYPE_GROUP_MAPPING["*"];
-        r.same_origin = cls.ResourceUtil.sameOrigin(d.url, r);
+        resource.group = this.group_order_type_index.hasOwnProperty(resource.type) ? resource.type : ctx.group_order.last.type;
+        resource.same_origin = cls.ResourceUtil.sameOrigin(document.url, resource);
 
-        r.full_id = d.pivot_id + "_" + ctx.group_order.indexOf(r.group) + r.group + "_" + r.uid;
-        r.pivot_id = d.pivot_id + "_" + r.group;
-        r.is_hidden = ctx.collapsed[r.pivot_id] == true;
+        resource.full_id = document.pivot_id + " " + lead(this.group_order_type_index[resource.group], " ") + "_" + resource.uid;
+        resource.pivot_id = document.pivot_id + "_" + resource.group;
+        resource.is_hidden = ctx.collapsed[resource.pivot_id] == true;
 
         return true;
       }, this);
@@ -182,10 +201,19 @@ cls.ResourceInspector = function(network_logger)
       });
 
       // filter the list of window. Purge the ones with no documents
-      ctx.window_list = ctx.window_list.filter(function(v) {
-        return ctx.document_list.some(function(w) {
-          return v.id == w.windowID;
+      ctx.window_list = ctx.window_list.filter(function(window) {
+        return ctx.document_list.some(function(document) {
+          return window.id == document.windowID;
         });
+      });
+
+      // sort the documents by their resources
+      var document_id_order = {};
+      ctx.resource_list.forEach(function(r, i) {
+        document_id_order[r.document_id] = i;
+      });
+      ctx.document_list = ctx.document_list.sort(function(a, b) {
+        return document_id_order[a.documentID] - document_id_order[b.documentID];
       });
 
       // request the list of documents if we have
@@ -228,7 +256,7 @@ cls.ResourceInspector = function(network_logger)
       if (event.shiftKey)
       {
         pivot_ids.push.apply(pivot_ids, Object.keys(hash).filter(function(p) {
-          return p.startswith(pivot_id + "_");
+          return p.startswith(pivot_id);
         }));
       }
 
@@ -270,11 +298,13 @@ cls.ResourceInspector = function(network_logger)
     {
       e.addClass(HIGHLIGHT_CLASSNAME);
 
+      Tooltips.hide_tooltip();
+
       // scroll into view
       var container = this.tree_view.get_container().firstChild;
       var y = container.scrollTop;
       var max_y = e.offsetTop;
-      var min_y = max_y + e.offsetHeight - container.offsetHeight;
+      var min_y = max_y + e.offsetHeight - container.clientHeight;
 
       if (y < min_y)
         container.scrollTop = min_y;
@@ -306,17 +336,18 @@ cls.ResourceInspector = function(network_logger)
     {
       this.highlight_resource(uid);
       this.detail_view.show_resource(uid);
+      return true;
     }
   };
 
   this.highlight_next_resource_bound = function()
   {
-    this._highlight_sibling_resource(-1);
+    return !this._highlight_sibling_resource(-1);
   }.bind(this);
 
   this.highlight_previous_resource_bound = function()
   {
-    this._highlight_sibling_resource(1);
+    return !this._highlight_sibling_resource(1);
   }.bind(this);
 
   this._resource_request_update_bound = function(msg)
