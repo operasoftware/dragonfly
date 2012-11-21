@@ -361,6 +361,7 @@ cls.ResourceUtil.header_presets = [
       "X-OperaMini-Features: advanced, download, file_system, touch, viewport, routing",
       "X-OperaMini-Phone: Apple # iPhone",
       "X-OperaMini-Phone-UA: Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1 like Mac OS X; en-us)",
+      "Device-Stock-UA: Mozilla/5.0 (iPhone; U; CPU iPhone OS 5_1 like Mac OS X; en-us)",
     ].join("\n")
   },
   {name: "Opera Mini 6.5 on SonyEricsson K800i", headers:
@@ -373,11 +374,13 @@ cls.ResourceUtil.header_presets = [
       "X-OperaMini-Phone: SonyEricsson # K800i",
       "X-OperaMini-Phone-UA: SonyEricssonK800i/R1KG Browser/NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1",
       "X-OperaMini-Features: advanced, file_system, camera, folding, routing",
+      "Device-Stock-UA: SonyEricssonK800i/R1KG Browser/NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1",
     ].join("\n")
   },
   {name: "Opera Mobile 12 on Samsung Galaxy S II", headers:
     [
       "User-Agent: Opera/9.80 (Android 4.0.3; Linux; Opera Mobi/ADR-1203051631; U; en-GB) Presto/2.10.254 Version/12.00",
+      "Device-Stock-UA: Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; GT-I9100 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, multipart/mixed, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
       "Accept-Language: en-GB, en",
       "Accept-Encoding: gzip, deflate",
@@ -386,7 +389,8 @@ cls.ResourceUtil.header_presets = [
   },
   {name: "Opera Mobile 12 on Motorola Xoom", headers:
     [
-      "User-Agent: Opera/9.80 (Android 4.0.5; Linux; Opera Tablet/ADR-1204201824; U; en) Presto/2.10.254 Version/12.00",
+      "User-Agent: Opera/9.80 (Android 4.1.1; Linux; Opera Tablet/ADR-1210091050) Presto/2.11.355 Version/12.10",
+      "Device-Stock-UA: Mozilla/5.0 (Linux; U; Android 4.1.1; en-us; Xoom Build/JRO03H) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30",
       "Accept: text/html, application/xml;q=0.9, application/xhtml+xml, multipart/mixed, image/png, image/webp, image/jpeg, image/gif, image/x-xbitmap, */*;q=0.1",
       "Accept-Language: en",
       "Accept-Encoding: gzip, deflate",
