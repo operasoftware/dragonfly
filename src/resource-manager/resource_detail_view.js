@@ -27,7 +27,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
 
   this.TEXT_RESOURCE_DETAIL_CONTAINER_SELECTOR = ["markup", "css", "script", "text"].map(function(v) {
     return ".resource-detail-" + v + "-container";
-  });
+  }).join(",");
   var HIGHLIGHTED_LINE_CLASSNAME = "highlighted-line";
   var TEXT = document.TEXT_NODE;
   var ELE = document.ELEMENT_NODE;
