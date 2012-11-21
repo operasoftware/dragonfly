@@ -25,8 +25,10 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     container.clearAndRender(window.templates.disabled_view());
   };
 
+  this.TEXT_RESOURCE_DETAIL_CONTAINER_SELECTOR = ["markup", "css", "script", "text"].map(function(v) {
+    return ".resource-detail-" + v + "-container";
+  }).join(",");
   var HIGHLIGHTED_LINE_CLASSNAME = "highlighted-line";
-  var RESOURCE_DETAIL_CONTAINER_CLASSNAME = "resource-detail-container";
   var TEXT = document.TEXT_NODE;
   var ELE = document.ELEMENT_NODE;
   var HIGHLIGHT_CONTEXT_SIZE = 8;
@@ -117,7 +119,7 @@ cls.ResourceDetailView = function(id, name, container_class, html, default_handl
     if (!data || data.line == null)
       return;
 
-    this._root_ele = container.querySelector("." + RESOURCE_DETAIL_CONTAINER_CLASSNAME);
+    this._root_ele = container.querySelector(this.TEXT_RESOURCE_DETAIL_CONTAINER_SELECTOR);
     if (this._root_ele)
     {
       this.clear_line_highlight(this._root_ele);
@@ -226,9 +228,6 @@ cls.ResourceDetailView.create_ui_widgets = function()
   });
 
   var text_search = window.views.resource_detail_view.text_search = new TextSearch();
-  var TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES = ["markup", "css", "script", "text"].map(function(v) {
-    return ".resource-detail-" + v + "-container";
-  });
 
   window.event_handlers.input["resource-text-search"] = function(event, target)
   {
@@ -244,13 +243,14 @@ cls.ResourceDetailView.create_ui_widgets = function()
   {
     if (msg.id === "resource_detail_view")
     {
-      var scroll_container = msg.container.querySelector(TEXT_RESOURCE_DETAIL_CONTAINER_CLASSNAMES);
+      var view = window.views.resource_detail_view;
+      var scroll_container = msg.container.querySelector(view.TEXT_RESOURCE_DETAIL_CONTAINER_SELECTOR);
 
       if (scroll_container)
       {
         text_search.setContainer(scroll_container);
         text_search.setFormInput(
-          views.resource_detail_view.getToolbarControl(msg.container, "resource-text-search")
+          view.getToolbarControl(msg.container, "resource-text-search")
         );
       }
     }
