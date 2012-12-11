@@ -1353,6 +1353,24 @@ ui_strings.S_PROFILER_CALCULATING = "Calculating…";
 /* DESC: Label in a tooltip, the duration of an event, e.g. "20 ms" */
 ui_strings.S_PROFILER_DURATION = "Duration";
 
+/* DESC: Button text for filter showing only events with a self time of at least 15 ms */
+ui_strings.S_PROFILER_FILTER_15MS = "> 15 ms";
+
+/* DESC: Button title for filter showing only events with a self time of at least 15 ms */
+ui_strings.S_PROFILER_FILTER_15MS_TITLE = "Show events with a self time of at least 15 ms";
+
+/* DESC: Button text for filter showing only events with a self time of at least 1 ms */
+ui_strings.S_PROFILER_FILTER_1MS = "> 1 ms";
+
+/* DESC: Button title for filter showing only events with a self time of at least 1 ms */
+ui_strings.S_PROFILER_FILTER_1MS_TITLE = "Show events with a self time of at least 1 ms";
+
+/* DESC: Button text for filter showing all events */
+ui_strings.S_PROFILER_FILTER_ALL = "All";
+
+/* DESC: Button title for filter showing all events */
+ui_strings.S_PROFILER_FILTER_ALL_TITLE = "Show all events";
+
 /* DESC: Message in the profiler when no data was "captured" by the profiler. I.e. nothing happened on the page between the time the profiler started and stopped. */
 ui_strings.S_PROFILER_NO_DATA = "No data";
 
@@ -1799,24 +1817,4 @@ ui_strings.S_TOGGLE_PAUSED_UPDATING_NETWORK_VIEW = "Pause updating network activ
 
 /* DESC: String shown instead of filename when file name is missing */
 ui_strings.S_UNKNOWN_SCRIPT = "(Unknown script)";
-
-/* DESC: Button text for filter showing all events */
-ui_strings.S_PROFILER_FILTER_ALL = "All";
-
-/* DESC: Button text for filter showing only events with a self time of at least 1 ms */
-ui_strings.S_PROFILER_FILTER_1MS = "> 1 ms";
-
-/* DESC: Button text for filter showing only events with a self time of at least 15 ms */
-ui_strings.S_PROFILER_FILTER_15MS = "> 15 ms";
-
-/* DESC: Button title for filter showing all events */
-ui_strings.S_PROFILER_FILTER_ALL_TITLE = "Show all events";
-
-/* DESC: Button title for filter showing only events with a self time of at least 1 ms */
-ui_strings.S_PROFILER_FILTER_1MS_TITLE = "Show events with a self time of at least 1 ms";
-
-/* DESC: Button title for filter showing only events with a self time of at least 15 ms */
-ui_strings.S_PROFILER_FILTER_15MS_TITLE = "Show events with a self time of at least 15 ms";
-
-
 
