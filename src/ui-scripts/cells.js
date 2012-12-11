@@ -183,16 +183,16 @@
         {
           for (var i = 0, cell; cell = parent_cell.children[i]; i++)
           {
-            this._remove_ui_elemnts(cell, view_id);
+            this._remove_ui_elements(cell, view_id);
           }
         }
       }
       else
-        this._remove_ui_elemnts(cell, view_id);
+        this._remove_ui_elements(cell, view_id);
     }
   };
 
-  this._remove_ui_elemnts = function(cell, view_id)
+  this._remove_ui_elements = function(cell, view_id)
   {
     if (!cell)
       return;
