@@ -83,17 +83,24 @@ var ProfilerTemplates = function()
 
   var style_sheets = document.styleSheets;
   var profiler_event_decl = style_sheets.getDeclaration(".profiler-event");
+  var profiler_event_small_decl = style_sheets.getDeclaration(".profiler-event-small");
   var profiler_timeline_row_decl = style_sheets.getDeclaration(".profiler-timeline-row");
-  var profiler_event_tooltip_decl = style_sheets.getDeclaration(".profiler-event-tooltip");
-  var BAR_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 0;
-  var BAR_HEIGHT = profiler_timeline_row_decl
-                 ? (parseInt(profiler_timeline_row_decl.height) +
-                    parseInt(profiler_timeline_row_decl.paddingTop) +
-                    parseInt(profiler_timeline_row_decl.paddingBottom))
-                 : 0;
-  var TOOLTIP_WIDTH = profiler_event_tooltip_decl
-                    ? parseInt(profiler_event_tooltip_decl.width)
-                    : 0;
+  var EVENT_MIN_WIDTH = profiler_event_decl ? parseInt(profiler_event_decl.minWidth) : 1;
+  var EVENT_SMALL_MIN_WIDTH = profiler_event_small_decl ? parseInt(profiler_event_small_decl.minWidth) : 1;
+  var EVENT_HEIGHT = profiler_timeline_row_decl
+                   ? (parseInt(profiler_timeline_row_decl.height) +
+                      parseInt(profiler_timeline_row_decl.paddingTop) +
+                      parseInt(profiler_timeline_row_decl.paddingBottom))
+                   : 1;
+  var EVENT_SMALL_HEIGHT = profiler_event_small_decl ? parseInt(profiler_event_small_decl.height) : 1;
+
+  var MIN_DURATION = ProfilerView.MIN_DURATION;
+
+  var HAS_UNPREFIXED_GRADIENTS = (function() {
+    var ele = document.createElement("div");
+    ele.style.backgroundImage = "-o-linear-gradient(0, transparent 0, transparent 0)";
+    return ele.style.backgroundImage === "";
+  }());
 
   this._order = [
     EVENT_TYPE_DOCUMENT_PARSING,
@@ -108,102 +115,73 @@ var ProfilerTemplates = function()
   this._expandables = [EVENT_TYPE_STYLE_RECALCULATION];
   this._event_colors = {}; // Will be populated lazily
 
-  this.main = function(timeline_list, aggregated_list, table, details_time, event_id, width, zero_point)
+  this.legend = function(event_list)
   {
-    var data = table && table.get_data();
-    var has_details_events = data && data.length;
-    return [
-      ["div",
-         this.legend(aggregated_list),
-       "class", "profiler-legend"
-      ],
-      ["div",
-         this.event_list_all(timeline_list,
-                             event_id,
-                             width,
-                             zero_point),
-       "class", "profiler-timeline",
-       "handler", "profiler-zoom-timeline"
-      ],
-      ["div",
-         this.details(table),
-       "class", "profiler-details-list" + (has_details_events ? "" : " profiler-no-status")
-      ],
-      ["div",
-         this.status(details_time),
-       "class", "profiler-status" + (has_details_events ? "" : " profiler-no-status")
-      ]
-    ];
-  };
-
-  this.legend = function(events)
-  {
-    var event_list = events && events.eventList;
-    if (event_list && event_list.length)
+    if (event_list)
     {
       var template = [];
       var total_time = event_list.reduce(function(prev, curr) {
         return prev + curr.time;
       }, 0);
-      event_list.forEach(function(event) {
-        var index = this._order.indexOf(event.type);
-        if (index !== -1)
-        {
-          var percentage = event.time / total_time * 100;
-          template[index] =
+      event_list.forEach(function(event, index) {
+        var self_time_amount = total_time
+                             ? event.time / total_time * 100
+                             : 0;
+        template.push(
+          ["div",
             ["div",
-               ["span",
-                  event_type_string_map[event.type],
-                "class", "profiler-legend-label"
-               ],
-               ["span",
-                  this.format_time(event.time, 0),
-                "class", "profiler-legend-amount"
-               ],
-               ["div",
-                "class", "profiler-legend-amount-bar",
-                "style", "width:" + percentage + "%"
-               ],
-             "class", "profiler-legend-row profiler-timeline-row" + (index % 2 ? " odd" : ""),
-             "data-event-type", String(event.type),
-             "handler", "profiler-event"
-            ];
-        }
+              ["span",
+                 event_type_string_map[event.type],
+               "class", "profiler-legend-label"
+              ],
+              ["span",
+                 this.format_time(event.time, 0),
+               "class", "profiler-legend-time"
+              ],
+             "class", "profiler-legend-row"
+            ],
+           "class", "profiler-timeline-row" + (index % 2 ? "" : " even"),
+           "data-event-type", String(event.type),
+           "handler", "profiler-event"
+          ]
+        );
       }, this);
       return template;
     }
   };
 
-  this.timeline_markers = function(width, start, duration, ms_unit)
+  this.timeline_markers = function(interval_start, interval_end, container_width)
   {
-    var MIN_MARKER_GAP = 120;
+    var MIN_MARKER_GAP = 80;
     var MIN_MARKERS = 2;
-    var cell_amount = Math.max(MIN_MARKERS, Math.round(width / MIN_MARKER_GAP));
+    var duration = Math.max(interval_end - interval_start, MIN_DURATION);
+    var ms_unit = (container_width - EVENT_MIN_WIDTH) / duration;
+    var cell_amount = Math.max(MIN_MARKERS, Math.round(container_width / MIN_MARKER_GAP));
     var marker_time = duration / cell_amount;
     var fractions = marker_time < 10 ? 1 : 0;
     var template = [];
     for (var i = 0; i < cell_amount; i++)
     {
       var left = Math.round(marker_time * i * ms_unit);
-      var time = (marker_time * i) + start;
+      var time = (marker_time * i) + interval_start;
       if (time === 0)
         fractions = 0;
       template.push(
         ["div",
          "class", "profiler-timeline-marker",
-         "style", "left:" + left + "px"
+         "style", "left: " + left + "px"
         ],
         ["div",
            this.format_time(time, fractions),
          "class", "profiler-timeline-marker-time" + (i === 0 ? " first" : ""),
-         "style", "left:" + left + "px"
+         "style", "left: " + left + "px"
         ]
       );
     }
 
     template.push(
       ["div",
-         this.format_time(start + duration),
+         this.format_time(interval_start + duration, fractions),
        "class", "profiler-timeline-marker-time last"
       ]
     );
@@ -211,65 +189,109 @@ var ProfilerTemplates = function()
     return template;
   };
 
-  this._background_bar = function(order, index)
-  {
-    return ["div",
-            "class", "profiler-timeline-row" + (index % 2 ? " odd" : "")
-           ];
-  };
-
-  this.event_list_all = function(events, selected_id, container_width, start, end)
+  this.event_list_full = function(event_list, interval_end, container_width)
   {
     var template = [];
-    var event_list = events && events.eventList;
-    if (event_list && event_list.length)
+    if (event_list)
     {
-      var interval_start = start || 0;
-      var interval_end = events.interval.end;
-      var duration = interval_end - interval_start;
-      var ms_unit = (container_width - BAR_MIN_WIDTH) / duration;
+      var duration = Math.max(interval_end, MIN_DURATION);
+      var ms_unit = (container_width - EVENT_SMALL_MIN_WIDTH) / duration;
 
-      // Add background bars
-      template.extend(this._order.map(this._background_bar));
-
-      // Add time markers
-      template.push(this.timeline_markers(container_width, interval_start, duration, ms_unit));
-
-      // Add actual events
-      template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit, selected_id)));
+      template.extend(event_list.map(this._full_timeline_event.bind(this, ms_unit)));
     }
     return template;
   };
 
-  this._timeline_event = function(interval_start, ms_unit, selected_id, event)
+  this.event_list_all = function(event_list, interval_start, interval_end, container_width)
   {
-    var interval = Math.round((event.interval.end - event.interval.start) * ms_unit);
-    var self_time = interval ? Math.max(BAR_MIN_WIDTH, Math.round(event.time * ms_unit)) : 0;
-    var event_start = Math.round((event.interval.start - interval_start) * ms_unit);
+    var template = [];
+    if (event_list)
+    {
+      var duration = Math.max(interval_end - interval_start, MIN_DURATION);
+      var ms_unit = (container_width - EVENT_MIN_WIDTH) / duration;
+
+      template.extend(event_list.map(this._timeline_event.bind(this, interval_start, ms_unit)));
+    }
+    return template;
+  };
+
+  this._full_timeline_event = function(ms_unit, event)
+  {
+    var duration = event.interval.end - event.interval.start;
+    var width = Math.round(duration * ms_unit); // min-width is specified in .profiler-event-small
+    var left = Math.round(event.interval.start * ms_unit);
     var column = this._order.indexOf(event.type);
-    var is_expandable = this._expandables.indexOf(event.type) != -1 && event.childCount > 1;
-    var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
     return (
       ["div",
        "style",
-         "width: " + interval + "px;" +
-         "left: " + event_start + "px;" +
-         "top:" + ((column * BAR_HEIGHT) + 1) + "px;" +
-         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "-o-linear-gradient(0deg, " + color + " 0, " +
-                                               color + " " + self_time + "px, " +
-                                              "transparent " + self_time + "px); " +
-         "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "linear-gradient(90deg, " + color + " 0, " +
-                                            color + " " + self_time + "px, " +
-                                           "transparent " + self_time + "px);",
-       "class", "profiler-event profiler-event-interval event-type-" + event.type +
-                (event.eventID == selected_id ? " selected" : "") +
-                (is_expandable ? " expandable" : " non-expandable"),
+         "width: " + width + "px; " +
+         "left: " + left + "px; " +
+         "top: " + (column * EVENT_SMALL_HEIGHT) + "px;",
+       "class", "profiler-event-small event-type-" + event.type + "-selftime" // not actually selftime, just using that color
+      ]
+    );
+  };
+
+  this._timeline_event = function(interval_start, ms_unit, event)
+  {
+    var duration = Math.max(event.interval.end - event.interval.start, MIN_DURATION);
+    var self_time_amount = duration
+                         ? (event.time / duration * 100).toFixed(2)
+                         : 0;
+    var width = Math.round(duration * ms_unit); // min-width is specified in .profiler-event
+    var left = Math.round((event.interval.start - interval_start) * ms_unit);
+    var column = this._order.indexOf(event.type);
+    var is_expandable = this._expandables.contains(event.type) && event.childCount > 1;
+    var color = this._get_color_for_type(event.type);
+    return (
+      ["div",
+       "style",
+         "width: " + width + "px; " +
+         "left: " + left + "px; " +
+         "top: " + (column * EVENT_HEIGHT) + "px; " +
+         (width > 46340 ? ("background-size: " + Math.floor(46340 / width * 100) + "%; ") : "") + // workaround for CORE-48579
+         (HAS_UNPREFIXED_GRADIENTS
+           ? "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "linear-gradient(90deg, " + color + " 0, " +
+                                                color + " " + self_time_amount + "%, " +
+                                               "transparent " + self_time_amount + "%);"
+           : "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "-o-linear-gradient(0deg, " + color + " 0, " +
+                                                   color + " " + self_time_amount + "%, " +
+                                                  "transparent " + self_time_amount + "%);"
+         ),
+       "id", "profiler-event-" + event.eventID,
+       "class", "profiler-event event-type-" + event.type +
+                " profiler-event-" + (is_expandable ? "expandable" : "non-expandable"),
        "data-event-id", String(event.eventID),
        "data-event-type", String(event.type),
-       "handler", "profiler-event",
        "data-tooltip", "profiler-event"
+      ]
+    );
+  };
+
+  this.get_title_interval_bar = function(event)
+  {
+    var duration = event.interval.end - event.interval.start;
+    var self_time_amount = duration
+                         ? (event.time / duration * 100).toFixed(2)
+                         : 0;
+    var color = this._get_color_for_type(event.type);
+    return (
+      ["div",
+       "style",
+         "width: 100%; " +
+         (HAS_UNPREFIXED_GRADIENTS
+           ? "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "linear-gradient(90deg, " + color + " 0, " +
+                                                color + " " + self_time_amount + "%, " +
+                                               "transparent " + self_time_amount + "%);"
+           : "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
+                               "-o-linear-gradient(0deg, " + color + " 0, " +
+                                                   color + " " + self_time_amount + "%, " +
+                                                  "transparent " + self_time_amount + "%);"
+         ),
+       "class", "profiler-event event-type-" + event.type
       ]
     );
   };
@@ -281,7 +303,7 @@ var ProfilerTemplates = function()
 
   this.details = function(table)
   {
-    return table && table.get_data().length && table.render() || this.no_events();
+    return table && table.get_data().length && table.render() || this.empty(ui_strings.S_PROFILER_NO_DETAILS);
   };
 
   this.status = function(time)
@@ -289,21 +311,15 @@ var ProfilerTemplates = function()
     return ["div", ui_strings.S_PROFILER_TOTAL_SELF_TIME + ": " + this.format_time(time)];
   };
 
-  this.no_events = function()
-  {
-    return ["div", ui_strings.S_PROFILER_NO_DETAILS, "class", "profiler-empty"];
-  };
-
   this.format_time = function(time, fractions)
   {
     fractions = (fractions != null) ? fractions
-                                    : (time < 1 ? 1 : 0);
+                                    : (time < 1 ? 2 : 1);
     return time.toFixed(fractions) + " ms";
   };
 
-  this.get_title_all = function(event)
+  this.get_title_all = function(event, range_start)
   {
-    var details = this.get_details_title(event);
     return (
       ["div",
         ["h2",
@@ -317,7 +333,8 @@ var ProfilerTemplates = function()
                    ui_strings.S_PROFILER_START_TIME + ": ",
                  "class", "profiler-event-tooltip-label"
                 ],
-                this.format_time(event.interval.start)
+                this.format_time(event.interval.start) +
+                " (Δ: " + this.format_time(event.interval.start - range_start) + ")"
              ],
              ["li",
                 ["span",
@@ -333,7 +350,7 @@ var ProfilerTemplates = function()
                 ],
                 this.format_time(event.time)
              ],
-             (details ? details : [])
+             this.get_details_title(event) || []
           ],
          "class", "profiler-event-tooltip-info"
         ],
@@ -359,8 +376,8 @@ var ProfilerTemplates = function()
 
     case EVENT_TYPE_THREAD_EVALUATION:
       var title = [];
-      var thread_type = event.threadEvaluation.threadType;
-      var event_name = event.threadEvaluation.eventName;
+      var thread_type = event.scriptThreadEvaluation.threadType;
+      var event_name = event.scriptThreadEvaluation.eventName;
 
       if (thread_type)
       {
@@ -454,7 +471,10 @@ var ProfilerTemplates = function()
                 ui_strings.S_PROFILER_AREA_LOCATION + ": ",
               "class", "profiler-event-tooltip-label"
              ],
-             area.x + ", " + area.y
+             (window.services["profiler"].satisfies_version(1, 1)
+              ? "(" + (area.x + area.ox) + ", " + (area.y + area.oy) + ")"
+              : "(" + area.x + ", " + area.y + ")"
+             )
           ],
           ["li",
              ["span",
@@ -466,30 +486,7 @@ var ProfilerTemplates = function()
         ]
       );
     }
-    return [];
-  };
-
-  this.get_title_interval_bar = function(event)
-  {
-    var interval = event.interval.end - event.interval.start;
-    var ms_unit = interval ? (TOOLTIP_WIDTH / interval) : 0;
-    var self_time = Math.round(event.time * ms_unit);
-    var color = this._event_colors[event.type] || (this._event_colors[event.type] = this._get_color_for_type(event.type));
-    return (
-      ["div",
-       "style",
-         "width: " + TOOLTIP_WIDTH + "px; " +
-         "background-image: -o-linear-gradient(90deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "-o-linear-gradient(0deg, " + color + " 0, " +
-                                               color + " " + self_time + "px, " +
-                                              "transparent " + self_time + "px);" +
-         "background-image: linear-gradient(0deg, transparent 0, rgba(255, 255, 255, .25) 100%), " +
-                           "linear-gradient(90deg, " + color + " 0, " +
-                                            color + " " + self_time + "px, " +
-                                           "transparent " + self_time + "px);",
-       "class", "profiler-event profiler-event-interval event-type-" + event.type
-      ]
-    );
+    return null;
   };
 
   this.disabled_view = function()
@@ -511,8 +508,13 @@ var ProfilerTemplates = function()
 
   this._get_color_for_type = function(type)
   {
+    var color = this._event_colors[type];
+    if (color)
+      return color;
     var decl = document.styleSheets.getDeclaration(".event-type-" + type + "-selftime");
-    return decl ? decl.backgroundColor : "#000";
+    color = decl ? decl.backgroundColor : "#000";
+    this._event_colors[type] = color;
+    return color;
   };
 };
 

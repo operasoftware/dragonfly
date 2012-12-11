@@ -2,9 +2,42 @@
 {
   position: absolute;
   left: 0;
-  top: 20px;
-  width: 160px;
-  border-top: 1px solid #e6e6e6;
+  top: 72px;
+  right: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.055);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+  overflow: hidden;
+}
+
+.profiler-full-timeline
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 22px;
+  height: 28px;
+  box-shadow: 0 1px inset rgba(0, 0, 0, 0.055),
+              0 -1px inset rgba(0, 0, 0, 0.055);
+  overflow-x: hidden;
+}
+
+.profiler-full-timeline-times
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 23px;
+  height: 26px;
+}
+
+.profiler-timeline-background
+{
+  position: absolute;
+  left: 160px;
+  right: 0;
+  top: 72px;
+  margin-top: 1px;
+  height: 176px;
 }
 
 .profiler-timeline
@@ -12,23 +45,17 @@
   position: absolute;
   left: 160px;
   right: 0;
-  top: 20px;
-  border-top: 1px solid #e6e6e6;
+  top: 72px;
+  overflow: hidden;
+  height: 176px;
+  margin-top: 1px; /* adjust for border of .profiler-legend */
 }
 
-.profiler-details-list
+.profiler-legend-row
 {
-  position: absolute;
-  top: 165px;
-  bottom: 21px;
-  overflow: auto;
-  border-top: 1px solid #e6e6e6;
-  width: 100%;
-}
-
-.profiler-details-list.profiler-no-status
-{
-  bottom: 0;
+  width: 155px;
+  position: relative;
+  overflow: hidden;
 }
 
 .profiler-status
@@ -38,13 +65,8 @@
   height: 20px;
   line-height: 20px;
   width: 100%;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid rgba(0, 0, 0, 0.055);
   text-align: center;
-}
-
-.profiler-status.profiler-no-status
-{
-  display: none;
 }
 
 .profiler-empty
@@ -70,47 +92,52 @@
 
 .profiler-timeline-row
 {
-  height: 16px;
-  line-height: 16px;
+  height: 20px;
+  line-height: 20px;
   padding: 1px 5px; /* Line up up with the table below */
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   position: relative;
 }
 
-.profiler-timeline-row.odd
+.profiler-timeline-row.even
 {
-  background-color: #f7f7f7;
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .profiler-legend-label
 {
   box-sizing: border-box;
   padding-right: 10px;
-  font-weight: bold;
-  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.profiler-legend-amount
+.profiler-legend-time
 {
   position: absolute;
-  right: 2px;
-  text-shadow: 1px 1px #fff;
-}
-
-.profiler-legend-amount-bar
-{
-  background: #769FE1;
-  position: absolute;
-  bottom: 0;
   right: 0;
-  height: 1px;
+  top: 0;
+  padding: 0 2px 0 4px;
+  background-color: #fff;
 }
 
-.profiler-timeline-row:hover .profiler-legend-label
+.even .profiler-legend-time
 {
-  color: #769fe1;
+  background-color: #f6f6f6;
+}
+
+.profiler-timeline-row:hover,
+.profiler-timeline-row:hover .profiler-legend-time
+{
+  background-color: #E7EEF9;
+  color: #000;
+}
+
+.profiler-timeline-row:active,
+.profiler-timeline-row:active .profiler-legend-time
+{
+  background-color: #739DE0;
+  color: #fff;
 }
 
 .profiler-timeline-marker
@@ -118,14 +145,15 @@
   position: absolute;
   height: 100%;
   width: 1px;
-  background: #e6e6e6;
+  background: rgba(0, 0, 0, 0.055);
   top: 0;
 }
 
 .profiler-timeline-marker-time
 {
+  font-size: 9px;
   position: absolute;
-  top: -15px;
+  top: -14px;
   color: #444;
   white-space: nowrap;
 }
@@ -142,11 +170,38 @@
   right: 2px;
 }
 
+.profiler-event-small
+{
+  min-width: 1px;
+  height: 3px;
+  margin-top: 2px;
+  position: absolute;
+}
+
 .profiler-event
 {
   min-width: 3px;
-  height: 10px;
-  border-radius: 2px;
+  height: 12px;
+  margin: 5px 0;
+  box-shadow: inset 0 2px rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px rgba(0, 0, 0, 0.05);
+}
+
+.profiler-event-expandable:hover
+{
+  box-shadow: inset 0 2px rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px rgba(0, 0, 0, 0.05),
+              0 0 0 2px rgba(137, 173, 232, 0.5);
+}
+
+.profiler-event-non-expandable:hover
+{
+  box-shadow: inset 0 2px rgba(255, 255, 255, 0.09),
+              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
+              inset 0 -1px rgba(0, 0, 0, 0.05),
+              0 0 0 2px rgba(204, 204, 204, 0.5);
 }
 
 .profiler-timeline .profiler-event
@@ -154,48 +209,19 @@
   position: absolute;
 }
 
-.profiler-event-interval
-{
-  margin: 3px 0;
-  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
-              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
-              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05);
-}
-
-.profiler-event-interval.expandable:hover
-{
-  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
-              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
-              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
-              0 0 0 3px #ceddf5;
-}
-
-.profiler-event-interval.non-expandable:hover
-{
-  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.09),
-              inset 0 0 0 1px rgba(0, 0, 0, 0.07),
-              inset 0 -1px 0 0 rgba(0, 0, 0, 0.05),
-              0 0 0 3px #ddd;
-}
-
-.profiler-event-interval.selected
-{
-  box-shadow: 0 0 0 3px #769fe1;
-}
-
 .event-type-3
 {
-  background-color: rgba(199, 199, 235, .6);
+  background-color: rgba(203, 190, 235, 0.6);
 }
 
 .event-type-3-selftime
 {
-  background-color: rgb(179, 176, 255);
+  background-color: rgb(184, 161, 255);
 }
 
 .event-type-4
 {
-  background-color: rgba(170, 193, 227, .6);
+  background-color: rgba(170, 193, 227, 0.6);
 }
 
 .event-type-4-selftime
@@ -205,17 +231,17 @@
 
 .event-type-5
 {
-  background-color: rgba(245, 225, 159, .6);
+  background-color: rgba(245, 225, 159, 0.6);
 }
 
 .event-type-5-selftime
 {
-  background-color: rgb(255, 225, 125);
+  background-color: rgb(255, 200, 82);
 }
 
 .event-type-6
 {
-  background-color: rgba(162, 222, 170, .6);
+  background-color: rgba(162, 222, 170, 0.6);
 }
 
 .event-type-6-selftime
@@ -225,37 +251,37 @@
 
 .event-type-7
 {
-  background-color: rgba(252, 177, 116, .6);
+  background-color: rgba(167, 233, 242, 0.6);
 }
 
 .event-type-7-selftime
 {
-  background-color: rgb(232, 130, 46);
+  background-color: rgb(61, 211, 242);
 }
 
 .event-type-8
 {
-  background-color: rgba(251, 207, 171, .6);
+  background-color: rgba(251, 207, 171, 0.6);
 }
 
 .event-type-8-selftime
 {
-  background-color: rgb(255, 192, 140);
+  background-color: rgb(255, 177, 115);
 }
 
 .event-type-10
 {
-  background-color: rgba(235, 191, 155, .6);
+  background-color: rgba(242, 187, 235, 0.6);
 }
 
 .event-type-10-selftime
 {
-  background-color: rgb(224, 148, 85);
+  background-color: rgb(250, 151, 237);
 }
 
 .event-type-11
 {
-  background-color: rgba(255, 156, 156, .6);
+  background-color: rgba(255, 156, 156, 0.6);
 }
 
 .event-type-11-selftime
