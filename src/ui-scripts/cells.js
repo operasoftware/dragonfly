@@ -170,29 +170,53 @@
       this.overlay.hide();
   };
 
-  this.remove_ui_elements = function(view_id)
+  this.remove_ui_elements = function(view_id, starting_from_parent)
   {
     var view = window.views[view_id];
     if (view && view.isvisible())
     {
       var cell = this.get_cell(view_id);
-      var container_id = "container-to-" + cell.id;
+      if (starting_from_parent)
+      {
+        var parent_cell = cell && cell.parent;
+        if (parent_cell)
+        {
+          for (var i = 0, cell; cell = parent_cell.children[i]; i++)
+          {
+            this._remove_ui_elemnts(cell, view_id);
+          }
+        }
+      }
+      else
+        this._remove_ui_elemnts(cell, view_id);
+    }
+  };
+
+  this._remove_ui_elemnts = function(cell, view_id)
+  {
+    if (!cell)
+      return;
+
+    var container_id = "container-to-" + cell.id;
+    var view = cell.tab && window.views[cell.tab.activeTab];
+    if (view)
+    {
       window.messages.post("hide-view", {id: view_id});
       view.removeContainerId(container_id);
       var toolbar_id = "toolbar-to-" + cell.id;
       var toolbar = window.toolbars[view_id];
       if (toolbar)
         toolbar.removeContainerId(toolbar_id);
-      [container_id,
-       toolbar_id,
-       "overlay-background-to-" + cell.id,
-       "slider-for-" + cell.id].forEach(function(id)
-      {
-        var ele = document.getElementById(id);
-        if (ele)
-          ele.parentNode.removeChild(ele);
-      });
     }
+    [container_id,
+     toolbar_id,
+     "overlay-background-to-" + cell.id,
+     "slider-for-" + cell.id].forEach(function(id)
+    {
+      var ele = document.getElementById(id);
+      if (ele)
+        ele.parentNode.removeChild(ele);
+    });
   };
 
   this.add_searchbar = function(searchbar)

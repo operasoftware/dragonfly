@@ -74,7 +74,7 @@ var CellOverlayPrototype = function()
     if (parent_toolbar)
       parent_toolbar.enable();
     this.is_active = false;
-    this.remove_ui_elements(this.view_id);
+    this.remove_ui_elements(this.view_id, true);
   };
 };
 
