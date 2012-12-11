@@ -203,6 +203,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <link rel="stylesheet" href="./screenshot/style.css"/>
 <link rel="stylesheet" href="./profiler/profiler_style.css"/>
 <link rel="stylesheet" href="./ui-scripts/tooltip/tooltip.css"/>
+<link rel="stylesheet" href="./ui-scripts/zoomer/zoomer.css"/>
 
 
 <!-- This will turn off including of the UI strings if the exclude_uistrings var is set -->
@@ -213,6 +214,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <!-- command concat_js "./script/dragonfly.js" -->
 
 <script src="./scripts/ini.js"/>
+<script src="./lib/windowobject.js"/>
 <script src="./lib/elementprototype.js"/>
 <script src="./lib/arrayprototype.js"/>
 <script src="./lib/canvasrenderingcontext2dprototype.js"/>
@@ -332,6 +334,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ui-scripts/contextmenu.js"/>
 <script src="./ui-scripts/sidepanels/view.js"/>
 <script src="./ui-scripts/sidepanels/templates.js"/>
+<script src="./ui-scripts/zoomer/zoomer.js"/>
 
 <script src="./ui-scripts/fontselection/monospacefontselection.js"/>
 <script src="./ui-scripts/fontselection/templates.js"/>
@@ -500,8 +503,8 @@ window.load_screen_timeout = window.setTimeout(function()
 
 <script src="./overlay/overlay_service.js"/>
 
-<script src="./profiler/profiler.1.0.responses.getevents.js"/>
-<script src="./profiler/profiler.1.0.responses.stopprofiler.js"/>
+<script src="./profiler/profiler.1.1.responses.getevents.js"/>
+<script src="./profiler/profiler.1.1.responses.stopprofiler.js"/>
 <script src="./profiler/profiler_service.js"/>
 <script src="./profiler/profiler_view.js"/>
 <script src="./profiler/profiler_templates.js"/>

@@ -223,6 +223,12 @@
           "down": "select-next-entry"
         }
       },
+      "profiler_all": {
+        "default":
+        {
+          "escape": "close-details"
+        }
+      },
       "search":
       {
         "default":
@@ -447,6 +453,12 @@
         {
           "up": "select-previous-entry",
           "down": "select-next-entry"
+        }
+      },
+      "profiler_all": {
+        "default":
+        {
+          "escape": "close-details"
         }
       },
       "search":
