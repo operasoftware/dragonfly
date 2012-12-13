@@ -151,9 +151,7 @@ var ZoomerPrototype = function()
   this._zoomer_ele_onmousewheel = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    var diff = (mouse_x < this._overlay_left) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
-    if (event.wheelDelta < 0)
-      diff = -diff;
+    var diff = (event.wheelDelta < 0) ? -MOUSEWHEEL_DIFF : MOUSEWHEEL_DIFF;
     this.move_overlay(diff);
     event.stopPropagation();
   };
@@ -197,7 +195,7 @@ var ZoomerPrototype = function()
 
   this._overlay_ele_onmousewheel = function(event)
   {
-    var diff = (event.wheelDelta > 0) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
+    var diff = (event.wheelDelta > 0) ? -MOUSEWHEEL_DIFF : MOUSEWHEEL_DIFF;
     this.change_overlay_size(-diff, diff);
     event.stopPropagation();
   };
@@ -209,20 +207,23 @@ var ZoomerPrototype = function()
     if (this._handle_ele)
       return;
 
+    if (!event.key)
+      return;
+
     var width = this._to_right_x(this._overlay_right) - this._overlay_left;
     var diff = {
-      33: width,  // Page up
-      34: -width, // Page down
-      37: -KEYDOWN_DIFF, // Arrow left
-      39: KEYDOWN_DIFF   // Arrow right
-    }[event.which];
+      "PageUp": width,
+      "PageDown": -width,
+      "Left": -KEYDOWN_DIFF,
+      "Right": KEYDOWN_DIFF
+    }[event.key];
     if (diff)
       this.move_overlay(diff);
 
     diff = {
-      38: KEYDOWN_DIFF, // Arrow up
-      40: -KEYDOWN_DIFF   // Arrow down
-    }[event.which];
+      "Up": -KEYDOWN_DIFF,
+      "Down": KEYDOWN_DIFF
+    }[event.key];
     if (diff)
       this.change_overlay_size(-diff, diff);
 
@@ -289,10 +290,14 @@ var ZoomerPrototype = function()
 
   this._handle_ele_onkeydown = function(event)
   {
+    if (!event.key)
+      return;
+
     var diff = {
-      37: -KEYDOWN_DIFF, // Arrow left
-      39: KEYDOWN_DIFF   // Arrow right
-    }[event.which];
+      "Left": -KEYDOWN_DIFF,
+      "Right": KEYDOWN_DIFF
+    }[event.key];
+
     if (!diff)
       return;
     var is_left_handle = this._handle_ele == this._handle_left_ele;

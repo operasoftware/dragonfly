@@ -349,6 +349,7 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       if (this._current_session_id)
         this._profiler.release_session(null, {session_id: this._old_session_id});
       this._reset();
+      this._zoomer.reset();
     }
   };
 
