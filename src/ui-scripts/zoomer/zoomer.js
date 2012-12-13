@@ -195,7 +195,7 @@ var ZoomerPrototype = function()
 
   this._overlay_ele_onmousewheel = function(event)
   {
-    var diff = (event.wheelDelta > 0) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
+    var diff = (event.wheelDelta > 0) ? -MOUSEWHEEL_DIFF : MOUSEWHEEL_DIFF;
     this.change_overlay_size(-diff, diff);
     event.stopPropagation();
   };
