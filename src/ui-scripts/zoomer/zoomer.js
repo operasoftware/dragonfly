@@ -151,9 +151,7 @@ var ZoomerPrototype = function()
   this._zoomer_ele_onmousewheel = function(event)
   {
     var mouse_x = event.clientX - this._zoomer_ele_left;
-    var diff = (mouse_x < this._overlay_left) ? MOUSEWHEEL_DIFF : -MOUSEWHEEL_DIFF;
-    if (event.wheelDelta < 0)
-      diff = -diff;
+    var diff = (event.wheelDelta < 0) ? -MOUSEWHEEL_DIFF : MOUSEWHEEL_DIFF;
     this.move_overlay(diff);
     event.stopPropagation();
   };
