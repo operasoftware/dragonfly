@@ -376,7 +376,7 @@ var ProfilerTemplates = function()
 
     case EVENT_TYPE_THREAD_EVALUATION:
       var title = [];
-      var thread_type = event.scriptThreadEvaluation.threadType;
+      var thread_type = event.scriptThreadEvaluation.scriptThreadType;
       var event_name = event.scriptThreadEvaluation.eventName;
 
       if (thread_type)
