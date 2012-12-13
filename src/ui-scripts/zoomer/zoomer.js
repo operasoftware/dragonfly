@@ -218,8 +218,8 @@ var ZoomerPrototype = function()
       this.move_overlay(diff);
 
     diff = {
-      38: KEYDOWN_DIFF, // Arrow up
-      40: -KEYDOWN_DIFF   // Arrow down
+      38: -KEYDOWN_DIFF, // Arrow up
+      40: KEYDOWN_DIFF   // Arrow down
     }[event.which];
     if (diff)
       this.change_overlay_size(-diff, diff);
