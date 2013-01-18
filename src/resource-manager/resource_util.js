@@ -30,6 +30,16 @@ cls.ResourceUtil.bytes_to_human_readable = function(bytes)
   }
 }
 
+cls.ResourceUtil.decode_string_content = function(data) {
+  if (/^data:/.test(data)){
+    var dataStart = data.indexOf(',');
+    var is_base64 = data.lastIndexOf(";base64", dataStart) != -1;
+    data = is_base64 ? decodeURIComponent(escape(atob(data.slice(dataStart + 1)))) : decodeURIComponent(data.slice(dataStart + 1));
+  }
+
+  return data;
+}
+
 /**
  * Common extensions mapped to generic type strings
  */
@@ -176,13 +186,18 @@ cls.ResourceUtil.type_to_content_mode = function(type)
   return "text";
 }
 
+cls.ResourceUtil._strip_mime_custom_field = function(mime)
+{
+  return mime.replace(/[^\/]+\+/, '');
+}
+
 cls.ResourceUtil.mime_to_type = function(mime, extension)
 {
   if (mime)
   {
-    return this.mime_type_map[mime.contains(";") ?
-                              mime.split(";")[0].trim() :
-                              mime];
+    mime = mime.contains(";") ?  mime.split(";")[0].trim() : mime
+    mime = this._strip_mime_custom_field(mime);
+    return this.mime_type_map[mime];
   }
 }
 
