@@ -404,6 +404,7 @@ templates._request_body = function(req, do_raw)
       var type = cls.ResourceUtil.mime_to_type(req.request_body.mimeType);
       if (TEXT_TYPES.contains(type))
       {
+        var decoded = cls.ResourceUtil.decode_string_content(req.request_body.content.stringData);
         ret = req.request_body.content.stringData;
       }
       else
@@ -460,7 +461,8 @@ templates._response_body = function(resp, do_raw, is_last_response)
       // Attempt to display the responsebody.
       if (TEXT_TYPES.contains(resp.logger_entry_type))
       {
-        ret.push(this._pre(resp.responsebody.content.stringData));
+        var decoded = cls.ResourceUtil.decode_string_content(resp.responsebody.content.stringData);
+        ret.push(this._pre(decoded));
       }
       else if (resp.logger_entry_type == "image")
       {
