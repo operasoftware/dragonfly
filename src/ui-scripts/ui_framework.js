@@ -258,6 +258,7 @@ var ui_framework = new function()
       "Prestige Elite",
       "ProFont",
       "PT Mono",
+      "Source Code Pro",
       "Sydnie",
       "Terminal",
       "Terminus",
