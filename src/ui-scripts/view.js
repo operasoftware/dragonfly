@@ -255,6 +255,11 @@ var ViewBase = new function()
 
   }
 
+  this.get_selection_string = function()
+  {
+
+  };
+
   var onHideView = function(msg)
   {
     var view = window.views[msg.id];

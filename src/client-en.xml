@@ -229,6 +229,7 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./lib/xmlhttprequestprototype.js"/>
 <script src="./lib/storageprototype.js"/>
 <script src="./lib/dict.js"/>
+<script src="./lib/clipboard.js"/>
 
 
 <script src="./scripts/Timeouts.js"/>
@@ -417,7 +418,6 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./ecma-debugger/scriptselect.js"/>
 
 <script src="./ecma-debugger/dominspection/templates.js"/>
-<script src="./ecma-debugger/dominspection/domserializer.js"/>
 <script src="./ecma-debugger/dominspection/domview.js"/>
 <script src="./ecma-debugger/dominspection/actions.js"/>
 <script src="./ecma-debugger/dominspection/attrandtextditor.js"/>
@@ -528,9 +528,9 @@ window.load_screen_timeout = window.setTimeout(function()
 <script src="./resource-manager/documentmanager.1.0.responses.listdocuments.js"/>
 <script src="./resource-manager/resourcemanager.1.2.events.onurlunload.js"/>
 <script src="./resource-manager/resourcemanager.1.2.responses.getresource.js"/>
+<script src="./resource-manager/resourcemanager.1.3.responses.createrequest.js"/>
 <script src="./resource-manager/resource_tree_view.js"/>
 <script src="./resource-manager/resource_detail_view.js"/>
-<script src="./resource-manager/resourcemanager.1.3.responses.createrequest.js"/>
 
 <script src="./network/network_service.js"/>
 <script src="./network/network_view.js"/>

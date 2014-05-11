@@ -64,6 +64,9 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   var ERROR_MSG = 0;
   var PSEUDO_NAME = {};
   var EVENT_LISTENER_LIST = cls.EcmascriptDebugger["6.0"].InspectableDOMNode.EVENT_LISTENER_LIST;
+  var SUCCESS = 0;
+  var STATUS = 0;
+  var VALUE = 2;
 
   PSEUDO_NAME[BEFORE] = "before";
   PSEUDO_NAME[AFTER] = "after";
@@ -444,6 +447,114 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
     return path;
   }
 
+  this.get_attr = function(node, attr_key)
+  {
+    var attrs = node && node[ATTRS];
+    if (attrs)
+    {
+      for (var i = 0, attr; attr = attrs[i]; i++)
+      {
+        if (attr[ATTR_KEY] == attr_key)
+          return attr[ATTR_VALUE];
+      }
+    }
+    return null;
+  };
+
+  this.get_xpath = function(object_id, force_lower_case, callback)
+  {
+    var script = "ele.namespaceURI == \"http://www.w3.org/1999/xhtml\"";
+    var ex_ctx = window.runtimes.get_execution_context(this._data_runtime_id);
+    var tag = window.tag_manager.set_callback(this,
+                                              this._handle_get_xpath,
+                                              [object_id, force_lower_case, callback]);
+    var msg = [ex_ctx.rt_id, ex_ctx.thread_id, ex_ctx.frame_index, script, [["ele", object_id]]];
+    window.services["ecmascript-debugger"].requestEval(tag, msg);
+  };
+
+  this._handle_get_xpath = function(status, message, object_id, force_lower_case, callback)
+  {
+    if (status != SUCCESS || message[STATUS] != "completed")
+      return callback(null);
+    var is_in_xhtml_ns = message[VALUE] == "true";
+    var path = this._get_unique_path("XPath", object_id, force_lower_case, is_in_xhtml_ns);
+    callback(path);
+  };
+
+  this.get_unique_css_path = function(object_id, force_lower_case)
+  {
+    return this._get_unique_path("CSS", object_id, force_lower_case, true);
+  };
+
+  this._get_unique_path = function(type, object_id, force_lower_case, is_in_xhtml_ns)
+  {
+    var path = "";
+    var name = "";
+    var name_count = 0;
+    var ele = null;
+    var prev_ele = null;
+    var selector = this._selectors[type];
+    if (object_id)
+    {
+      for (var i = 0; (ele = this._data[i]) && ele[ID] != object_id; i++);
+      if (ele)
+      {
+        if (ele[TYPE] == Node.ELEMENT_NODE)
+        {
+          var id = is_in_xhtml_ns && this.get_attr(ele, "id");
+          if (id)
+            return selector.get_id(id);
+          name  = this._get_element_name(ele, force_lower_case);
+          name_count = 1;
+        }
+        prev_ele = ele;
+        i--;
+        for ( ; ele = this._data[i]; i--)
+        {
+          if (ele[TYPE] == Node.ELEMENT_NODE)
+          {
+            if (ele[DEPTH] < prev_ele[DEPTH])
+            {
+              path = selector.get_part(name, name_count) + path;
+              name  = this._get_element_name(ele, force_lower_case);
+              name_count = 1;
+              prev_ele = ele;
+            }
+            else if (ele[DEPTH] == prev_ele[DEPTH] && ele[NAME] == prev_ele[NAME])
+              name_count++;
+          }
+        }
+        if (name)
+          path = selector.get_part(name, name_count) + path;
+      }
+    }
+    return path.replace(/^ > /, "");
+  };
+
+  this._selectors = {};
+  this._selectors["XPath"] =
+  {
+    get_id: function(id)
+    {
+      return "//*[@id=\"" + id + "\"]";
+    },
+    get_part: function(name, name_count)
+    {
+      return "/" + name + (name_count > 1 ? "[" + name_count + "]" : "");
+    }
+  };
+  this._selectors["CSS"] =
+  {
+    get_id: function(id)
+    {
+      return "#" + id;
+    },
+    get_part: function(name, name_count)
+    {
+      return " > " + name + (name_count > 1 ? ":nth-of-type(" + name_count + ")" : "");
+    }
+  };
+
   this.has_data = function()
   {
     return Boolean(this._data && this._data.length);
@@ -506,6 +617,22 @@ cls.EcmascriptDebugger["6.0"].InspectableDOMNode.prototype = new function()
   {
     return this._data_runtime_id;
   }
+
+  this.serialize_to_string = function(node_id, callback)
+  {
+    var script = "ele.namespaceURI == \"http://www.w3.org/1999/xhtml\"" +
+               "? ele.outerHTML" +
+               ": new XMLSerializer().serializeToString(ele);";
+    var ex_ctx = window.runtimes.get_execution_context(this._data_runtime_id);
+    var tag = window.tag_manager.set_callback(this, this._handle_serialize_to_string, [callback]);
+    var msg = [ex_ctx.rt_id, ex_ctx.thread_id, ex_ctx.frame_index, script, [["ele", node_id]]];
+    window.services["ecmascript-debugger"].requestEval(tag, msg);
+  };
+
+  this._handle_serialize_to_string = function(status, message, callback)
+  {
+    callback(status == SUCCESS && message[STATUS] == "completed" ? message[VALUE] : null);
+  };
 
   this._get_id = (function()
   {

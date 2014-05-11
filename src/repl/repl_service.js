@@ -20,6 +20,12 @@ cls.ReplService = function(view, data)
   const RE_DOM_OBJECT = cls.InlineExpander.RE_DOM_OBJECT;
   const IS_EXPAND_INLINE_KEY = "expand-objects-inline";
   const CLASS_NAME = 4;
+  var ELEMENT_IDENTIFIERS =
+  [
+    [window.cls.SimpleJSParser.IDENTIFIER, "$0"],
+    [window.cls.SimpleJSParser.IDENTIFIER, "$1"],
+  ];
+  var get_value = function(token) { var VALUE = 1; return token[VALUE]; };
 
   this._on_consolemessage_bound = function(msg)
   {
@@ -270,7 +276,7 @@ cls.ReplService = function(view, data)
       // has enabled showing errors in the repl. The error message
       // will still be printed, but as a result of the console-log
       // event.
-      if (!settings.command_line.get('show-js-errors-in-repl')) {
+      if (!settings.command_line.get("show-js-errors-in-repl")) {
         this._handle_raw(msg[0]);
       }
     }
@@ -298,7 +304,7 @@ cls.ReplService = function(view, data)
     else
     {
       this._prev_selected = this._cur_selected;
-      this._cur_selected = msg.obj_id;
+      this._cur_selected = msg;
     }
   }.bind(this);
 
@@ -344,7 +350,7 @@ cls.ReplService = function(view, data)
         val = type;
         break;
       case "string":
-        val = '"' + val + '"';
+        val = "\"" + val + "\"";
         break;
     }
 
@@ -364,6 +370,7 @@ cls.ReplService = function(view, data)
 
   this.evaluate_input = function(input)
   {
+    var $_identifiers = this._transformer.has_tokens(input, ELEMENT_IDENTIFIERS).map(get_value);
     var cooked = this._transformer.transform(input);
     var command = this._transformer.get_command(cooked);
 
@@ -373,15 +380,15 @@ cls.ReplService = function(view, data)
     }
     else
     {
-      this._handle_hostcommand(cooked);
+      this._handle_hostcommand(cooked, $_identifiers);
     }
   };
 
   this.get_selected_objects = function()
   {
     var selection = [];
-    if (this._cur_selected) { selection.push(this._cur_selected) }
-    if (this._prev_selected) { selection.push(this._prev_selected) }
+    if (this._cur_selected) { selection.push(this._cur_selected.obj_id) }
+    if (this._prev_selected) { selection.push(this._prev_selected.obj_id) }
     return selection;
   };
 
@@ -390,23 +397,34 @@ cls.ReplService = function(view, data)
     command.call(this._transformer, this._view, this._data, this);
   };
 
-  this._handle_hostcommand = function(cooked)
+  this._handle_hostcommand = function(cooked, $_identifiers)
   {
     // ignore all whitespace commands
     if (cooked.trim() == "")
       return;
-
-    var ex_ctx = window.runtimes.get_execution_context();
-    var rt_id = ex_ctx.rt_id;
-    var thread_id = ex_ctx.thread_id;
-    var frame_index = ex_ctx.frame_index;
     var magicvars = [];
-    if (this._cur_selected)
-      magicvars.push(["$0", this._cur_selected]);
+    if ($_identifiers.contains("$0") && this._cur_selected)
+    {
+      magicvars.push(["$0", this._cur_selected.obj_id]);
+      if (this._cur_selected.rt_id != rt_id)
+        this._runtime_select.set_id(this._cur_selected.rt_id)
+    }
 
-    if (this._prev_selected)
-      magicvars.push(["$1", this._prev_selected]);
-
+    if ($_identifiers.contains("$1") && this._prev_selected)
+    {
+      magicvars.push(["$1", this._prev_selected.obj_id]);
+      if (this._prev_selected.rt_id != rt_id)
+        this._runtime_select.set_id(this._prev_selected.rt_id)
+    }
+    var rt_id = this._runtime_select.get_id();
+    var thread_id = 0;
+    var frame_index = 0;
+    var ex_ctx = window.runtimes.get_execution_context();
+    if (ex_ctx.rt_id == rt_id)
+    {
+      thread_id = ex_ctx.thread_id;
+      frame_index = ex_ctx.frame_index;
+    }
     var msg = [rt_id, thread_id, frame_index, cooked, magicvars];
     this._eval(msg, this._on_eval_done_bound, [rt_id, thread_id, frame_index]);
   };
@@ -418,7 +436,7 @@ cls.ReplService = function(view, data)
     msg[WANT_DEBUG] = msg[THREAD_ID] ? 0 : 1;
     this._edservice.requestEval(tag, msg);
     if (msg[WANT_DEBUG])
-      window.messages.post('console-script-submitted', {script: msg[SCRIPT_DATA]});
+      window.messages.post("console-script-submitted", {script: msg[SCRIPT_DATA]});
   }
 
   this._get_host_info = function()
@@ -457,6 +475,7 @@ cls.ReplService = function(view, data)
     this._on_eval_done_bound = this._msg_queue.queue(this._process_on_eval_done);
     this._tagman = window.tagManager; //TagManager.getInstance(); <- fixme: use singleton
     this._edservice = window.services["ecmascript-debugger"];
+    this._runtime_select = window["cst-selects"]["cmd-runtime-select"];
     this._edservice.addListener("consolelog", this._on_consolelog_bound);
     this._edservice.addListener("consoletime", this._on_consoletime_bound);
     this._edservice.addListener("consoletimeend", this._on_consoletimeend_bound);
@@ -470,7 +489,7 @@ cls.ReplService = function(view, data)
     window.messages.addListener("element-selected", this._on_element_selected_bound);
 
     this._is_inline_expand = settings.command_line.get(IS_EXPAND_INLINE_KEY);
-    messages.addListener('setting-changed', this._onsettingchange.bind(this));
+    messages.addListener("setting-changed", this._onsettingchange.bind(this));
 
     this._get_host_info();
   };

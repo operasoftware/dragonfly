@@ -527,8 +527,8 @@ var ProfilerView = function(id, name, container_class, html, default_handler)
       get_model_element_width: this._get_timeline_ele_width.bind(this)
     });
 
-    Tooltips.register("profiler-tooltip-url", true, false);
-    this._tooltip = Tooltips.register("profiler-event", true, false);
+    Tooltips.register("profiler-tooltip-url", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
+    this._tooltip = Tooltips.register("profiler-event", {type: Tooltips.TYPE_SUPPORT_CONTEXT});
     this._tooltip.ontooltip = this._ontooltip.bind(this);
 
     var overlay = new ProfilerOverlayView(id + "_overlay", "scroll");

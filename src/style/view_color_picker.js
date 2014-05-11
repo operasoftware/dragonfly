@@ -298,11 +298,13 @@ window.cls.ColorPickerView = function(id, name, container_class)
     this._color_notation = null;
     this._ele = null;
     this._panel_ele = null;
-    this._tooltip = Tooltips.register("color-palette", true);
+    this._tooltip = Tooltips.register("color-palette", {type: Tooltips.TYPE_SUPPORT_CONTEXT,
+                                                        set_selected: true,
+                                                        preferred_position: "top"});
 
     this._tooltip.ontooltip = function(event, target) {
       var box = target.getBoundingClientRect();
-      box.mouse_x = box.left;
+      box.mouse_x = box.left - 5;
       this.show(window.templates.color_picker_palette(), box);
     };
 

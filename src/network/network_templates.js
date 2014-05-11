@@ -234,6 +234,8 @@ templates.url_list_entry = function(selected, entry)
            ],
            "handler", "select-network-request",
            "data-object-id", String(entry.id),
+           "data-copy", entry.url,
+           "data-copy-label", ui_strings.M_CONTEXTMENU_COPY_URL,
            "class", (selected === entry.id ? "selected" : "") +
                     (error_in_current_response ? " " + ERROR_RESPONSE : "") +
                     (not_requested ? " " + NOT_REQUESTED : "")

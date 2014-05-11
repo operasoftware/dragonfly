@@ -61,7 +61,7 @@ var BaseEditor = new function()
     this.textarea = this.textarea_container.
       appendChild(document.createElement('textarea'));
     this.textarea.style.cssText = cssText;
-    this.textarea.oninput = this.getInputHandler();
+    this.textarea.addEventListener("input", this.getInputHandler(), false);
   }
   this.__is_active = function(){return false};
   this.__defineGetter__("is_active", function(){return this.__is_active()});

@@ -1,92 +1,96 @@
 message <span class="message">UrlLoad</span>
 {
-  enum URLType
+  required <span class="number">uint32</span> windowID = 1;
+  optional <span class="number">uint32</span> frameID = 2;
+  optional <span class="number">uint32</span> documentID = 3;
+  required <span class="number">uint32</span> resourceID = 4;
+  <span class="comment">/**
+    * The URL which which is about to be loaded.
+    */</span>
+  required <span class="string">string</span> url = 5;
+  <span class="comment">/**
+    * The type of URL that was started, this can referer to a specific protocol
+    * or a special URL type.
+    * 
+    * @note More types may be added in the future, make sure the client supports that.
+    */</span>
+  required URLType urlType = 6;
   {
-    <span class="comment">/** 
-     * Type not known, should not occur.
-     */</span>
-    UNKNOWN = 0;
-    <span class="comment">/** 
-     * HTTP protocol.
-     */</span>
-    HTTP = 1;
-    <span class="comment">/** 
-     * HTTP protocol with SSL.
-     */</span>
-    HTTPS = 2;
-    <span class="comment">/** 
-     * Local file access.
-     */</span>
-    FILE = 3;
-    <span class="comment">/** 
-     * Data URIs, e.g data:text/plain,mydata
-     */</span>
-    DATA = 4;
-    FTP = 5;
-    GOPHER = 6;
-    WAIS = 7;
-    NEWS = 8;
-    SNEWS = 9;
-    NEWSATTACHMENT = 10;
-    SNEWSATTACHMENT = 11;
-    EMAIL = 12;
-    ATTACHMENT = 13;
-    TELNET = 14;
-    MAILTO = 15;
-    OPERA = 16;
-    JAVASCRIPT = 17;
-    CONTENT_ID = 18;
-    TN3270 = 19;
-    SOURCE = 21;
-    CLIENT = 22;
-    NNTP = 23;
-    NNTPS = 25;
-    SHARE = 26;
-    GHTTP = 27;
-    TV = 28;
-    EDITED = 29;
-    ERROR = 30;
-    DVB = 31;
-    TEL = 32;
-    MAIL = 33;
-    IRC = 34;
-    SMS = 35;
-    SMSTO = 36;
-    CHAT_TRANSFER = 39;
-    DEVICE = 40;
-    MOUNTPOINT = 41;
-    WIDGET = 42;
-    OBMLSERVER = 43;
-    UNITE = 44;
-    INTERNAL = 100;
+    <span class="comment">/**
+      * Type not known, should not occur.
+      */</span>
+    <span class="enum">UNKNOWN</span> = 0;
+    <span class="comment">/**
+      * HTTP protocol.
+      */</span>
+    <span class="enum">HTTP</span> = 1;
+    <span class="comment">/**
+      * HTTP protocol with SSL.
+      */</span>
+    <span class="enum">HTTPS</span> = 2;
+    <span class="comment">/**
+      * Local file access.
+      */</span>
+    <span class="enum">FILE</span> = 3;
+    <span class="comment">/**
+      * Data URIs, e.g data:text/plain,mydata
+      */</span>
+    <span class="enum">DATA</span> = 4;
+    <span class="enum">FTP</span> = 5;
+    <span class="enum">GOPHER</span> = 6;
+    <span class="enum">WAIS</span> = 7;
+    <span class="enum">NEWS</span> = 8;
+    <span class="enum">SNEWS</span> = 9;
+    <span class="enum">NEWSATTACHMENT</span> = 10;
+    <span class="enum">SNEWSATTACHMENT</span> = 11;
+    <span class="enum">EMAIL</span> = 12;
+    <span class="enum">ATTACHMENT</span> = 13;
+    <span class="enum">TELNET</span> = 14;
+    <span class="enum">MAILTO</span> = 15;
+    <span class="enum">OPERA</span> = 16;
+    <span class="enum">JAVASCRIPT</span> = 17;
+    <span class="enum">CONTENT_ID</span> = 18;
+    <span class="enum">TN3270</span> = 19;
+    <span class="enum">SOURCE</span> = 21;
+    <span class="enum">CLIENT</span> = 22;
+    <span class="enum">NNTP</span> = 23;
+    <span class="enum">NNTPS</span> = 25;
+    <span class="enum">SHARE</span> = 26;
+    <span class="enum">GHTTP</span> = 27;
+    <span class="enum">TV</span> = 28;
+    <span class="enum">EDITED</span> = 29;
+    <span class="enum">ERROR</span> = 30;
+    <span class="enum">DVB</span> = 31;
+    <span class="enum">TEL</span> = 32;
+    <span class="enum">MAIL</span> = 33;
+    <span class="enum">IRC</span> = 34;
+    <span class="enum">SMS</span> = 35;
+    <span class="enum">SMSTO</span> = 36;
+    <span class="enum">CHAT_TRANSFER</span> = 39;
+    <span class="enum">DEVICE</span> = 40;
+    <span class="enum">MOUNTPOINT</span> = 41;
+    <span class="enum">WIDGET</span> = 42;
+    <span class="enum">OBMLSERVER</span> = 43;
+    <span class="enum">UNITE</span> = 44;
+    <span class="enum">INTERNAL</span> = 100;
   }
-
-  required <span class="number">uint32    </span> windowID   = 1; 
-  optional <span class="number">uint32    </span> frameID    = 2; 
-  optional <span class="number">uint32    </span> documentID = 3; 
-  required <span class="number">uint32    </span> resourceID = 4; 
-  <span class="comment">/** 
-   * The URL which which is about to be loaded.
-   */</span>
-  required <span class="string">string    </span> url        = 5; 
-  <span class="comment">/** 
-   * The type of URL that was started, this can referer to a specific protocol
-   * or a special URL type.
-   * 
-   * @note More types may be added in the future, make sure the client supports that.
-   */</span>
-  required <span class="number">URLType   </span> urlType    = 6; 
-  <span class="comment">/** 
-   * Milliseconds since Unix epoch.
-   */</span>
-  required <span class="number">double    </span> time       = 7; 
-  <span class="comment">/** 
-   * This field may be set to provide additional information about the
-   * origin of a URL load.
-   * 
-   * If the field is not set, the origin is unknown.
-   * 
-   * @since 1.2
-   */</span>
-  optional <span class="number">LoadOrigin</span> loadOrigin = 8; 
+  <span class="comment">/**
+    * Milliseconds since Unix epoch.
+    */</span>
+  required <span class="number">double</span> time = 7;
+  <span class="comment">/**
+    * This field may be set to provide additional information about the
+    * origin of a URL load.
+    * 
+    * If the field is not set, the origin is unknown.
+    * 
+    * @since 1.2
+    */</span>
+  optional LoadOrigin loadOrigin = 8;
+  {
+    <span class="comment">/**
+      * The resource was requested by XMLHttpRequest.
+      */</span>
+    <span class="enum">XHR</span> = 1;
+  }
 }
