@@ -455,7 +455,7 @@ def _convert_imgs_to_data_uris(src):
                             temp.write(line.encode("ascii"))
                             dirty = True
                 else:
-                    temp.write(line.encode("ascii"))
+                    temp.write(line.encode("ascii", "xmlcharrefreplace"))
                     dirty = True
 
             if dirty:
