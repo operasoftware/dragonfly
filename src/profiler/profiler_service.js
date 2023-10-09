@@ -43,7 +43,7 @@ var ProfilerService = function()
       config.timeline_id,
       typeof config.mode == "number" ? config.mode : null,
       typeof config.event_id == "number" ? config.event_id : null,
-      typeof config.max_depth == "number" ? congif.max_depth : null,
+      typeof config.max_depth == "number" ? config.max_depth : null,
       config.event_type_list || null,
       config.interval || null
     ];
